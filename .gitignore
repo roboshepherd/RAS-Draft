@@ -1,4 +1,5 @@
 elsart
+*.cls
 *.b*
 *.out
 *.aux
