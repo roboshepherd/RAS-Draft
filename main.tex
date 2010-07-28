@@ -43,6 +43,8 @@
 \usepackage{multirow}
 \usepackage{booktabs}
 \usepackage{rotating}
+\usepackage{listings,program}
+\usepackage{algorithmicx,algpseudocode}
 %% The lineno packages adds line numbers. Start line numbering with
 %% \begin{linenumbers}, end it with \end{linenumbers}. Or switch it on
 %% for the whole article with \linenumbers after \end{frontmatter}.
@@ -68,6 +70,10 @@
 %% \biboptions{comma,round}
 % \biboptions{}
 \journal{Robotics and Autonomous System}
+
+%% custom commands
+\newcommand{\HRule}{\rule{\linewidth}{0.3mm}} 
+%=================================================================
 \begin{document}
 %%
 \begin{acronym}
@@ -118,6 +124,7 @@
 %==== U V W X ====
 %==== Y Z ==== 
 \end{acronym}
+%-----------------------------------------------------
 \begin{frontmatter}
 %%
 %% Title, authors and addresses
@@ -161,12 +168,12 @@ Mdomarfaruque.Sarker \vline Torbjorn.Dahl@newport.ac.uk}
 This paper proposes to solve the MRTA problem using a set of previously published generic rules for division of labour derived from the observation of ant, human and robotic social systems. The concrete form of these rules, the \textit{attractive filed model} (AFM), provides sufficient abstraction to local communication and sensing which is uncommon in existing MRTA solutions. We have validated the effectiveness of AFM to address MRTA  using two bio-inspired communication and sensing strategies: ``global sensing - no communication'' and ``local sensing - local communication''. The former is realized using a centralized communication system and the latter is emulated under a peer-to-peer local communication scheme. They are applied in a  manufacturing shop-floor scenario using 16 e-puck robots. A flexible multi-robot control architecture, \textit{hybrid event-driven architecture on D-Bus}, has been outlined which uses the state-of-the-art D-Bus interprocess communication.  Based-on the organization of task-allocation, communication and interaction among robots, a  novel taxonomy of MRTA solutions has been proposed to remove the ambiguities found in existing MRTA solutions. Besides, a set of domain-independent metrics, e.g., plasticity, task-specialization and energy usage, has been formalized to compare the performances of the above two strategies.
 \end{abstract}
 %%
-\begin{keyword}
-multi-robot system \sep multi-robot task allocation
+%\begin{keyword}
+%multi-robot system \sep multi-robot task allocation
 %% keywords here, in the form: keyword \sep keyword
 %% MSC codes here, in the form: \MSC code \sep code
 %% or \MSC[2008] code \sep code (2000 is the default)
-\end{keyword}
+%\end{keyword}
 %%
 \end{frontmatter}
 %%
@@ -276,18 +283,629 @@ The central issue of this paper is to determine the role of communication and se
 \section{Robotic interpretation of the Attractive Field Model}
 \label{sec:afm}
 %%
+The construction of AFM has been achieved through a series of collaborative interactions among our project partners. From the biological experiments of ants colonies {\em Temnothorax albipennis} we  inferred the bottom-up rules and roles of feedback in collective performance of ants brood-sorting and nest construction after emigration to a new site. We  also analysed the observational data from the self-organized infrastructural development of an {\em eco-village} by an open community of volunteers resided in Ireland. These studies helped us to formalize the generic rules into a concrete model  and to validate this model by deploying it in our robot controllers within the context of a manufacturing shop-floor scenario. In this section, we have described the robotic validation of AFM, with a brief presentation on interpretations of AFM from different social perspectives.
+\subsection{Generic framework}
+\label{afm:framework}
+Inspired from the DOL in ants, humans and robots,  we  have proposed the following four rules that are the potential ingredients to obtain self-regulation in any social system. In this dissertation, these rules are mentioned as the {\em generic rules of self-regulation}.
+
+\textbf{Rule 1: Continuous flow of information.} Self-regulatory social systems establish the continuous minimum flow of information over the period of time when self-regulation can be defined. This should help to maintain at least two states of an agent: 1) receiving information about task(s) and 2) ignoring information or doing no task. The up-to-date information should reflect  the changes of the system i.e. it encodes the necessary feedback for the agents. Thus, this property will act as the basis of the state switching of agents, between these two minimum states or, among multiple states e.g. in case of multiple tasks or many sub-states of a single task.
+
+At the individual level, information is processed differently by each individual, and is certainly not constant nor continuous. In addition, there can be lower and upper thresholds on the amount of info necessary for DOL to take place. The time scale at the individual level is very small compared to the system level's time scale.We can approximate the propagation of information at this macro time scale as the continuous flow of information.  In the model, emphasize is given to whether the information is used e.g. stimulation to perform a task, or unused e.g. random walk.
+
+\textbf{Rule 2: Sensitization}. Self-regulatory social systems allow the differentiation in the use of  (or access to) information, e.g. through sensitization or learning of some tasks. This differentiation is regulated by the characteristics of the system, e.g. the ability of the agents to learn tasks that are repeatedly performed.
+
+\textbf{Rule 3: Concurrence.} Self-regulatory social systems include concurrent access to information from different spatial positions with certain preferences. This preference is not fixed and can change with the dynamics of the system. 
+
+\textbf{Rule 4: Forgetting.} Self-regulatory social systems include forgetting, e.g. the ability of the agents to diminish information over time, if not used. The system determines the amount of information being released, and this changes over time. For example, specialists might have to attend an emergency situation and switch tasks that contributes to the forgetting of old task experiences. This is considered as crucial to allow flexibility in the system.
+%%
+\begin{figure}
+\centering
+\includegraphics[height=7cm, angle=0]{./images/AFM-Diag2.eps}
+\caption{The attractive filed model (AFM)}
+\label{fig:afm} % Give a unique label
+\end{figure}
+Having this general framework of self-regulatory social systems, we can now formalize AFM that will describe the properties of individual  agents and the system as a whole. In terms of networks, the model is a bipartite network, i.e. there are two different types of nodes. One set of nodes describes the sources of the attractive fields and the other set describes the agents. Links only exist between different types of nodes and they encode the flow of information so that, even if there is no direct link between two agents, their interaction is taken into account in the information flow. This is an instance of {\em weak} interaction. The strength of the field primarily depends upon the distance between the task and the agent. This relationship is represented using weighted links. Besides, there is a permanent field that represents the {\em no-task} or  option for ignoring information. The model can be mapped to a network as shown in Fig. \ref{fig:afm}. The correspondence is given below:
+\begin{enumerate}
+\item Source nodes (o) are tasks that can be divided between a number of agents.
+\item Agent nodes (x) an be ants, human,  robots etc.
+\item The attractive fields correspond to stimuli to perform a task, and these are given by the black solid lines.
+\item When an agent performs a task, the link becomes different, and this is denoted in the figure by a dashed line. Agents linked to a source by a red line are the agents currently doing that task. 
+\item The field of ignoring the information (w) corresponds to the stimulus to random walk, i.e. the no-task option, and this is denoted by the dotted lines in the graph. 
+\item Each of the links is weighted. The value of this weight describes the strength of the stimulus that the agent experiences. In a spatial representation of the model, it is easy to see that the strength of the field depends on the physical distance of the agent to the source. Moreover, the strength can be increased through sensitisation of the agent via experience (learning). This distance is not depicted in the network, it is represented through the weights of the links. In the figure of the network (Fig. \ref{fig:afm}), the nodes have arbitrary places. Note that even though the distance is physical in this case, the distance in the model applied to other systems, needs not to be physical. It can represent the accessibility to the information, the time the information takes to reach the receiver, etc. 
+\end{enumerate}
+In summary, from the above diagram of the network, we can see that each of the agents is connected to each of the fields. This means that even if an agent is currently involved in a task, the probability that it stops doing it in order to pursue a different task, or to random walk, is always non-zero. The weighted links express the probability of an agent to be attracted to each of the fields.
+%%--------------------------------------------------------------------
+\subsection{Relationship of AFM with self-organization}
+\label{afm:so}
+\begin{figure}
+\centering
+\includegraphics[width=9cm, angle=0]
+{./images/self-org-2.eps}
+%figure caption is below the figure
+\caption{\small Four generic rules establish the self-regulated DOL in social systems}
+\label{fig:afm-rules} % Give a unique label
+\end{figure}
+
+It is interesting to note that our proposed four generic rules can be considered as  the four major foundations of a self-organized system (Fig.  \ref{fig:afm-rules}). Self-organized systems exhibit four distinct perspectives known as so-called ingredients or properties of self-organization \cite{Camazine+2001}. However, it is not clear how those properties can come into existence. Here, we have described the four underlying mechanisms that explains how self-organization can be realized in different social systems using our generic framework of self-regulation. From our understanding, we can explain it in the following ways.
+
+Firstly, multiple interactions become meaningful when {\em continuous flow of information} occurs  by exchanging signals or cues among agents or their environment  that regulates their behaviours. This, in turn, contribute to the task-allocation  and task-switching in the social level.  In swarm intelligence literature, multiple interactions are often described as an essential ingredient of self-organization. However, interactions without definite purposes may not contribute to the self-organization.
+
+Secondly, in swarm intelligence, positive feedback has been attributed as another mechanism of  self-organization. But it is not easy to understand what creates positive feedback in a social system. Possible answers might be the characteristic of the environment e.g. ants select shorter path since density of pheromones becomes higher and thus more ants becomes attracted in that path, the gradual decrease of response-threshold of individuals which increases the probability of selecting a task etc.  To make the answer more concrete, we have explicitly attributed {\em sensitisation} or learning as a mechanism of positive feedback. There might exist other mechanisms too. But clearly sensitisation will be one of the reliable mechanisms for achieving positive feedback.
+
+Thirdly, similar to positive feedback, we have proposed {\em forgetting} that contributes to provide negative feedback about a task or decreasing the probability to select it. Other negative feedback mechanisms can be implemented by assigning a saturation level to each task which is also present in our model, for details see \citet{Arcaute+2008}.
+
+Finally, creating  artificial amplification of fluctuations or stochastic events is not a straight-forward issue. It throws  many open questions. Does a system designer intentionally impose irregularity in task-performance of agents?  Is random movement  enough for simulating randomness in a system?
+Since emergencies do not always pop-up on request, we provide the rule of {\em concurrency} that enables agents to  maintain even a small amount of probability of selecting a low-priority, or less sensitized or distant task. This concurrency mechanism provides a high-degree of robustness in the system such that all tasks can be attended even if specialization of agents delays them in switching to some of the tasks.
+%%
+\subsection{Interpretation of AFM in multi-robot systems}
+\label{afm:mrs-interpretation}
+The interpretation of AFM in a multi-robot system also follows almost exactly as in generic interpretation. However, in order to make the interpretation more concrete, let us consider a manufacturing shop floor scenario, where $N$ number of autonomous mobile robots are required to attend $J$ number of shop tasks spread over a fixed area $A$. Let these tasks be represented by a set of small rectangular boxes resembling to manufacturing machines.
+
+%%
+Let $R$ be the set of robots ${r_1, r_2,...,r_n}$. Let a task $j$ has an associated task-urgency $\phi_j$ indicating its relative importance over time.
+If a robot attends a task $j$ in the $x^{th}$ time-step, the value of $\phi_j$ will decrease by an amount $\delta_{\phi_{INC}}$ in the $(x+1)^{th}$ time-step.
+On the other hand, if a task has not been served by any robot in the $x^{th}$ time-step, $\phi_j$ will increase by another amount  $\delta_{\phi_{DEC}}$  in $(x+1)^{th}$ time-step. Thus
+%-- Phi update
+urgency of a task is updated by the following rules.
+\begin{equation}
+ If\hspace*{0.15cm}the\hspace*{0.15cm} task\hspace*{0.15cm}is\hspace*{0.15cm}not\hspace*{0.15cm}being\hspace*{0.15cm} done:\hspace*{0.15cm}  \phi_j \rightarrow   \phi_j \hspace*{0.15cm} + \delta_{\phi_{INC}}
+\label{eqn:delta-phi1}
+\end{equation}
+%%
+\begin{equation}
+ If\hspace*{0.15cm}the \hspace*{0.15cm}task\hspace*{0.15cm}is\hspace*{0.15cm}being\hspace*{0.15cm}done:\hspace*{0.15cm}  \phi_j \rightarrow   \phi_j \hspace*{0.15cm} - n\hspace*{0.10cm}\delta_{\phi_{DEC}}
+\label{eqn:delta-phi2}
+\end{equation}
+Eq. \ref{eqn:delta-phi1} refers to a case where no robot attend to task $j$ and Eq. \ref{eqn:delta-phi2} refers to another case where $n$ robots are concurrently performing the task $j$.
+
+In order to complete a task $j$, a robot $r_i$ needs to be within a fixed boundary $D_{j}$. If a robot completes a task $j$ it learns about it and this will influence $r_i$'s likelihood of selecting that task in future, say through increasing  its sensitization to $j$ by a small amount, $k_{INC}$. Here, the variable affinity of a robot $r_i$ to task $j$ is called as its {\em sensitization} $k^{i}_{j}$. If a robot $i$ does not do a task $j$ for some time, it forgets about $j$ and $k^i_j$ is decreased, by another small amount, say $k_{DEC}$ .
+Thus a robot's task-sensitization update follows these rules.
+\begin{equation}
+ If\hspace*{0.15cm}task\hspace*{0.15cm}is\hspace*{0.15cm}done:\hspace*{0.15cm}  k^i_j \rightarrow   k^i_j \hspace*{0.15cm} + \hspace*{0.15cm} k_{INC}
+\label{eqn:k-inc}
+\end{equation}
+\begin{equation}
+ If\hspace*{0.15cm}task\hspace*{0.15cm}is\hspace*{0.15cm}not\hspace*{0.15cm}done:\hspace*{0.15cm}  k^i_j \rightarrow   k^i_j \hspace*{0.15cm} - \hspace*{0.15cm} k_{DEC}
+\label{eqn:k-dec}
+\end{equation}
+
+According to AFM, all robots will establish attractive fields to all tasks due to the presence of a system-wide continuous flow of information. The strength of these attractive fields will vary according to the dynamic distances between robots and tasks, task-urgencies and corresponding sensitizations of robots. Simplifying the generic implementation of AFM from \citet{Arcaute+2008}, we can formally encode this stimuli of attractive field as follows.
+%% S
+\begin{equation}
+S_{j}^{i} = tanh\{\frac{k_{j}^{i}}{d_{ij}+\delta } \phi _{j}\}
+\label{eqn:afm1}
+\end{equation}
+%--P(Task)
+\begin{equation}
+S^{i}_{RW} = tanh \left \{ 1 -  \frac{ \sum_{j=1}^{J} S^{i}_{j}}{J + 1} \right \}
+\label{eqn:afm2}
+\end{equation}
+%-- P(RW)
+\begin{equation}
+P_{j}^{i} = \frac{S_{j}^{i}}{\sum_{j=0}^{J} S_{j}^{i}} \hspace*{0.25cm}where,\hspace*{0.25cm}S^{i}_{0} = S^{i}_{RW}   
+\label{eqn:afm3}
+\end{equation}
+
+Eq. \ref{eqn:afm1} states that the stimuli of a robot $r_i$ to a particular task $j$, $S^{i}_{j}$ depends on $r_i$'s spatial distance to $j$ ($d_{ij}$), level of sensitization to $j$ ($k_{j}^{i}$), and perceived urgency of that task ($\phi _{j}$). In  Eq. \ref{eqn:afm1}, we have used a very small constant value $\delta$ to avoid division by zero, in the case when a robot has reached to a task. Since $S^{i}_{j}$ is a probability function, it is chosen as a $tanh$ in order to keep the values between 0 and 1. Eq. \ref{eqn:afm2} suggests us how we can estimate the stimuli of random walk or no-task option. This stimuli of random walk depends on the sum of stimulus of $J$ real tasks. Here, random-walk is also considered as a task. Thus the total number of tasks become $J+1$. The probability of selecting each task has been determined by a probabilistic method outlined in Eq. \ref{eqn:afm3} which states that the probability of choosing a task $j$ by robot $r_i$ is directly proportional to its calculated stimuli $ S^i_j$. Finally, let $T_a$ be the allocated time to accomplish a task. If a robot can enter inside the task boundary within $T_a$ time it waits there until $T_a$ elapsed. Otherwise it will select a different task.
+%%============================================================ 
 \section{AFM based task-allocation solution}
 \label{sec:mrta}
+We have designed a set of  manufacturing shop-floor scenario experiments for validating the effectiveness of our AFM in producing self-regulated MRTA.  The overall aim of this design is to analyse the various properties of task-allocation and related other issues. In this section, we have described our manufacturing shop-floor scenario and our task-allocation solution for robot-controllers.
 %%
+\begin{figure}
+\centering
+\includegraphics[width=12cm, angle=0]
+{./images/VSP.eps}
+%figure caption is below the figure
+\caption{A manufacturing shop-floor production and maintenance cycle}
+\label{fig:vsp}  % Give a unique label
+\end{figure}
+\subsection{A manufacturing shop-floor scenario}
+\label{afm:vms}
+By extending our interpretation of AFM in multi-robot system, we can set-up manufacturing shop-floor  scenario. Here, each task represents a manufacturing machine that is  capable of producing goods from raw materials, but they also require constant maintenance works for stable operations. Let $W_{j}$ be a finite number of material parts that can be loaded into a machine $j$ in the beginning of its production process and in each time-step, $\omega_{j}$ units of material parts can be processed  ($\omega_{j} \ll W_{j} $). So let $\Omega_{j}^{p}$ be the initial production workload of $j$ which is simply: $W_{j} / \omega_{j}$ unit.
+
+We assume that all machines are identical. In each time step, each machine always requires a minimum threshold number of robots, called hereafter as {\em minimum robots per machine ($\mu$)}, to meet its constant maintenance work-load, $\Omega_{j}^{m}$ unit. However, if $\mu$ or more robots are present in a machine for production purpose, we assume that, no extra robot is required to do its maintenance work separately. These robots, along with their production jobs, can do necessary maintenance works concurrently. For the sake of simplicity, here we consider $\mu$ = 1.
+
+Now let us fit the above production and maintenance work-loads and task performance of robots into a unit task-urgency scale. Let us divide our manufacturing operation into two subsequent stages: 1) \acfi{PMM}, and 2) \acfi{MOM}. Initially a machine starts working in PMM and does production and maintenance works concurrently. When there is no production work left, then it  enters into MOM. Fig. \ref{fig:vsp} illustrates this scenario for a single machine.
+
+Under both modes, let $\alpha_{j}$ be the amount of workload occurs in a unit time-step if no robot serves a task and it corresponds to a fixed task-urgency $\Delta \phi_{INC}$. On the other hand, let us assume that in each time-step, a robot, $i$, can decrease a constant workload $\beta_{i}$ by doing some maintenance work along with doing any available production work. This  corresponds to a negative task urgency: $- \Delta \phi_{DEC}$. So, at the beginning of production process, task-urgency, occurred in a machine due to its production work-loads, can be encoded by Eq. \ref{eqn:task-urgency-prod-init}.
+\begin{equation}
+%\small
+\Phi_{j, INIT}^{PMM} = \Omega_{j}^{p} \times \Delta \phi_{INC} + \phi_{j}^{m0}
+\label{eqn:task-urgency-prod-init}
+\end{equation}
+where $\phi_{j}^{m0}$ represents the task-urgency due to any initial maintenance work-load of $j$.
+Now if no robot attends to serve a machine, each time-step a constant maintenance workload of $\alpha_{j}^{m}$ will be added to $j$ and that will increase its task-urgency by $\Delta \phi_{INC}$. So, if $k$ time steps passes without any production work being done, task urgency at $k^{th}$ time-step will follow Eq. \ref{eqn:task-urgency-prod-case1}.
+\begin{equation}
+\Phi_{j, k}^{PMM} =\Phi_{j, INIT}^{PMM} + k \times \Delta \phi_{INC}
+\label{eqn:task-urgency-prod-case1}
+\end{equation}
+However, if a robot attends to a machine and does some production works from it, there would be no extra maintenance work as we have assumed that $\mu$ = 1. Rather, the task-urgency on this machine will decrease by $\Delta \phi_{DEC}$ amount. If $\nu_{k}$ robots work on a machine simultaneously at time-step $k$, this decrease will be: $\nu_{k} \times \Delta \phi_{DEC}$. So in such cases, task-urgency in $(k+1)^{th}$ time-step can be represented by:
+\begin{equation}
+\Phi_{j, k+1}^{PMM} = \Phi_{j, k}^{PMM} - \nu_{k} \times \Delta \phi_{DEC}
+\label{eqn:task-urgency-prod-case2}
+\end{equation}
+At a particular machine $j$, once $\Phi_{j, k}^{PMM}$ reaches to zero, we can say that there is no more production work left and this time-step $k$ can give us the {\em production completion time} of $j$, $T_{j}^{PMM}$. Average production time-steps of a shop-floor with M machines can be calculated by the following simple equation.
+\begin{equation}
+T_{avg}^{PMM} = \frac{1}{M} \sum_{j=1}^{M} T_{j}^{PMM} 
+\label{eqn:avg-pmm}
+\end{equation}
+$T_{avg}^{PMM}$ can be compared with the minimum number of time-steps necessary to finish production works, $T_{min}^{PMM}$. This can only happen in an ideal case where all robots work for production without any random walking or failure. We can get $T_{min}^{PMM}$ from the total amount of work load and maximum possible inputs from all robots. If there are M machines and N robots, each machine has $\Phi_{INIT}^{PMM}$ task-urgency, and each time-step robots can decrease N $\times$ $\Delta \phi_{DEC}$ task-urgencies, then the theoretical $T_{min}^{PMM}$ can be found from the following Eq. \ref{eqn:min-pmm}.
+%
+%\begin{multicols}{2}
+%\small
+\begin{equation}
+T_{min}^{PMM} = \frac{M \times \Phi_{INIT}^{PMM}}{N \times \Delta \phi_{DEC}} 
+\label{eqn:min-pmm}
+\end{equation}
+%\vspace*{0.2cm}
+\begin{equation}
+\zeta_{avg}^{PMM} = \frac{T_{avg}^{PMM} - T_{min}^{PMM}}{T_{min}^{PMM}} 
+\label{eqn:appd}
+\end{equation}
+%\end{multicols}
+Thus we can define $\zeta_{avg}^{PMM}$, \acf{APCD} by following Eq. \ref{eqn:appd}:
+%%
+When a machine enters into MOM, only $\mu$ robots are required to do its maintenance works in each time step. So, in such cases, if no robot serves a machine, the growth of task-urgency will follow Eq. \ref{eqn:task-urgency-prod-case1}. However, if $\nu_{k}$ robots are serving this machine at a particular time-step $k^{th}$ , task-urgency at $(k+1)^{th}$ time-step can be represented by:
+\begin{equation}
+\Phi_{j, k+1}^{MOM} = \Phi_{j, k}^{MOM}- (\nu_{k} - \mu) \times \Delta \phi_{DEC}
+\label{eqn:task-urgency-maint-case}
+\end{equation}
+By considering $\mu = 1$, Eq. \ref{eqn:task-urgency-maint-case} will reduces to Eq. \ref{eqn:task-urgency-prod-case2}. Here, $\Phi_{j, k+1}^{MOM}$ will correspond to the {\em pending maintenance work-load} of a particular machine at a given time. This happens due to the random task switching of robots with a no-task option (random-walking). Interestingly PMW will indicate the robustness of this system since higher PMW value will indicate the delay in attending maintenance works by robots. We can find the \acfi{APMW} per time-step per machine, $\chi_{j}^{MOM}$ (Eq. \ref{eqn:sigle-pmw}) and average PMW per machine per time-step, $\chi_{avg}^{MOM}$ (Eq. \ref{eqn:avg-pmw}).
+%\begin{multicols}{2}
+%\small
+\begin{equation}
+\chi_{j}^{MOM}= \frac{1}{K} \sum_{k=1}^{K} \Phi_{j, k}^{MOM}
+\label{eqn:sigle-pmw}
+\end{equation}
+%\vspace*{0.2cm}
+\begin{equation}
+\chi_{avg}^{MOM}= \frac{1}{M} \sum_{j=1}^{M} {\chi_{j}^{MOM}}
+\label{eqn:avg-pmw}
+\end{equation}
+%\end{multicols}
+%----------------------------------------------------------------
+\subsection{Robot-controller algorithms}
+\textbf{Task-allocation algorithm:}\\
+\textbf{Stage 1.} In the beginning of our task-allocation algorithm, we count the total number of tasks and initialize the sum of the stimuli all tasks to zero. Then for each task, we extract its pose, urgency, sensitisation from input data.\\  \textit{CalculateTaskDistance()} function calculates the Euclidian distance between a task and a the robot by taking the current robot-pose and static task-pose as the input. These values are enough to get a task's stimuli based on Eq. \ref{eqn:afm1}. In this loop finally we update \textit{TaskRecords} for using it in next task-allocation cycle. We get the random-walk task's stimuli from Eq. \ref{eqn:afm2}. It requires total number of shop-tasks and sum of their stimulus.
+%% ALG
+\newline
+\textbf{Algorithm 4.1: Self-regulated task-allocation based on AFM}
+\vspace{-3mm}
+\newline
+\HRule
+\begin{algorithmic}[1]
+\begin{small}
+\label{alg:task-selector}
+\State $\textbf{Input: } AllTaskInfo, RobotPose, TaskRecords, DeltaDistance$
+\State $\textbf{Output: } SelectedTaskID$
+\State \COMMENT {Stage 1: Get each task's individual stimuli and sum  all stimulus}
+\State $TotalTasks \gets$  Total number of tasks $\in AllTaskInfo$  
+\State $ TaskStimuliSum \gets 0 $
+\ForAll {$ Task \in AllTaskInfo $} 
+\State $ TaskPose \gets  $ Task-position  $ \in Task$
+\State $ TaskUrgency \gets $ Task-urgency $ \in Task$
+\State $ TaskSensitization \gets $ Task-sensitization $\in Task$
+\State $ DistanceToTask \gets  $\textbf{CalculateTaskDistance(}$RobotPose$, $TaskPose$\textbf{)}
+\State $ TaskStimuli \gets  $ \textbf{CalculateTaskStimuli(}$DistanceToTask,$\\ \hspace*{3.5cm} $TaskSensitization, 	        TaskUrgency, DeltaDistance\textbf{)}$
+\State $ TaskStimuliSum \gets$  $TaskStimuliSum + TaskStimuli$
+\State $ TaskRecords \gets $ \textbf{UpdateTaskRecords(}$TaskStimuli,$\\ \hspace*{3.5cm}$DistanceToTask, TaskUrgency, TaskSensitization\textbf{)}$
+\EndFor
+%%
+\State $RandomWalkStimuli \gets $ \textbf{CalculateRandomWalkStimuli(}$TotalTasks,$\\ \hspace*{4.5cm} $TaskStimuliSum$\textbf{)}
+\State $ AllStimuliSum \gets TaskStimuliSum + RandomWalkStimuli $
+%%
+\State \COMMENT {Stage 2: Find probability of each task based on its stimuli}
+\State $ TaskID \gets 0 $ 
+\While {$ TaskID \leq TotalTasks $} 
+\State $ TaskStimuli \gets $ Task-stimuli $\in TaskRecords(TaskID)$
+\State $ TaskProbability \gets  $ \textbf{GetTaskProbability(}$TaskStimuli, AllStimuliSum$\textbf{)}
+\State $ TaskProbabilityRange \gets $ \textbf{ConvertTaskProbabilityIntoRange(}\\ \hspace*{6cm}$TaskProbability$\textbf{)}
+\State $ TaskRecords \gets  $ \textbf{UpdateTaskRecords(}$TaskProbability$\textbf{)}
+\EndWhile
+%%
+\State \COMMENT {Stage 3: Draw a random-number to match with TaskID}
+\State $ RandomNum \gets  $ \textbf{GetRandomNumber(}$0,$ \textbf{Max(}$TaskProbabilityRange$\textbf{))}
+\While {$ TaskID \leq TotalTasks $} 
+\State $ RangeStart \gets  $ \textbf{Min(}$TaskProbabilityRange (TaskID)$\textbf{)}
+\State $ RangeEnd \gets  $ \textbf{Max(}$TaskProbabilityRange (TaskID)$\textbf{)}
+\If {$  RandomNum \geq RangeStart \hspace*{.25cm}\&\& \hspace*{.25cm} RandomNum \leq  RangeEnd $}
+\State $ SelectedTaskID \gets TaskID $ 
+\EndIf
+\EndWhile
+\end{small}
+\end{algorithmic}
+\vspace{-3mm} 
+\HRule\\
+%%
+\textbf{Stage 2.} In the second stage of our task-allocation algorithm, we  find the probability of each task (including random-walk) based on Eq. \ref{eqn:afm3}. Then this probability value of each task, between 0 and 1, is rounded to the closest two-digit fractions and multiplied by 100 and put into a linear scale. For example, if two tasks probability values are: 0.15 and  0.25, the probability range of first  task becomes 0 to 15 and for second task, it becomes 16 to 40.\\
+%% 
+\textbf{Stage 3.} After converting each task's probability values into a linear range, we use a random-number generator that draws a random-number between 0 and the highest value of task-probability range, say 40 for the previous example. Then this random number is compared against the task probability range of each task. For the above example, if the random-number becomes 37, our task-probability range checking function selects \textit{Task2} since 37 falls between 16 to 40. Under this probabilistic method, the task with larger probability range has a  higher chance to be selected, but low probability tasks are also got selected time-to-time.
+%%
+\newline
+\textbf{Algorithm 4.2: Robot's learning and forgetting of tasks based on AFM}
+\vspace{-3mm}
+\newline
+\HRule
+\begin{algorithmic}[1]
+\begin{small}
+\label{alg:update-sz}
+\State $\textbf{Input: }  TaskRecords, LeranRate, ForgetRate, SelectedTaskID$
+\State $\textbf{Output: }$ Updated $TaskSensitisation \in TaskRecords$
+\ForAll {$ Task \in TaskRecords $} 
+\State $ TaskID \gets  $ ID $\in Task$
+\State $ TaskSensitization \gets  $   Sensitisation $ \in Task$
+\If {$  TaskID \equiv SelectedTaskID $}
+\State $ TaskSensitization \gets $ \textbf{Max(}$1, (TaskSensitization + LeanRate)$\textbf{)}
+\Else
+\State $ TaskSensitization \gets $ \textbf{Min(}$0, (TaskSensitization - ForgetRate)$\textbf{)}
+\EndIf
+\EndFor
+\end{small}
+\end{algorithmic}
+\vspace{-3mm} 
+\HRule\\
+%%
+\textbf{Robot learning and forgetting algorithm:}\\
+Algorithm 4.2 lists the pseudo-code for updating the robot's task-sensitization values. Along with previously mentioned \textit{TaskRecords}, and  \textit{SelectedTaskID}, it takes two other inputs: \textit{LeranRate} ($\Delta k_{INC} $) and \textit{ForgetRate} ($\Delta k_{INC} $) as outlined in Eq. {eqn:k-inc} and {eqn:k-dec} respectively.  In addition to that it also keep the value of task-sensitization between the fixed limit of 0 and 1.
+%====================================================================
 \section{Experiments}
 \label{sec:expt}
 %%
+In this section, we have described the design of our MRTA experiments within the context of our manufacturing shop-floor scenario. 
+%----------------------------------------------------------
+\subsection{Observables}
+\textbf{Plasticity:} %As we have discussed in Sec. \ref{bg:def:dol},  
+Self-regulated DOL can be characterised by plasticity and task-specialization, in both macroscopic and microscopic levels. Within manufacturing shop-floor context, plasticity refers to the collective ability of the robots to switch from doing no-task option (random-walking) to doing a task (or vice-versa) depending on the work-load present in the system. Here we expect to see that most of the robots would be able to engage in tasks when there would be high workloads (or task-urgencies) during PMM. Similarity, when there would be low workload in case of MOM only a few robots would do the task, rest of them would either be idle (not doing any task) or perform a random-walk.  The changes of task-urgencies and the ratio of robots engaged in tasks can be good metrics to observe plasticity in MRTA.\\
+%%
+\textbf{Task-specialization:} Under heavy work-load most of the robots should attend to tasks. But self-regulated DOL is always accompanied with task-specializations of agents. That means that few robots will be more active than others. From AFM, we can see that after doing a task a few times, a robot will soon be sensitized to it. Therefore, from the raw log of task-sensitization of robots, we can be able to find the pattern of task-sensitization of robots per task basis. If a few robots specializes on a particular task that will help to reduce traffic near the task and improves overall efficiency of the system. Thus, at the end of our production cycle in manufacturing shop-floor scenario, we can count the percentage of robots specializes on each task in our experiments.\\
+%%
+\textbf{Quality of task-performance:} As discussed in Sec. \ref{afm:vms} we can measure the quality of MRTA from the APCD. It first calculates the ideal minimum production time and then finds the delay in production process from the actual production completion data. Thus this will indicate how much more time is  spent in the production process due to the self-regulation of robots in this distributed task-allocation scheme.  In order to calculate APCD, we can find the production completion time for each task from the raw log of task-urgency and make an average from them.\\
+%%
+\textbf{Robustness:} In order to see if our system can respond to the gradually increasing workloads,  we can measure APMW within the context of our manufacturing shop-floor scenario. This can show the robustness of our system where a task can be  unattended for long time. When a task is not being served by any robot for some time we can see that its urgency will rise and robots will respond to this dynamic demand. For measuring APMW we need only the task-urgency data.\\
+%%
+\textbf{Flexibility:} From the design of AFM, we know that robots that are not doing a task will be de-sensitized to it or forget that task. So at an overall low work-load (or task urgency), less robots will do the tasks and hence less robots will have the opportunity to learn tasks. From the shop-floor work-load data, we can confirm the presence of flexibility in MRTA.\\
+%%
+\textbf{Energy-efficiency:} In order to characterize the energy-efficiency in MRTA we can log the pose data of each robot that can give us the total translations occurred by all robots in our experiments. This can give us a rough indication of energy-usage by our robots. \\
+%%
+\textbf{Information flow:} Since AFM requires a system-wide continuous flow of information, we can measure the communication load to bench-mark our implementation of communication system. This bench-mark data can be used to compare among various communication strategies. Here we can measure  how much task-related information, i.e. task-urgency, location etc. are sent to the robots at each time step. This  amount of information or communication load can be constant or variable depending on the design of the communication system.
+%%
+\textbf{Scalability:} In order to see the effects of scaling on MRTA, we have designed two series of experiments. {\em Series A} corresponds to a small group where we have used 8 robots, 2 tasks under an arena of 2 $m^2$. We have doubled these numbers in {Series B}, i.e. 16 robots, 4 tasks under an arena of 4 $m^2$. This proportional design can give us a valuable insight about the effects of scaling on self-regulated MRTA. All of the above metrics of Set A and Set B can be compared to find those scalability effects.
+
+Thus, in order to observe the above properties of self-regulated MRTA , we have designed our experiments to record the following  observables in each time-step.
+\begin{enumerate}
+\item Task-urgency of each task ($\phi$).
+\item Number of robots engaged in each task.
+\item Task-sensitizations ($k$) of robots.
+\item Pose data of robots.
+\item Communication of task-information message with robots.  
+\end{enumerate}
+%%
+\begin{table}
+\caption{Experimental parameters of Series A \& B experiments}
+\label{table:params}
+\begin{center}
+\begin{tabular}{|l|c|}
+\hline Parameter & Series A $\mid$ Series B\\
+\hline Total number of robots ($N$) & \hspace*{0.1cm} 8 $\mid$ 16\\
+\hline Total number of tasks ($M$) & 2 $\mid$ 4\\
+\hline Experiment area ($A$) & 2 $m^2$ $\mid$  4 $m^2$\\
+\hline Initial production work-load/machine ($\Omega_{j}^{p}$) & 100 unit \\
+\hline Task urgency increase rate ($\Delta\phi_{INC}$) & 0.005\\
+\hline Task urgency decrease rate ($\Delta\phi_{DEC}$) & 0.0025\\
+\hline Initial sensitization ($K_{INIT}$) & 0.1\\
+\hline Sensitization increase rate ($\Delta k_{INC}$) & 0.03\\
+\hline Sensitization decrease rate ($\Delta k_{DEC}$) & 0.01\\
+\hline
+\end{tabular}
+\end{center}
+\end{table}
+%-------------------------------------------------------------------- 
+\begin{figure}
+\centering
+\includegraphics[height=7cm, angle=0]{./images/CentralizedComm.eps}
+\caption{\small A centralized communication scheme} % for implementing AFM}
+\label{fig:ccm} % Give a unique label
+\end{figure}
+\subsection{Parameters}
+Table \ref{table:params} lists a set of essential parameters of our experiments. We intend to have a set-up that is relatively complex, i.e., with a high number of robots and tasks in a large area. The diameter of the marker of our e-puck robot is 0.08m. So, if we put 4 robots in an area of one square meter, this will give us a robot-occupied-space to free-space ratio of about 1:49 per square meter. This ratio reasonable in order to allow the robots to move at a speed of 5 cm/sec without much interference to each other. 
+
+The initial values of task urgencies correspond to 100 units of production work-load without any maintenance work-load as outlined in Eq. \ref{eqn:task-urgency-prod-init}. We choose a limit of 0 and 1, where 0 means no urgency and 1 means maximum urgency. Same rule applies to sensitisation, where 0 means no sensitisation and 1 means maximum sensitisation. This also implies that if sensitization is 0, task has been forgotten completely. On the other hand, if sensitization is 1, the task has been learnt completely. We choose a default sensitization value of 0.1 for all tasks. The following relationships are maintained for selecting task-urgency and sensitization parameters.
+\begin{equation}
+\Delta\phi_{INC} = \frac{\Delta\phi_{DEC} \times N}{2 \times M}
+\label{eqn:task-urgency}
+\end{equation}
+%
+\begin{equation}
+\Delta k_{DEC} = \frac{\Delta k_{INC}} {M - 1} 
+\label{eqn:sensitization}
+\end{equation}
+%
+Eq. \ref{eqn:task-urgency} establishes the fact that task urgency will increase at a higher rate than that of its decrease. As we do not like to keep a task left unattended for a long time we choose a higher rate of increase of task urgency. This difference is set on the basis of our assumption that at least half of the expected number of robots (ratio of number of robots to tasks) would be available to work on a task. So they would produce similar types of increase and decrease behaviours in task urgencies.
+
+Eq. \ref{eqn:sensitization} suggests that the learning will happen much faster than the forgetting. The difference in these two rates is based on the fact that faster leaning gives a robot more chances to select a task in next time-step and thus it becomes more specialized on it. 
+%-------------------------------------------------------
+\subsection{Implementation}
+\label{afm:impl}
+%%
+\begin{figure}
+\centering
+\includegraphics[width=\textwidth, angle=0]
+{./images/RIL-Expt-Setup1.eps}
+%figure caption is below the figure
+\caption{Hardware and software setup for series A \& B experiments}
+\label{fig:RIL-Expt-Setup1} % Give a unique label
+\end{figure}
+%%
+Ideally, AFM can be implementation as a complete distributed task-allocation system where each agent selects its own task based on its own external perception about task-urgencies (i.e. attractive fields),  distances from tasks and internal task-sensitisation records. Such an implementation requires powerful robots with sophisticated sensors (camera, laser etc.) and sufficient computation and communication  capabilities. In that case, robots can keep  task-urgency information up-to-date  through suitable local communication  schemes with their peers who can monitor the tasks. By using suitable navigation and mapping modules, they can also accurately calculate the distances from tasks and navigate to tasks autonomously. Moreover, they also require necessary hardware to do the actual task, e.g. gripper for pick-up tasks.
+
+However, in this study, we are particularly interested to find the suitable communication schemes that can effectively spread the attractive fields (task-urgencies) among robots. So we have simplified the complexities of a full-fledged implementation by using a centralized communication system  that effectively makes up the limitations of our robots.  For example, our robots are not  capable of sensing a task to estimate its urgencies, instead our centralized {\em task-perception server (TPS)} broadcast task information, e.g. task-urgencies, locations etc. to robots in certain time intervals. Within this interval, if some robots work on a task, they independently send their status, i.e. which task they are currently doing. From this status message,  TPS can re-calculate the task-urgencies and send them in next broadcast. 
+
+Fig. \ref{fig:ccm} shows how three robots are attracted to two different tasks and their communications with TPS. Here although the robots are selecting task independently based-on the strength of their attractive fields to different tasks, they are depended on the TPS for task-information.
+
+This centralized communication system can be converted into a decentralized one where robots can use local observation and communication with peers about tasks to estimate task-urgencies. In Chapter \ref{local-comm}, we present an emulation of this scenario where robots do not depend entirely on TPS for estimating task-urgencies, instead they get task information from TPS when they are very close to a task (inside a pre-defined task-boundary) or from local peers who know about a task via TPS.
+
+In our current implementation, instead of doing any real work with powerful robots, we emulate a mock manufacturing shop-floor scenario that requires the robot only to travel among tasks. As discussed in Sec. \ref{expt-tools:btcom}, our robots do not have on-board CPU, they need a host PC to  control them using BTCom communication protocol. Thus our host-PC  runs one RCC for each physical robot. These RCCs also rely upon SwisTrack multi-robot tracking system for updating their real-time pose. So although our MRTA solution is distributed by design, we primarily used a centralized approach to implement it due to the limitations of our robots and the convenience of implementation. Below we describe the actual implementations of these components, i.e. D-Bus communication interfaces and detail implementations of TPS and RCC.
+%%==================================================================
 \section{Results}
 \label{sec:res}
 %%
+In this section we have presented our experimental results. We ran those experiments for about 40 minutes and averaged them over five iterations. 
+%%-------------------------------------------------
+\subsection*{Shop-floor work-load history}
+In our experiments we have defined shop-floor work-load in terms of task urgencies. For example, Eq. \ref{eqn:task-urgency-prod-init} shows how we have calculated initial production work-load of our manufacturing shop-floor scenario. Fig. \ref{fig:raw-urgencies-SA} and Fig. \ref{fig:raw-urgencies-SB}  show the dynamic changes in task-urgencies for the single iteration of Series A and Series B experiments respectively. The fluctuations in these plots are resulted from the different levels of task-performance of our robots.
+\begin{figure}
+%\begin{minipage}[t]{0.48\linewidth}
+\centering
+\includegraphics[height=8cm, angle=0]
+{images/global-8robots/PlotUrgencyLog-2010Apr30-095755.eps}
+%figure caption is below the figure
+\caption{\small Changes in task-urgencies in Series A experiments}
+\label{fig:raw-urgencies-SA} 
+%\end{minipage}
+%\hspace{0.5cm}
+%\begin{minipage}[t]{0.48\linewidth}
+\centering
+\includegraphics[height=8cm, angle=0]{images/PlotUrgencyLog-2010May10-115549.eps}
+\caption{\small Changes in task-urgencies in Series B experiments} 
+\label{fig:raw-urgencies-SB} 
+%\end{minipage}
+\end{figure}
+In order to measure the task-related work-loads on our system we have summed up the changes in all task-urgencies over time. We call this as {\em shop-floor work-load history} and formalized as follows. Let $ \phi_{j, q}$ be the urgency of a task $j$ at $q^{th}$ step and $\phi_{j, q+1}$ be the task urgency of $(q+1)^{th}$ step. We can calculate the sum of changes in urgencies of all $M$ tasks at $(q+1)^{th}$ step:
+\begin{equation} 
+\Delta \Phi_{j, q+1} = \sum_{j=1}^{M} (\phi_{j, q+1} - \phi_{j, q})
+\label{eqn:Delta-Phi}
+\end{equation}
+From Fig. \ref{fig:urgency-stat-SA} and Fig. \ref{fig:urgency-stat-SB} shows the dynamic shop-floor workload for Series A and Series B experiments respectively. From these plots, we can see that initially the sum of changes of task urgencies (shop-floor workload) is going towards negative direction. This implies that tasks are being served by a high number of robots. 
+%%
+\begin{figure}
+%\begin{minipage}[t]{0.48\linewidth}
+\centering
+\includegraphics[height=8cm, angle=0]
+{images/global-8robots/8robots2tasks-TaskUrgencyStat.eps}
+%figure caption is below the figure
+\caption{\small Shop-floor workload change history in Series A} 
+\label{fig:urgency-stat-SA} % Give a unique label
+%\end{minipage}
+%\hspace{0.5cm}
+%\begin{minipage}[t]{0.48\linewidth}
+\centering
+\includegraphics[height=8cm, angle=0]{images/TaskUrgencyStat.eps}
+\caption{\small Shop-floor workload change history in Series B} % measured in terms of task urgencies
+\label{fig:urgency-stat-SB} % Give a unique label
+%\end{minipage}
+\end{figure}
+%%
+%%----------------------------------------------------------------
+\subsection*{Ratio of active workers}
+%%
+\begin{figure}
+%\begin{minipage}[t]{0.48\linewidth}
+\centering
+\includegraphics[height=8cm, angle=0]
+{images/global-8robots/Plasticity-8robots2tasks.eps}
+%figure caption is below the figure
+\caption{\small Self-organized allocation of robots in Series A}
+\label{fig:worker-stat-SA}
+%\end{minipage}
+%
+%\hspace{0.5cm}
+%\begin{minipage}[t]{0.48\linewidth}
+\centering
+\includegraphics[height=8cm, angle=0]{images/WorkerRatio.eps}
+\caption{\small Self-organized allocation of robots in Series B }
+\label{fig:worker-stat-SB} % Give a unique label
+%\end{minipage}
+\end{figure}
+%%
+From both Fig. \ref{fig:worker-stat-SA} and Fig. \ref{fig:worker-stat-SB}, we can  see that in production stage, when work-load is high, many robots are active in tasks. Here active workers ratio is the ratio of those robots that work on tasks to the total number of robots $N$ of a particular experiment.   Here we can see that this ratio varies according to the shop-floor work-load changes.
+%%-------------------------------------------------------------
+\subsection*{Shop-task performance}
+\begin{figure}
+%\begin{minipage}[t]{0.48\linewidth}
+\centering
+\includegraphics[height=7cm, angle=0]{images/apcd-SA-SB.eps}
+\caption{APCD of Series A and Series B experiments.}
+\label{fig:apcd-SA-SB} 
+%\end{minipage} 
+%%%
+%\hspace{0.5cm}
+%\begin{minipage}[t]{0.48\linewidth}
+\centering
+\includegraphics[height=7cm, angle=0]
+{images/apmw-SA-SB.eps}
+\caption{APMW of Series A and Series B experiments.}
+\label{fig:apmw-SA-SB} % Give a unique label
+%\end{minipage}
+\end{figure}
+%%
+In our manufacturing shop-floor scenario, we have calculated the APCD\\ and APMW for both Series A and Series B experiments. For Series A we have got  average production completion time 111 time-steps (555s) where sample size is (5 x 2) = 10 tasks, SD = 10 time-steps (50s). According to Eq. \ref{eqn:min-pmm}, our theoretical minimum production completion time is 50 time-steps (250s) assuming the non-stop task performance of all 8 robots with an initial task urgency of 0.5 for all 2 tasks and task urgency decrease rate $\Delta \Phi_{DEC }$ = 0.0025 per robot per time-step.  Hence, Eq. \ref{eqn:appd} gives us APCD, $\zeta$ = 1.22 which means that in Series A experiments, it took 1.22 times more time (305s) than the estimated minimum production completion time (250s). For Series B, we have got average production completion time 165 time-steps (825s) where sample size is (5 x 4) = 20 tasks, SD = 72 time-steps (360s).  Hence, Eq. \ref{eqn:appd} gives us APCD, $\zeta$ = 2.3. Fig. \ref{fig:apcd-SA-SB} shows the APCD for both Series A and Series B experiments. \\
+%%
+For APMW, Series A experiments give us an average time length of 369 time-steps (1845s).  In this period we calculated APMW and it is 1 time-step with SD = 1 time-step (5s) and $\Delta \Phi_{INC}$ = 0.005 per task per time-step. This shows a very low APMW ($\chi$ = 0.000235) and a very high robustness of the system. For Series B experiments, from the average 315 time-steps (1575s) maintenance activity of our robots per experiment run, we have got APMW, $\chi$ = 0.012756 which corresponds to the pending work of 3 time-steps (15s) where SD = 13 time-steps (65s). This tells us the robust task performance of our robots which can return to an abandoned task within a minute or so. Fig. \ref{fig:apmw-SA-SB} plots the APMW for both Series A and Series B experiments. 
+%%-------------------------------------------------
+\subsection*{Task specializations}
+We have measured the task-specialization of the robots based-on their peak value of sensitization. This maximum value represents how long a robot has repeatedly been selecting a particular task. Since tasks are homogeneous we have considered the maximum sensitization value of a robot among all tasks during an experiment run. This value is then averaged for all robots using the following  equation. 
+%%
+\begin{equation}
+K^G_{avg} = \frac{1}{N}\sum_{i=1}^{N} \max_{j=1}^M\left ( k^i_{j, q} \right ) 
+\label{eqn:K-G}
+\end{equation}
+%%
+If a robot $r_i$ has the peak sensitization value $k^i_j$ on task $j$ ($j \in M$ tasks)  at $q^{th}$ time-step, Eq. \ref{eqn:K-G} calculates the average of the peak task-specialization values of all robots for a certain iteration of our experiments. We have also averaged the time-step values ($q$) taken to reach those peak values for all robots using the following equation.
+%%
+\begin{equation}
+Q^G_{avg}= \frac{1}{N}\sum_{i=1}^{N} q^i_{k=k_{max}}
+\label{eqn:Q-G}
+\end{equation}
+In Eq. \ref{eqn:Q-G}, $q^i_{k=k_{max}}$ represents the time-step of robot $r_i$  where its sensitization value $k$ reaches the peak $k_{max}$ as discussed above. By averaging this peak time-step values of all robots we can have an overall idea of how many task-execution cycles are spent to reach the maximum task-specialization value $K^G_{avg}$.
+%% S-A
+\begin{table}
+\centering
+\caption{Peak task-sensitization values of robots in a Series A experiment.}
+% 30Apr expt.
+\begin{tabular}{|c|c|c|c|}
+\hline \textbf{Robot ID} & \textbf{Maximum k} & \textbf{At time-step (q)} & \textbf{Task} \\ 
+\hline 1 & 0.54 & 64 & Task1\\
+\hline 4 & 0.32 & 14 & ,,\\
+\hline 5 & 0.27 & 11 & ,,\\
+%%
+\hline 3 & 0.47 & 63 & Task2\\
+\hline 2 & 0.46 & 64 & ,,\\
+\hline 6 & 0.20 & 10 & ,,\\
+\hline 7 & 0.18 & 4 & ,,\\
+\hline 8 & 0.15 & 3 & ,,\\
+\hline 
+\end{tabular} 
+\label{table:K-G-SA}
+\end{table}
+%% S - B
+\begin{table}
+\centering
+\caption{Peak task-sensitization values of robots in a Series B experiment.}
+\begin{tabular}{|c|c|c|c|}
+% Apr 18 Feb-3 expt
+\hline \textbf{Robot ID} & \textbf{Maximum k} & \textbf{At time-step (q)} & \textbf{Task} \\
+\hline 24 & 0.41 & 29 & Task1\\
+\hline 13 & 0.31 & 19 & ,,\\
+\hline 16 & 0.18 & 4 & ,,\\
+%% 
+\hline 1 & 0.64 & 66 & Task2\\
+\hline 35 & 0.34 & 12 & ,,\\
+\hline 5 & 0.28 & 14 & ,,\\
+\hline 22 & 0.18 & 20 & ,,\\
+\hline 17 & 0.16 & 6 & ,,\\
+\hline 3 & 0.14 & 12 & ,,\\
+%%
+\hline 9 & 0.68 & 66 & Task3\\
+\hline 6 & 0.43 & 71 & ,,\\
+\hline 15 & 0.19 & 4 & ,,\\
+\hline 14 & 0.15 & 4 & ,,\\
+\hline 31 & 0.14 & 4 & ,,\\
+%%
+\hline 19 & 0.22 & 12 & Task4\\
+\hline 12 & 0.16 & 10 & ,,\\
+\hline 
+\end{tabular} 
+\label{table:K-G-SB}
+\end{table}
+Table \ref{table:K-G-SA} and Table \ref{table:K-G-SB} show the peak sensitization values of Series A and Series B experiments respectively.  Based on Eq. \ref{eqn:K-G} and Eq. \ref{eqn:Q-G}, we have got the peak task-sensitization $K^G_{avg} 
+$ values: 0.40 (SD=0.08)  and 0.30 (SD=0.03), and their respective time-step $Q^G_{avg}$ values: 38 (SD=13) and 18 (SD=5) time-step.  They are shown in Fig. \ref{fig:K-G-SA-SB} and Fig. \ref{fig:Q-G-SA-SB}. Here we can see that the robots in Series A had higher chances of task-specialization than that of Series B experiments.
+%%
+\begin{figure}
+%\begin{minipage}[t]{0.48\linewidth}
+\centering
+\includegraphics[height=7cm, angle=0]{images/K-G-SA-SB.eps}
+\caption{ Overall task-specialization of robot groups.}
+\label{fig:K-G-SA-SB} 
+%\end{minipage} 
+%%%
+%\hspace{0.5cm}
+%\begin{minipage}[t]{0.48\linewidth}
+\centering
+\includegraphics[height=7cm, angle=0]
+{images/Q-G-SA-SB.eps}
+\caption{Time-steps to reach the peak values of task-specialization}
+\label{fig:Q-G-SA-SB} 
+%\end{minipage}
+\end{figure}
+%% ------ Single robot----
+\begin{figure}
+\centering
+\includegraphics[width=\textwidth, angle=0]{images/TaskSpecialization-task3-10may-1.eps}
+\caption{Task specialization on Task3 for a Series B experiment.}
+\label{fig:k-single-task-SB} 
+\end{figure}
+%%
+Fig. \ref{fig:k-single-task-SB} shows us the task specialization of five robots on Task3 in a particular run of Series B experiment. This shows us how some of the robots can specialize (learn) and de-specialize (forget) tasks over time.
+%%-------------------------------------------------
+\subsection*{Robot motions}
+We have aggregated the changes in translation motion of all robots over time. Let $u_{i,q}$ and $u_{i,q+1}$ be the translations of a robot $i$ in two consecutive steps. If the difference between these two translations be $\delta u_{i}$, we can find the sum of changes of translations of all robots in $(q+1)^{th}$ step using the following equation.
+\begin{equation}
+\Delta U_{q+1} = \sum_{i=1}^{N} \delta u_{i, q+1} 
+\label{eqn:Delta-Tr}
+\end{equation}
+%%
+\begin{figure*}
+%\begin{minipage}[t]{0.5\linewidth}
+\centering
+\includegraphics[height=8cm]{images/global-8robots/8robots-DeltaTranslationStat.eps}
+\caption{\small Sum of the translations of robots in Series A experiments}
+\label{fig:translation-stat-SA} % Give a unique label
+%\end{minipage}
+%\hspace{0.5cm}
+%\begin{minipage}[t]{0.5\linewidth}
+\centering
+\includegraphics[height=8cm]{images/global/DeltaTranslationStat.eps}
+\caption{\small Sum of the translations of robots in Series B experiments}
+\label{fig:translation-stat-SB} % Give a unique label
+%\end{minipage}
+\end{figure*}
+%%
+The results from Series A and Series B experiments are plotted in Fig. \ref{fig:translation-stat-SA} and Fig. \ref{fig:translation-stat-SB}. In this plot we can see that robot translations also vary over varying task requirements of tasks.
+%%%-------------------------------------------------
+\subsection*{Communication load}
+%%% Communication load %%%
+\begin{figure}
+%\begin{minipage}[t]{0.5\linewidth}
+\centering
+\includegraphics[height=8cm]
+{images/global-8robots/8Robot-SignalingFreqStat.eps}
+\caption{\small Frequency of \texttt{TaskInfo} signalling in Series A experiments}
+\label{fig:signal-frequency-stat-SA} 
+%\end{minipage}
+%\hspace{0.5cm}
+%\begin{minipage}[t]{0.5\linewidth}
+\end{figure}
+%%
+\begin{figure}
+\centering
+\includegraphics[height=8cm]{images/Global-SignalingFreqStat.eps}
+\caption{\small Frequency of \texttt{TaskInfo} signalling in Series B experiments}
+\label{fig:signal-frequency-stat-SB} 
+%\end{minipage}
+\end{figure}
+%%
+Fig. \ref{fig:signal-frequency-stat-SA}  and Fig. \ref{fig:signal-frequency-stat-SB}  show the number of received \texttt{TaskInfo} signals by each robot in Series A and Series B experiments. Since the duration of each time-step is 50s long and TPS emits signal in every 2.5s, there is an average of 20 signals in each time-step.
+%==================================================================
 \section{Discussions}
 \label{sec:discuss}
 %%
+\textbf{Self-regulated DOL}. From our experimental results, we have noted several aspects of self-regulated DOL that exposes the power of AFM. As we have pointed out that this self-regulated DOL, as observed in biological and human social systems, needs to satisfy several important characteristics, e.g. plasticity, task-specialization. In addition to satisfying those basic qualities, AFM has demonstrated many other aspects. Our self-regulated robots, driven by AFM, effectively handle the dynamic work-load in our manufacturing shop-floor. They can dynamically support the need to work on currently demanding tasks, if there any. The variations of active worker ratio supports this. 
+
+From the self-organized worker allocations of AFM, it is clear to us that although in larger system (Series B) the degree of variations of active-worker ratio can show us significantly unpredictable patterns, nevertheless the self-regulated rules drive the robots to respond to the dynamic needs of the system. This means that AFM can sufficiently produce the plasticity of DOL in order to meets the dynamic work-load of the system.
+
+\textbf{Learning and Forgetting}. From the individual and group-level task-\\ specialization, we can see that robots can maintain both task-specialization and flexibility. In a self-organized system, it is very common that only a few individuals specialize on tasks and others generally do not. From two samples data sets, we can see that in particular runs of Series A and Series B experiments, task-sensitization values of  only 2-3 robots reach above the group-level average score. Thus in both types of experiments, robots exhibit similar task-specialization behaviours. 
+
+From task-sensitization we can also see that a limited number of robots are specialized in tasks. Thus most of the other robots are flexible in selecting any tasks as their task-specializations do not bind them to particular tasks.
+
+\textbf{Concurrency and robustness}. As a consequence of fewer robots specializing in tasks, we can also see that robots can concurrently  consider different tasks without being biased to a particular task all the time. Our experiments also show us the robust DOL as in case of  both high and low work-loads present in the system. This is evident from the manufacturing shop-floor task performance during PMM and MOM. For example,  in case of Series B experiments APMW was 13 time-steps (65s) which corresponded  to pending work-load of 0.065 unit for a single robot. Thus, on an average, before the work-load exceeded by about 13 percent of initial work-load, robots were able to respond to  a task.
+
+\textbf{Communication load.} In these experiments we used a centralized communication system (source of attractive fields) that serves the robot with necessary task-perception information. Although our robot-controllers software RCC was also co-located in the same host-PC, they can be distributed to several PCs or robot's on-board PCs. Our centralized communication system has the advantage of minimising the communication load and the disadvantage of a single point of failure as well as single point of load. In the next chapter we present how the task perception can be decentralized by P2P communications among RCCs.
+
+\textbf{Scaling-up}. We have observed the effect of scaling-up the robot team size. The system size of Series B is double of that of Series A in terms of robots, tasks and experiment arena. Keeping a fixed ratio of robot-to-task and task-to-arena we have intended to see the scaling effects in our experiments. Here we see that both systems can show sufficient self-regulated DOL, but task-performance of both systems varies significantly. For example, the value of APCD in Series B is higher by 1.08. This means that performance  is decreased in Series B experiments despite having the resources in same proportion in both systems. This occurs partly due to the greater stochastic effects found in task-allocation in a larger system, e.g. presence of more tasks produce higher stochastic behaviours in robot's task selection.
+
+Similarly we can see that in larger system robots have less chances to specialize on tasks, as the Series B experiments show us that the overall average task-specialization of the group $K^G_{avg}$ is lower by 0.10 and it lasts for significantly less time (the difference of $Q^G_{avg}$  of both systems is 20 time-steps). Thus, in a large group, robots are more likely to switch among tasks more frequently and this produces more translation motions which cost more energy (e.g. battery power) in task-performance.
+%%================================================================
 \section{Conclusions}
 \label{sec:conc}
 %% The Appendices part is started with the command \appendix;
