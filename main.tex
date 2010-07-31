@@ -7,7 +7,7 @@
 %% $Id: elsarticle-template-num.tex 4 2009-10-24 08:22:58Z rishi $
 %%
 %%
-\documentclass[preprint,12pt]{elsarticle}
+%\documentclass[preprint,12pt]{elsarticle}
 %% Use the option review to obtain double line spacing
 %% \documentclass[preprint,review,12pt]{elsarticle}
 %% Use the options 1p,twocolumn; 3p; 3p,twocolumn; 5p; or 5p,twocolumn
@@ -17,7 +17,7 @@
 %% \documentclass[final,3p,times]{elsarticle}
 %% \documentclass[final,3p,times,twocolumn]{elsarticle}
 %% \documentclass[final,5p,times]{elsarticle}
-%% \documentclass[final,5p,times,twocolumn]{elsarticle}
+ \documentclass[draft,5p,times,twocolumn]{elsarticle}
 
 %% if you use PostScript figures in your article
 %% use the graphics package for simple commands
@@ -216,13 +216,13 @@ The main contributions of this paper are as follows:
 \section{Related work}
 \label{sec:bg}
 %%
-\begin{figure}
+\begin{figure*}
 \centering
-\includegraphics[width=12cm, angle=0]
+\includegraphics[width=0.8\linewidth, angle=0]
 {./images/ta-categories.eps}
-\caption{\small Classification of MRTA solutions.}
+\caption{Classification of MRTA solutions.}
 \label{fig:mrta-classification} % Give a unique label
-\end{figure}
+\end{figure*}
 %%
 Since 90s, MRTA many robot control architectures   have been solely designed to address MRTA issue from different perspectives. Based-on the high-level design of those solutions, here we have classified them into two major categories: 1) predefined or intentional task-allocation and 2) bio-inspired self-organized task-allocation. Fig. \ref{fig:mrta-classification} illustrates our classification.
 
@@ -259,7 +259,7 @@ From above discussions we can see that, self-organized task-allocation methods a
 %%
 \begin{figure}
 \centering
-\includegraphics[width=12cm, angle=0]
+\includegraphics[width=\linewidth, angle=0]
 {./images/mrta-lines.eps}
 %figure caption is below the figure
 \caption{ Three major axes of complexities in MRTA}
@@ -300,7 +300,7 @@ At the individual level, information is processed differently by each individual
 %%
 \begin{figure}
 \centering
-\includegraphics[height=7cm, angle=0]{./images/AFM-Diag2.eps}
+\includegraphics[width=0.7\linewidth, angle=0]{./images/AFM-Diag2.eps}
 \caption{The attractive filed model (AFM)}
 \label{fig:afm} % Give a unique label
 \end{figure}
@@ -317,14 +317,14 @@ In summary, from the above diagram of the network, we can see that each of the a
 %%--------------------------------------------------------------------
 \subsection{Relationship of AFM with self-organization}
 \label{afm:so}
-\begin{figure}
+\begin{figure*}
 \centering
-\includegraphics[width=9cm, angle=0]
+\includegraphics[width=0.9\linewidth, angle=0]
 {./images/self-org-2.eps}
 %figure caption is below the figure
 \caption{\small Four generic rules establish the self-regulated DOL in social systems}
 \label{fig:afm-rules} % Give a unique label
-\end{figure}
+\end{figure*}
 
 It is interesting to note that our proposed four generic rules can be considered as  the four major foundations of a self-organized system (Fig.  \ref{fig:afm-rules}). Self-organized systems exhibit four distinct perspectives known as so-called ingredients or properties of self-organization \cite{Camazine+2001}. However, it is not clear how those properties can come into existence. Here, we have described the four underlying mechanisms that explains how self-organization can be realized in different social systems using our generic framework of self-regulation. From our understanding, we can explain it in the following ways.
 
@@ -392,14 +392,15 @@ Eq. \ref{eqn:afm1} states that the stimuli of a robot $r_i$ to a particular task
 \label{sec:mrta}
 We have designed a set of  manufacturing shop-floor scenario experiments for validating the effectiveness of our AFM in producing self-regulated MRTA.  The overall aim of this design is to analyse the various properties of task-allocation and related other issues. In this section, we have described our manufacturing shop-floor scenario and our task-allocation solution for robot-controllers.
 %%
-\begin{figure}
+\begin{figure*}
 \centering
-\includegraphics[width=12cm, angle=0]
+\includegraphics[width=0.9\linewidth, angle=0]
 {./images/VSP.eps}
 %figure caption is below the figure
 \caption{A manufacturing shop-floor production and maintenance cycle}
 \label{fig:vsp}  % Give a unique label
-\end{figure}
+\end{figure*}
+%--------------------------------------------
 \subsection{A manufacturing shop-floor scenario}
 \label{afm:vms}
 By extending our interpretation of AFM in multi-robot system, we can set-up manufacturing shop-floor  scenario. Here, each task represents a manufacturing machine that is  capable of producing goods from raw materials, but they also require constant maintenance works for stable operations. Let $W_{j}$ be a finite number of material parts that can be loaded into a machine $j$ in the beginning of its production process and in each time-step, $\omega_{j}$ units of material parts can be processed  ($\omega_{j} \ll W_{j} $). So let $\Omega_{j}^{p}$ be the initial production workload of $j$ which is simply: $W_{j} / \omega_{j}$ unit.
@@ -467,10 +468,9 @@ By considering $\mu = 1$, Eq. \ref{eqn:task-urgency-maint-case} will reduces to 
 %----------------------------------------------------------------
 \subsection{Robot-controller algorithms}
 \textbf{Task-allocation algorithm:}\\
-\textbf{Stage 1.} In the beginning of our task-allocation algorithm, we count the total number of tasks and initialize the sum of the stimuli all tasks to zero. Then for each task, we extract its pose, urgency, sensitisation from input data.\\  \textit{CalculateTaskDistance()} function calculates the Euclidian distance between a task and a the robot by taking the current robot-pose and static task-pose as the input. These values are enough to get a task's stimuli based on Eq. \ref{eqn:afm1}. In this loop finally we update \textit{TaskRecords} for using it in next task-allocation cycle. We get the random-walk task's stimuli from Eq. \ref{eqn:afm2}. It requires total number of shop-tasks and sum of their stimulus.
-%% ALG
-\newline
-\textbf{Algorithm 4.1: Self-regulated task-allocation based on AFM}
+\textbf{Stage 1.} In the beginning of our task-allocation algorithm, we count the total number of tasks and initialize the sum of the stimuli all tasks to zero. Then for each task, we extract its pose, urgency, sensitisation from input data.\\  \textit{CalculateTaskDistance()} function calculates the Euclidian distance between a task and a the robot by taking the current robot-pose and static task-pose as the input. These values are enough to get a task's stimuli based on Eq. \ref{eqn:afm1}. In this loop finally we update \textit{TaskRecords} for using it in next task-allocation cycle. We get the random-walk task's stimuli from Eq. \ref{eqn:afm2}. It requires total number of shop-tasks and sum of their stimulus.\\
+
+\textbf{Algorithm 1: Self-regulated task-allocation based on AFM}
 \vspace{-3mm}
 \newline
 \HRule
@@ -479,37 +479,47 @@ By considering $\mu = 1$, Eq. \ref{eqn:task-urgency-maint-case} will reduces to 
 \label{alg:task-selector}
 \State $\textbf{Input: } AllTaskInfo, RobotPose, TaskRecords, DeltaDistance$
 \State $\textbf{Output: } SelectedTaskID$
-\State \COMMENT {Stage 1: Get each task's individual stimuli and sum  all stimulus}
+\State \COMMENT {Stage 1: Get  sum  of stimulus of all tasks}
 \State $TotalTasks \gets$  Total number of tasks $\in AllTaskInfo$  
 \State $ TaskStimuliSum \gets 0 $
 \ForAll {$ Task \in AllTaskInfo $} 
 \State $ TaskPose \gets  $ Task-position  $ \in Task$
 \State $ TaskUrgency \gets $ Task-urgency $ \in Task$
 \State $ TaskSensitization \gets $ Task-sensitization $\in Task$
-\State $ DistanceToTask \gets  $\textbf{CalculateTaskDistance(}$RobotPose$, $TaskPose$\textbf{)}
-\State $ TaskStimuli \gets  $ \textbf{CalculateTaskStimuli(}$DistanceToTask,$\\ \hspace*{3.5cm} $TaskSensitization, 	        TaskUrgency, DeltaDistance\textbf{)}$
+\State $ DistToTask \gets$
+\textbf{CalculateTaskDistance(}
+\newline
+$RobotPose$, $TaskPose$\textbf{)}
+\State $ TaskStimuli \gets  $ \textbf{CalculateTaskStimuli(}
+\newline
+$DistToTask, TaskSensitization, TaskUrgency, DeltaDistance$\textbf{)}
 \State $ TaskStimuliSum \gets$  $TaskStimuliSum + TaskStimuli$
-\State $ TaskRecords \gets $ \textbf{UpdateTaskRecords(}$TaskStimuli,$\\ \hspace*{3.5cm}$DistanceToTask, TaskUrgency, TaskSensitization\textbf{)}$
+\State $ TaskRecords \gets $ \textbf{UpdateTaskRecords(\\}$TaskStimuli,DistToTask, TaskUrgency,$\\ $TaskSensitization\textbf{)}$
 \EndFor
 %%
-\State $RandomWalkStimuli \gets $ \textbf{CalculateRandomWalkStimuli(}$TotalTasks,$\\ \hspace*{4.5cm} $TaskStimuliSum$\textbf{)}
+\State $RandomWalkStimuli \gets $ \textbf{CalculateRandomWalkStimuli(\\}$TotalTasks,$ %\hspace*{4.5cm}
+ $TaskStimuliSum$\textbf{)}
 \State $ AllStimuliSum \gets TaskStimuliSum + RandomWalkStimuli $
 %%
-\State \COMMENT {Stage 2: Find probability of each task based on its stimuli}
+\State \COMMENT {Stage 2: Find probability of doing each task }
 \State $ TaskID \gets 0 $ 
 \While {$ TaskID \leq TotalTasks $} 
 \State $ TaskStimuli \gets $ Task-stimuli $\in TaskRecords(TaskID)$
-\State $ TaskProbability \gets  $ \textbf{GetTaskProbability(}$TaskStimuli, AllStimuliSum$\textbf{)}
-\State $ TaskProbabilityRange \gets $ \textbf{ConvertTaskProbabilityIntoRange(}\\ \hspace*{6cm}$TaskProbability$\textbf{)}
+\State $ TaskProbability \gets  $ \textbf{GetTaskProbability(\\}$TaskStimuli, AllStimuliSum$\textbf{)}
+\State $ TaskProbabilityRange \gets $
+\newline
+ \textbf{ConvertTaskProbabilityIntoRange(}\\ $TaskProbability$\textbf{)}
 \State $ TaskRecords \gets  $ \textbf{UpdateTaskRecords(}$TaskProbability$\textbf{)}
 \EndWhile
 %%
-\State \COMMENT {Stage 3: Draw a random-number to match with TaskID}
-\State $ RandomNum \gets  $ \textbf{GetRandomNumber(}$0,$ \textbf{Max(}$TaskProbabilityRange$\textbf{))}
+\State \COMMENT {Stage 3: Draw a random-number to match TaskID}
+\State $ RandomNum \gets  $ 
+\newline
+\textbf{GetRandomNumber(}$0,$ \textbf{Max(}$TaskProbabilityRange$\textbf{))}
 \While {$ TaskID \leq TotalTasks $} 
 \State $ RangeStart \gets  $ \textbf{Min(}$TaskProbabilityRange (TaskID)$\textbf{)}
 \State $ RangeEnd \gets  $ \textbf{Max(}$TaskProbabilityRange (TaskID)$\textbf{)}
-\If {$  RandomNum \geq RangeStart \hspace*{.25cm}\&\& \hspace*{.25cm} RandomNum \leq  RangeEnd $}
+\If {$  RandomNum \geq RangeStart$ \newline $\hspace*{.25cm}\&\& \hspace*{.25cm} RandomNum  \leq  RangeEnd $}
 \State $ SelectedTaskID \gets TaskID $ 
 \EndIf
 \EndWhile
@@ -520,10 +530,9 @@ By considering $\mu = 1$, Eq. \ref{eqn:task-urgency-maint-case} will reduces to 
 %%
 \textbf{Stage 2.} In the second stage of our task-allocation algorithm, we  find the probability of each task (including random-walk) based on Eq. \ref{eqn:afm3}. Then this probability value of each task, between 0 and 1, is rounded to the closest two-digit fractions and multiplied by 100 and put into a linear scale. For example, if two tasks probability values are: 0.15 and  0.25, the probability range of first  task becomes 0 to 15 and for second task, it becomes 16 to 40.\\
 %% 
-\textbf{Stage 3.} After converting each task's probability values into a linear range, we use a random-number generator that draws a random-number between 0 and the highest value of task-probability range, say 40 for the previous example. Then this random number is compared against the task probability range of each task. For the above example, if the random-number becomes 37, our task-probability range checking function selects \textit{Task2} since 37 falls between 16 to 40. Under this probabilistic method, the task with larger probability range has a  higher chance to be selected, but low probability tasks are also got selected time-to-time.
-%%
-\newline
-\textbf{Algorithm 4.2: Robot's learning and forgetting of tasks based on AFM}
+\textbf{Stage 3.} After converting each task's probability values into a linear range, we use a random-number generator that draws a random-number between 0 and the highest value of task-probability range, say 40 for the previous example. Then this random number is compared against the task probability range of each task. For the above example, if the random-number becomes 37, our task-probability range checking function selects \textit{Task2} since 37 falls between 16 to 40. Under this probabilistic method, the task with larger probability range has a  higher chance to be selected, but low probability tasks are also got selected time-to-time.\\
+
+\textbf{Algorithm 2: Robot's learning and forgetting of tasks based on AFM}
 \vspace{-3mm}
 \newline
 \HRule
@@ -578,7 +587,7 @@ In terms of target recipients, our model differs from a traditional publish/subs
 %%----------------------------------------------------------------
 \subsection{Implementation algorithm}
 %%
-\textbf{\small Algorithm 5.1: Locality based P2P Communication Model}
+\textbf{\small Algorithm 3: Locality based P2P Communication Model}
 \vspace{-3mm}
 \newline
 \HRule
@@ -590,14 +599,18 @@ In terms of target recipients, our model differs from a traditional publish/subs
 \State $ TaskPose \gets $ Estimate/get pose of a task within $r_{task}$
 \State $ TaskUrgency \gets $ Estimate/get urgency of a task within $r_{task}$
 \State $ TaskInfo \gets (TaskPose, TaskUrgency) $ 
-\State $TaskInfoDB \gets$ \textbf{UpdateTaskInfoDB(}$TaskInfo$\textbf{)}
+\State $TaskInfoDB \gets$
+\newline
+\textbf{UpdateTaskInfoDB(}$TaskInfo$\textbf{)}
 % P2P Interaction, listen signal
 \State \COMMENT {Listening \textit{\textit{LocalTaskInfo}} signal(s) from peers}
 \State $ RobotPeers \gets $ Identify/get a list of peers within $r_{comm}$
 \ForAll {peer $\in RobotPeers$}
 \If {(caught a \textit{\textit{LocalTaskInfo}} signal from nearby peer)}
 \State $ListeningBuffer \gets $ \textit{\textit{LocalTaskInfo}} of peer
-\State $TaskInfoDB \gets$ \textbf{UpdateTaskInfoDB(}$ListeningBuffer$\textbf{)}
+\State $TaskInfoDB \gets$
+\newline 
+\textbf{UpdateTaskInfoDB(}$ListeningBuffer$\textbf{)}
 \EndIf
 \EndFor
 %%
@@ -657,7 +670,7 @@ Thus, in order to observe the above properties of self-regulated MRTA , we have 
 \caption{Experimental parameters of Series A \& B experiments}
 \label{table:params}
 \begin{center}
-\begin{tabular}{|l|c|}
+\begin{tabular}{|p{2in}|c|}
 \hline Parameter & Series A $\mid$ Series B\\
 \hline Total number of robots ($N$) & \hspace*{0.1cm} 8 $\mid$ 16\\
 \hline Total number of tasks ($M$) & 2 $\mid$ 4\\
@@ -722,14 +735,14 @@ Series D uses larger ranges that enables our robot to capture more task informat
 \subsection{Implementation}
 \label{afm:impl}
 %%
-\begin{figure}
+\begin{figure*}
 \centering
-\includegraphics[width=\textwidth, angle=0]
+\includegraphics[width=0.9\textwidth, angle=0]
 {./images/RIL-Expt-Setup1.eps}
 %figure caption is below the figure
 \caption{Hardware and software setup for series A \& B experiments}
 \label{fig:RIL-Expt-Setup1} % Give a unique label
-\end{figure}
+\end{figure*}
 %%
 Ideally, AFM can be implementation as a complete distributed task-allocation system where each agent selects its own task based on its own external perception about task-urgencies (i.e. attractive fields),  distances from tasks and internal task-sensitisation records. Such an implementation requires powerful robots with sophisticated sensors (camera, laser etc.) and sufficient computation and communication  capabilities. In that case, robots can keep  task-urgency information up-to-date  through suitable local communication  schemes with their peers who can monitor the tasks. By using suitable navigation and mapping modules, they can also accurately calculate the distances from tasks and navigate to tasks autonomously. Moreover, they also require necessary hardware to do the actual task, e.g. gripper for pick-up tasks.
 
@@ -740,6 +753,99 @@ Fig. \ref{fig:ccm} shows how three robots are attracted to two different tasks a
 This centralized communication system can be converted into a decentralized one where robots can use local observation and communication with peers about tasks to estimate task-urgencies. In Chapter \ref{local-comm}, we present an emulation of this scenario where robots do not depend entirely on TPS for estimating task-urgencies, instead they get task information from TPS when they are very close to a task (inside a pre-defined task-boundary) or from local peers who know about a task via TPS.
 
 In our current implementation, instead of doing any real work with powerful robots, we emulate a mock manufacturing shop-floor scenario that requires the robot only to travel among tasks. As discussed in Sec. \ref{expt-tools:btcom}, our robots do not have on-board CPU, they need a host PC to  control them using BTCom communication protocol. Thus our host-PC  runs one RCC for each physical robot. These RCCs also rely upon SwisTrack multi-robot tracking system for updating their real-time pose. So although our MRTA solution is distributed by design, we primarily used a centralized approach to implement it due to the limitations of our robots and the convenience of implementation. Below we describe the actual implementations of these components, i.e. D-Bus communication interfaces and detail implementations of TPS and RCC.
+%%
+\begin{table*}
+\caption{D-Bus signal interfaces among software components.}
+\label{table:dbus-interfaces}
+\begin{center}
+\begin{tabular}{|l|l|l|p{2in}|}
+\hline D-Bus Signal &  Source & Destination  & Payload \\ 
+\hline RobotPose & SwisTrack & RCC  & Robot-pose x, y and oientation (theta). \\ 
+\hline TaskInfo & TPS & RCC & An array of all tasks' information each of them contains: task-id, time-stamp, task pose (x,y), task-urgency. \\ 
+\hline RobotStatus & RCC & TPS & Robot's id and its currently executing task's id. \\ 
+\hline RobotPeers & SwisTrack & RCC & List of IDs of peers of each robot within its communication range.  \\ 
+\hline TaskNeighbour & SwisTrack & TPS &  List of IDs of robots that are co-located within a task's perception range.\\ 
+\hline LocalTaskInfo & RCC & RCC & An array of known tasks' information.\\
+\hline 
+\end{tabular}
+\end{center} 
+\end{table*}
+%%
+\begin{figure*}
+\begin{center}
+\includegraphics[width=0.9\linewidth]{./images/concrete-arch} 
+%\centering
+\caption{General outline of {\em HEAD}. A RCC application has been split into two parts: one runs locally in server PC and another runs remotely, e.g., in an embedded PC.} 
+\label{fig:concrete-arch}
+\end{center}
+\end{figure*}
+
+Fig. \ref{fig:concrete-arch} outlines the placements of various software components of our multi-robot control architecture based on their functional characteristics and processing requirements \cite{Sarker2010control}. As shown in Fig. \ref{fig:RIL-Expt-Setup1}, each e-puck robot is controlled by a corresponding RCC. A RCC sends commands to the robot's firmware using BTCom protocol. A RCC consists of several Python modules. Each module represents a sub-process under a main process that ties all of them together by using Python's Multiprocessing module. Below we have described the detail design and implementation of these Python modules. All code are publicly accessible through GitHub repository\footnote{git://@github.com/roboshepherd/EpuckCentralizedClient.git,    
+\textit{hash:}7e3af8902e64db3fa59e}.
+%%
+%%
+\begin{table}
+\caption{Data structures and events used by the RCC}
+\begin{center}
+\begin{tabular}{|l|l|}
+\hline \textbf{Data structure} & \textbf{Related event(s)}\\ 
+\hline \texttt{\texttt{mRobotID}} & - \\ 
+\hline \texttt{mRobotPose} & \texttt{mRobotPoseAvailable}\\ 
+\hline \texttt{mTaskInfo} & \texttt{mTaskInfoAvailable}\\ 
+\hline \texttt{mSelectedTask} & \texttt{mSelectedTaskAvailable}\\
+ &  \texttt{mSelectedTaskStarted}\\
+ &  \texttt{mTaskTimedOut}\\
+ \hline 
+\end{tabular}
+\end{center}
+\label{table:data-mgr}
+\end{table} 
+
+In the implementation of RCC, we have employed a data and event management process called \texttt{DataManager} that acts as a data warehouse and event management centre for RCC. Table \ref{table:data-mgr} list the major data structures and corresponding event channels of \texttt{Data Manager}. Here \texttt{mRobotID}, an integer type data,  represents the e-puck robot's marker ID (converted to decimal number from the binary code) which uniquely identifies a robot from others. This is given as a command-line argument during RCC start-up. We have used Python {\em dictionary} type data structure for all other data structures that are managed by the Python Multiprocessing's {\em Manager()} object. Any other process e.g. \texttt{TaskSelector}, can access \texttt{DataManager}'s data and event channels locally  by taking a reference of \texttt{DataManager} object from the Multiprocessing's parent process. \texttt{DataManager} object also runs a tiny TCP/IP server process powered by the Multiprocessing's {\em RemoteManager()} interface. So, if necessary,  any other process e.g. \texttt{DeviceController}, can access all of the DataManger's data structures and event channels remotely by instantiating a proxy client  that connects to this embedded TCP/IP server of \texttt{DataManager} and  fetch data from it.
+
+We have employed two D-Bus communication modules in RCC: \texttt{SignalListener} and \texttt{SignalEmitter}, that are responsible for listening and emitting D-Bus signals respectively. \texttt{SignalListener}, has subscribed to D-Bus session bus for listening  to D-Bus \texttt{RobotPose} and \texttt{TaskInfo} signals that are discussed above. \texttt{SignalListener} uses two call-back functions that handles both of these signal reception events. For example when SwisTrack emits \texttt{RobotPose} signal  the corresponding handler function becomes activated and receive this \texttt{RobotPose} signal's payload data (i.e. x, y , theta). It then makes a copy of these data  to \texttt{DataManager}'s \texttt{mRobotPose} data structure and label them as dictionary key/value pairs, where x, y, theta etc. becomes the dictionary keys. In addition to copying the data, \texttt{SignalListener} also set the \texttt{DataMager}'s   \texttt{mRobotPoseAvailable} event to {\em \texttt{True}}. In consequence, those processes that are waiting for \texttt{mRobotPose} data, e.g. \texttt{TaskSelector}, finishes their waiting and try to access this newly arrived \texttt{mRobotPose} data. After reading to this data they marks this \texttt{mRobotPoseAvailable} event as  {\em \texttt{False}} so that this pose data can be treated as outdated and waiting processes can wait for new pose update. This strategy ensures the consistent and real-time data read/write by all subscribing processes.
+
+Similar to the \texttt{SignalListener}, \texttt{SignalEmitter} makes use of Python\\ {\em sched} module that enables it to check periodically \texttt{mSelectedTaskStarted} event and emit a robot's task status containing signal, \texttt{RobotStatus}.  This is done by subscribing to the  \texttt{mSelectedTaskStarted} event channel. When a robot executes a task, this event channel becomes  activated by\\ \texttt{DeviceController} (discussed below).\\ At a very close time, \texttt{SignalEmitter} gets this event update and finishes waiting for this event. It then picks up the \texttt{mSelectedTask} data from \texttt{DataManager} and prepare the \texttt{RobotStatus} signal and emits it to the session bus. Upon a successful emission event, it clears \texttt{ mSelected TaskStarted} event so that only one \texttt{RobotStatus}  signal is emitted per task-cycle.
+
+\texttt{TaskSelector} works in the application layer of our multi-robot control architecture. It plugs the AFM algorithms into RCC to select task based-on \texttt{DataManger}'s event notifications , i.e. \texttt{mRobotPoseAvailable} and\\ \texttt{mTaskInfoAvailable} and upon running task-allocation algorithm it updates  \texttt{mSelectedTask} (and \texttt{mSelectedTaskAvailable}) with selected task information.
+%%
+\begin{figure*}
+\centering
+\includegraphics[width=0.9\linewidth,height=11cm]
+{./images/rcc-device-controller-state.eps}
+%figure caption is below the figure
+\caption{State diagram of \texttt{DeviceController} module}
+\label{fig:dc-states} % Give a unique label
+\end{figure*}
+
+The final code that moves a robot to desired task location or make random-walk resides in \texttt{DeviceController} module. This is also a separate sub-process of our Python Multiprocessing based mother process. It waits for the \texttt{DataManager}'s \texttt{mRobotPoseAvailable} and \texttt{mSelectedTaskAvailable} events. When \texttt{TaskSelector} sets  \texttt{mSelectedTaskAvailable} event,\\ \texttt{DeviceController} sub-process checks the Bluetooth link-connectivity with physical robot. In case of successful task start-up it sets\\ \texttt{mSelectedTaskStarted} event that, in turn, triggers \texttt{SignalEmitter} to emit a D-Bus signal publishing the robot's currently engaged task. The full state switching policies of\\ \texttt{DeviceController} is illustrated in Fig. \ref{fig:dc-states}. Externally we can observe two distinct physical state of a robot: it is either idle or in motion (separated by dotted line). These two physical states are mapped into several logical steps:\\
+%%
+\textbf{DeviceUnavailable: }
+Initially, \texttt{DeviceController} sets it state as \textit{DeviceUnavailable} (e.g. not connected with Bluetooth link) and after a fixed short-time intervals it checks whether the device has connected to host-PC, i.e. after the  wireless link becomes up. In that case, \texttt{DeviceController} switches its state to \textit{DeviceAvailable} (i.e device connected). We can see that from every other state, device can come to this unavailable state (shown by dotted arrow) when the  link is lost e.g. in case of robot's low battery or any other disconnection event (i.e device disconnected).\\
+%%
+\textbf{DeviceAvailable: }
+\texttt{DeviceController} stays in this state until\\ \texttt{Data-Manager}'s mSelectedTaskAvailable event fires ({\em Device connected, no task selected}). Then it switches to either \textit{MoveToTask} or \textit{RandomWalk} state depending on the selected task.  \texttt{DeviceController}  returns to this state from \textit{RandomWalk}, \textit{MoveToTask} or \textit{AtTask} states after a pre-set task time-out period has elapsed.  In that case it triggers the \texttt{DataManager}'s \texttt{mTaskTimedOut} event.\\
+%%
+\textbf{RandomWalk: }
+Robot can random walk in two cases: 1) when \texttt{TaskSelector} selects this random-walk task or 2) when the robot can not get its pose information for a moment. The latter helps the pose tracker to recover the robot-pose from a crowd of robots. Robot continues to do random-walk until it's task time-out period elapses or it regains it pose remains unavailable from the pose tracker (i.e. random-walk pending).\\
+%%
+\textbf{MoveToTask: }
+In this state, robot takes step-by-step navigation approach to reach a task boundary. Until the robot reaches the task boundary ({\em Away from task}), in every navigation-step it adjusts its heading to task based on both  robot and task pose information and then makes a fixed-time translation movement. In worse cases, when time-out happens early before reaching a task  \texttt{DeviceController}\\ switches from this state to\textit{ DeviceAvailable} state. However, if the same task is selected immediately, it is more likely that it will go to \textit{AtTask} state in next step.
+%%
+\textbf{AtTask: }
+In this state  \texttt{DeviceController} discovers itself neat the task and normally until task time-out happens (i.e. task pending) it stays at this state.
+
+We have added three new D-Bus signal interfaces in this version of our implementation. They are briefly discussed below.\\
+\textbf{\texttt{RobotPeers}: }This signal is emitted by SwisTrack to each robot's signal path in a common \texttt{ac.uk.newport.ril.SwisTrack} interface. The payload of this signal contains the list of IDs of peers of each robot within it's $r_{comm}$.  These peer-IDs are extracted by analysing the captured image frame.  This signal is caught by RCCs and used in emitting the \texttt{LocalTaskInfo} signal (discussed below).\\
+\textbf{\texttt{TaskNeighbohood}: }This signal is emitted by SwisTrack for TPS and the payload of this signal contains the list of IDs of robots that are co-located within a task's perception range, $r_{task}$. TPS catches one signal per task and based-on the robot IDs, it emits the \texttt{TaskInfo} signal to those robot's RCC path (as discussed in Sec. \ref{afm:impl}).\\ 
+\textbf{\texttt{LocalTaskInfo}: }This signal is emitted by RCCs to their peers that are co-located within the same communication range $r_{comm}$. The payload of this signal contains the known task information of a  RCC. This task-information can be gathered either through task-perception (via \texttt{TaskInfo} signal received from TPS) or via communications i.e. through \texttt{LocalTaskInfo} signals from its peers.
+
+%% local
+As shown in Fig. \ref{fig:local-setup}, RCCs disseminate task information to each other by\\ \texttt{LocalTaskInfo} D-Bus signal. The contents of task information are physical locations of tasks and their urgencies. However as our robots are incapable of sensing task directly. So it relies on TPS for a task-perception signal, \texttt{TaskInfo}, that contains the actual task location and urgency. When a robot $r_i$ comes within $r_{task}$ of a task $j$, SwisTrack reports it to TPS (by \texttt{TaskNeighbors} signal) and TPS then gives it current task information to $r_i$ by  \texttt{TaskInfo} signal. As we have discussed, TPS catches feedback signals from robots via \texttt{RobotStatus} signal. This can be used to inform TPS about a robot's current task id, its device status and so on. TPS uses this information to update relevant part of task information such as, task-urgency. This up-to-date information is encoded in next \texttt{TaskInfo} signal.
+
+From the above discussions, we can see that our base implementation of RCC's task-allocation (i.e. \texttt{TaskSelector}) is almost unchanged in this local implementation. The only thing we need to extend is the D-Bus signal reception and emission interfaces that catches the above signals and put the signal payload in \texttt{DataManager}. For the sake of simplicity, we have merges the perceived \texttt{Task-}\\ \texttt{Info} with communicated \texttt{LocalTaskInfo} into one so that \texttt{TaskAllocator} always gets all available task information. We have not made any major change in other modules of RCC, i.e. \texttt{DeviceController}. The full Python implementation of this RCC is available for download from the GitHub repository\footnote{http://github.com/roboshepherd/EpuckDistributedClient }.
+
+In our base implementation TPS periodically broadcasts \texttt{TaskInfo }signals to all robots. But in this local version, TPS only emits \texttt{TaskInfo} signal when a robot is within a task's perception range, $r_{task}$ based-on the \texttt{TaskNeighbour} signal from SwisTrack. For this additional interface, we have extended D-Bus \texttt{SignalListener} to catch this additional D-Bus signal.  No major changes are done in the other parts of TPS implementation. The full Python implementation of TPS is available for download from the GitHub repository\footnote{http://github.com/roboshepherd/DitributedTaskServer}.
 %%==================================================================
 \section{Results}
 \label{sec:res}
@@ -752,19 +858,21 @@ In our experiments we have defined shop-floor work-load in terms of task urgenci
 \begin{figure}
 \centering
 \subfloat[Series A]
-{\includegraphics[width=0.48\linewidth, angle=0]
+{\includegraphics[width=0.96\linewidth, angle=0]
 {images/SA-PlotUrgencyLog-2010Apr30-095755.eps}}
 %\hspace{0.2cm}
+\newline
 \subfloat[Series B]
-{\includegraphics[width=0.48\linewidth, angle=0]
+{\includegraphics[width=0.96\linewidth, angle=0]
 {images/SB-PlotUrgencyLog-2010May10-115549.eps}}
 \newline
 \subfloat[Series C]
-{\includegraphics[width=0.48\linewidth, angle=0]
+{\includegraphics[width=0.96\linewidth, angle=0]
 {images/SC-PlotUrgencyLog-2010Feb15-171017.eps}}
 %\hspace{0.2cm}
+\newline
 \subfloat[Series D]
-{\includegraphics[width=0.48\linewidth, angle=0]
+{\includegraphics[width=0.96\linewidth, angle=0]
 {images/SD-PlotUrgencyLog-2010Feb17-112141.eps}}
 \caption{Changes in task-urgencies} 
 \label{fig:raw-urgencies} 
@@ -780,19 +888,21 @@ From Fig. \ref{fig:urgency-stat} shows the dynamic shop-floor workload for all f
 \begin{figure}
 \centering
 \subfloat[Series A]
-{\includegraphics[width=0.48\linewidth, angle=0]
+{\includegraphics[width=0.96\linewidth, angle=0]
 {images/SA-8robots2tasks-TaskUrgencyStat.eps}}
 %\hspace{0.2cm}
+\newline
 \subfloat[Series B]
-{\includegraphics[width=0.48\linewidth, angle=0]
+{\includegraphics[width=0.96\linewidth, angle=0]
 {images/SB-TaskUrgencyStat.eps}}
 \newline
 \subfloat[Series C]
-{\includegraphics[width=0.48\linewidth, angle=0]
+{\includegraphics[width=0.96\linewidth, angle=0]
 {images/SC-TaskUrgencyStat.eps}}
 %\hspace{0.2cm}
+\newline
 \subfloat[Series D]
-{\includegraphics[width=0.48\linewidth, angle=0]
+{\includegraphics[width=0.96\linewidth, angle=0]
 {images/SD-TaskUrgencyStat.eps}}
 \caption{Shop-floor workload change history} 
 \label{fig:urgency-stat} 
@@ -804,19 +914,21 @@ From Fig. \ref{fig:urgency-stat} shows the dynamic shop-floor workload for all f
 \begin{figure}
 \centering
 \subfloat[Series A]
-{\includegraphics[width=0.48\linewidth, angle=0]
+{\includegraphics[width=0.96\linewidth, angle=0]
 {images/SA-Plasticity-8robots2tasks.eps}}
 %\hspace{0.2cm}
+\newline
 \subfloat[Series B]
-{\includegraphics[width=0.48\linewidth, angle=0]
+{\includegraphics[width=0.96\linewidth, angle=0]
 {images/SB-WorkerRatio.eps}}
 \newline
 \subfloat[Series C]
-{\includegraphics[width=0.48\linewidth, angle=0]
+{\includegraphics[width=0.96\linewidth, angle=0]
 {images/SC-Local50cm-Plasticity.eps}}
 %\hspace{0.2cm}
+\newline
 \subfloat[Series D]
-{\includegraphics[width=0.48\linewidth, angle=0]
+{\includegraphics[width=0.96\linewidth, angle=0]
 {images/SD-Local1m-Plasticity.eps}}
 \caption{Self-organized allocation of robots} 
 \label{fig:worker-stat} 
@@ -829,11 +941,12 @@ From Fig. \ref{fig:worker-stat}, we can  see that in production stage, when work
 \begin{figure}
 \centering
 \subfloat[APCD]
-{\includegraphics[width=0.48\linewidth, angle=0]
+{\includegraphics[width=0.96\linewidth, angle=0]
 {images/apcd.eps}}
 %\hspace{0.2cm}
+\newline
 \subfloat[APMW]
-{\includegraphics[width=0.48\linewidth, angle=0]
+{\includegraphics[width=0.96\linewidth, angle=0]
 {images/apmw.eps}}
 \label{fig:mfg-stat} 
 \end{figure}
@@ -974,11 +1087,12 @@ $ values: 0.40 (SD=0.08)  and 0.30 (SD=0.03), and their respective time-step $Q^
 \begin{figure}
 \centering
 \subfloat[Task-sensitization (K)]
-{\includegraphics[width=0.48\linewidth, angle=0]
+{\includegraphics[width=0.96\linewidth, angle=0]
 {images/K-Group.eps}}
 %\hspace{0.2cm}
+\newline
 \subfloat[Time-steps (Q)]
-{\includegraphics[width=0.48\linewidth, angle=0]
+{\includegraphics[width=0.96\linewidth, angle=0]
 {images/Q-Group.eps}}
 \caption{ Overall task-specialization of robot groups based on Peak task-sensitization values.}
 \label{fig:task-specialization} 
@@ -987,7 +1101,7 @@ $ values: 0.40 (SD=0.08)  and 0.30 (SD=0.03), and their respective time-step $Q^
 %% ------ Single robot----
 \begin{figure}
 \centering
-\includegraphics[width=\textwidth, angle=0]{images/TaskSpecialization-task3-10may-1.eps}
+\includegraphics[width=\linewidth, angle=0]{images/TaskSpecialization-task3-10may-1.eps}
 \caption{Task specialization on Task3 for a Series B experiment.}
 \label{fig:k-single-task-SB} 
 \end{figure}
@@ -1004,19 +1118,20 @@ We have aggregated the changes in translation motion of all robots over time. Le
 \begin{figure}
 \centering
 \subfloat[Series A]
-{\includegraphics[width=0.48\linewidth, angle=0]
+{\includegraphics[width=0.96\linewidth, angle=0]
 {images/SA-8robots-DeltaTranslationStat.eps}}
 %\hspace{0.2cm}
+\newline
 \subfloat[Series B]
-{\includegraphics[width=0.48\linewidth, angle=0]
+{\includegraphics[width=0.96\linewidth, angle=0]
 {images/SB-DeltaTranslationStat.eps}}
 \newline
 \subfloat[Series C]
-{\includegraphics[width=0.42\linewidth, angle=0]
+{\includegraphics[width=0.84\linewidth, angle=0]
 {images/SC-DeltaTranslationStat.eps}}
-\hspace{0.2cm}
+\newline
 \subfloat[Series D]
-{\includegraphics[width=0.48\linewidth, angle=0]
+{\includegraphics[width=0.96\linewidth, angle=0]
 {images/SD-DeltaTranslationStat.eps}}
 \caption{Sum of the translations of robots} 
 \label{fig:translation-stat}
@@ -1030,19 +1145,21 @@ The sum of translations of robots from our experiments are plotted in Fig. \ref{
 \begin{figure}
 \centering
 \subfloat[Series A]
-{\includegraphics[width=0.48\linewidth, angle=0]
+{\includegraphics[width=0.96\linewidth, angle=0]
 {images/SA-8Robot-SignalingFreqStat.eps}}
 %\hspace{0.2cm}
+\newline
 \subfloat[Series B]
-{\includegraphics[width=0.48\linewidth, angle=0]
+{\includegraphics[width=0.96\linewidth, angle=0]
 {images/SB-SignalingFreqStat.eps}}
 \newline
 \subfloat[Series C]
-{\includegraphics[width=0.48\linewidth, angle=0]
+{\includegraphics[width=0.96\linewidth, angle=0]
 {images/SC-Local-500cm-SignalingFreqStat.eps}}
-\hspace{0.2cm}
+%\hspace{0.2cm}
+\newline
 \subfloat[Series D]
-{\includegraphics[width=0.48\linewidth, angle=0]
+{\includegraphics[width=0.96\linewidth, angle=0]
 {images/SD-Local-1m-SignalingFreqStat.eps}}
 \caption{Frequency of \texttt{TaskInfo} signalling of (a) and (b) by TPS and (c) and (d) by local peers.} 
 \label{fig:signal-frequency-stat}
@@ -1052,9 +1169,9 @@ The sum of translations of robots from our experiments are plotted in Fig. \ref{
 \begin{figure}
 \centering
 \hspace*{0.5cm}
-\subfloat[Series C]{\includegraphics[height=8cm]{images/Robot12-16feb-1-LocalSignals.eps}}
+\subfloat[Series C]{\includegraphics[width=0.96\linewidth]{images/Robot12-16feb-1-LocalSignals.eps}}
 \newline
-\subfloat[Series D]{\includegraphics[height=8cm]{images/Robot12-17feb-3-LocalSignals.eps}}
+\subfloat[Series D]{\includegraphics[width=0.96\linewidth]{images/Robot12-17feb-3-LocalSignals.eps}}
 \caption{\small \texttt{LoaclTaskInfo} (P2P) signals caught by Robot12 in (a) Series C and (b) Series D experiment}
 \label{fig:local-single-robot-signal} 
 \end{figure}
