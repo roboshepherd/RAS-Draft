@@ -37,7 +37,7 @@
 \usepackage{amsmath,amsfonts,amssymb,amsthm}
 \usepackage{natbib}
 \usepackage[colorlinks=false]{hyperref}
-\usepackage{graphicx,hypernat}
+\usepackage{graphicx,hypernat,subfig}
 \usepackage{geometry}
 \usepackage{color}
 \usepackage{multirow}
@@ -165,7 +165,7 @@ Mdomarfaruque.Sarker \vline Torbjorn.Dahl@newport.ac.uk}
 %\address{}
 %
 \begin{abstract}
-This paper proposes to solve the MRTA problem using a set of previously published generic rules for division of labour derived from the observation of ant, human and robotic social systems. The concrete form of these rules, the \textit{attractive filed model} (AFM), provides sufficient abstraction to local communication and sensing which is uncommon in existing MRTA solutions. We have validated the effectiveness of AFM to address MRTA  using two bio-inspired communication and sensing strategies: ``global sensing - no communication'' and ``local sensing - local communication''. The former is realized using a centralized communication system and the latter is emulated under a peer-to-peer local communication scheme. They are applied in a  manufacturing shop-floor scenario using 16 e-puck robots. A flexible multi-robot control architecture, \textit{hybrid event-driven architecture on D-Bus}, has been outlined which uses the state-of-the-art D-Bus interprocess communication.  Based-on the organization of task-allocation, communication and interaction among robots, a  novel taxonomy of MRTA solutions has been proposed to remove the ambiguities found in existing MRTA solutions. Besides, a set of domain-independent metrics, e.g., plasticity, task-specialization and energy usage, has been formalized to compare the performances of the above two strategies.
+To deploy a large group of autonomous robots in dynamic multi-tasking environments, a suitable multi-robot task-allocation (MRTA) solution is required. This paper proposes to solve the MRTA problem using a set of previously published generic rules for division of labour derived from the observation of ant, human and robotic social systems. The concrete form of these rules, the \textit{attractive filed model} (AFM), provides sufficient abstraction to local communication and sensing which is uncommon in existing MRTA solutions. We have validated the effectiveness of AFM to address MRTA  using two bio-inspired communication and sensing strategies: ``global sensing - no communication'' and ``local sensing - local communication''. The former is realized using a centralized communication system and the latter is emulated under a peer-to-peer local communication scheme. They are applied in a  manufacturing shop-floor scenario using 16 e-puck robots. A flexible multi-robot control architecture, \textit{hybrid event-driven architecture on D-Bus}, has been outlined which uses the state-of-the-art D-Bus interprocess communication.  Based-on the organization of task-allocation, communication and interaction among robots, a  novel taxonomy of MRTA solutions has been proposed to remove the ambiguities found in existing MRTA solutions. Besides, a set of domain-independent metrics, e.g., plasticity, task-specialization and energy usage, has been formalized to compare the performances of the above two strategies.
 \end{abstract}
 %%
 %\begin{keyword}
@@ -548,11 +548,83 @@ By considering $\mu = 1$, Eq. \ref{eqn:task-urgency-maint-case} will reduces to 
 %%
 \textbf{Robot learning and forgetting algorithm:}\\
 Algorithm 4.2 lists the pseudo-code for updating the robot's task-sensitization values. Along with previously mentioned \textit{TaskRecords}, and  \textit{SelectedTaskID}, it takes two other inputs: \textit{LeranRate} ($\Delta k_{INC} $) and \textit{ForgetRate} ($\Delta k_{INC} $) as outlined in Eq. {eqn:k-inc} and {eqn:k-dec} respectively.  In addition to that it also keep the value of task-sensitization between the fixed limit of 0 and 1.
+%==============================================================
+\section{Local P2P communication model (LPCM)}
+From our understanding of different kinds of communication strategies of biological social systems, this is obvious that an effective LSLC strategy can greatly enhance the self-regulated MRTA.  In fact, most  researchers in the field of swarm robotics now acknowledge that LSLC is the one of the most critical components of a swarm robotic system, as global behaviours emerges from local interactions among the individuals and their environment.
+
+In this study, we have used the concepts of pheromone active-space of ants to realize our simple LSLC scheme. As discussed in Sec. \ref{bg:bio-comm}, ants use various chemical pheromones with different active spaces (or communication ranges) to communicate different messages with their group members. Ants sitting near the source of this pheromone sense and respond quicker than others who wander in far distances. Thus both communication and sensing occurs within a small communication range\footnote{Although, generally communication and sensing are two different issues, however within the context of our self-regulated DOL, we have broadly viewed sensing as the part of communication process, either implicitly via environment, or explicitly via local peers.}. We have used this concept of communication range or locality in our LPCM.
+
+In order to find a suitable  range (or radius) of communication and sensing, some researchers have argued that this range can be set at design time based on the capabilities of robots \cite{Agassounon+2002}. Some other researchers have argued that they can be dynamically varied over time depending on the  cost of communication and sensing, e.g. density of peers, ambient noise in the communication channels, or even by aiming for maximizing information spread  \cite{Yoshida+2000}. In this study, we have followed the former approach as our robots do not have the precise hardware to dynamically vary their communication and sensing ranges.
+%%---------------------------------------------------------
+\subsection{General characteristics of LPCM}
+Our LPCM relies on the local P2P communications among robots. we have assumed that robots can communicate to its nearby peers within a certain communication radius, $r_{comm}$ and they can sense tasks within another radius $r_{task}$. They exchange communication signals reliably without any significant loss of information. A robot $R_1$ is a {\em peer} of robot $R_2$, if spatial distance between $R_1$ and $R_2$ is less than this $r_{comm}$.
+Similarly, when a robot comes within this $r_{task}$ of a task, it can sense the status of this task. Although the communication and sensing  range can be different based on robot capabilities, we have considered them same for the simplicity of our implementation.
+
+Local communication can also give robots similar task information as in centralized communication. In this case, it is not necessary for each robot to communicate with every other robot to get information on all tasks. Since robots can random walk and explore the environment we assume that for a reasonably high robot-to-space density, all task will be known to all robots after an initial exploration period. In order to update the urgency of a task, robots can estimate the number of robots working on a task in two ways:  by either using their sensory perception (e.g., camera) or  doing local P2P communication with others.
+
+We characterize our communication model in terms of three fundamental issues of communication \cite{Gerkey+2001}. 
+\begin{enumerate}
+\item Message content: {\em what to communicate?}
+\item Communication frequency: {\em when to communicate?}
+\item Target message recipients: {\em with whom to communicate?}
+\end{enumerate}
+%%
+In a typical multi-robot system, message content can be categorized into two types: state of each individual robot and target task (goal) information \cite{Balch2005}. The latter can also be subdivided into two types: 1) an individual robot's target task information and 2) information of all available tasks found in the system.
+
+Regarding the first issue, our communication model is open. Robots can communicate with their peers with any kind of message. Our model addresses the last two issues very specifically. Robots communicate only when they meet their peers within a certain communication radius ($r_{comm}$). Although in case of an environment where robots move relatively faster the peer relationships can also be changed dynamically. But this can be manipulated by setting the signal frequency and robot to space density to somewhat reasonably higher value.
+
+In terms of target recipients, our model differs from a traditional publish/subscribe communication model by introducing the concept of dynamic subscription. In a traditional publish/subscribe communication model, subscription of messages happens prior to the actual message transmission. In that case prior knowledge about the subjects of a system is necessary. But in our model this is not necessary as long as all robots uses a common addressing convention for naming their incoming signal channels. In this way, when a robot meets with another robot it can infer the address of this peer robot's channel name by using a shared rule. A robot is thus always listening to its own channel for receiving messages from its potential peers or message publishers. On the other side, upon recognizing a peer, a robot sends a message to this particular peer. So here neither it is necessary to create any custom subject name-space  \cite{Gerkey+2001} nor we need to hard-code information in each robot controller about the knowledge of their potential peers {\em a priori}. Subscription is done automatically based on their respective $r_{comm}$.
+%
+%%----------------------------------------------------------------
+\subsection{Implementation algorithm}
+%%
+\textbf{\small Algorithm 5.1: Locality based P2P Communication Model}
+\vspace{-3mm}
+\newline
+\HRule
+\begin{algorithmic}[1]
+\label{alg:lpcm}
+\State $\textbf{Input: } RobotID, r_{comm}, r_{task}, TaskInfoDB, RobotPose,$\\ \hspace*{1cm}$ListeningBuffer, EmissionBuffer$
+\State $\textbf{Output: }$ updated $TaskInfoDB$
+\State \COMMENT {Perception of a task, if the robot is within $r_{task}$}
+\State $ TaskPose \gets $ Estimate/get pose of a task within $r_{task}$
+\State $ TaskUrgency \gets $ Estimate/get urgency of a task within $r_{task}$
+\State $ TaskInfo \gets (TaskPose, TaskUrgency) $ 
+\State $TaskInfoDB \gets$ \textbf{UpdateTaskInfoDB(}$TaskInfo$\textbf{)}
+% P2P Interaction, listen signal
+\State \COMMENT {Listening \textit{\textit{LocalTaskInfo}} signal(s) from peers}
+\State $ RobotPeers \gets $ Identify/get a list of peers within $r_{comm}$
+\ForAll {peer $\in RobotPeers$}
+\If {(caught a \textit{\textit{LocalTaskInfo}} signal from nearby peer)}
+\State $ListeningBuffer \gets $ \textit{\textit{LocalTaskInfo}} of peer
+\State $TaskInfoDB \gets$ \textbf{UpdateTaskInfoDB(}$ListeningBuffer$\textbf{)}
+\EndIf
+\EndFor
+%%
+\State \COMMENT {Emitting own \textit{\textit{LocalTaskInfo}} signal to peers}
+\State $ EmissionBuffer \gets TaskInfoDB$
+\ForAll {peer $\in RobotPeers$}
+\State \textbf{EmitLocalTaskInfoSignal(}peer, $EmissionBuffer$ \textbf{) }
+\EndFor
+\State $RobotPeers \gets 0$
+\end{algorithmic}
+%\vspace{-3mm} 
+%\HRule\\
+Within the context of our self-regulated MRTA experiments under AFM,  we have formalized the following three aspects of LPCM into an implementation algorithm. 
+\begin{enumerate}
+\item Local sensing of peers and tasks.
+\item Listening to the task-information peer signals.
+\item Emitting local task-information signals to peers.
+\end{enumerate}
+%%
+From Algorithm 5.1, we see that a robot controller is initialized with its specific $RobotID$ and default values of $r_{comm}$ and $r_{task}$ that correspond to the robot's communication and sensing range respectively. We have assumed that these values are same for all robots and for all tasks. Initially a robot has no information about tasks, i.e. {$TaskInfoDB$} is empty. It has neither received nor transmitted any information yet, i.e. corresponding data buffers, $ListeningBuffer$ and $EmissionBuffer$, are also empty. Upon sensing a task, robot determines the task's pose and urgency of that task (according AFM rules described in Sec. \ref{afm:mrs-interpretation}). This is not strictly necessary as this information can also be available from alternate sources, e.g. via communicating with a TPS which is discussed later.
+
+Robot controller then executes the \textbf{UpdateTaskInfoDB()} that modified the robot's information about the corresponding task. In second step, robot senses its nearby peers located within $r_{comm}$ and add them in $RobotPeers$. The potential textit{LocalTaskInfo} signal reception from a  peer again triggers the \textbf{UpdateTaskInfoDB()} function. In the last step, robot emits its own task information as a \textit{LocalTaskInfo} signal to its peers. Finally it cleans up the current values of $RobotPeers$ for running a new cycle.
 %====================================================================
 \section{Experiments}
 \label{sec:expt}
 %%
-In this section, we have described the design of our MRTA experiments within the context of our manufacturing shop-floor scenario. 
+We have designed a set of manufacturing shop-floor scenario experiments for validating the effectiveness of our AFM in producing self-regulated MRTA. The overall aim of this experiments is to compare the various properties of self-regulated MRTA under GSNC and LSLC strategies. These experiments are grouped into four series labelled using the following letters: A, B C and D. Series A and B experiments are done using a centralized communication system under GSNC strategy and Series C and D experiments are carried out using an emulated local P2P communication under LSLC stategty. Below we describe the observables, parameters and implementation of our experiments.
 %----------------------------------------------------------
 \subsection{Observables}
 \textbf{Plasticity:} %As we have discussed in Sec. \ref{bg:def:dol},  
@@ -600,13 +672,14 @@ Thus, in order to observe the above properties of self-regulated MRTA , we have 
 \end{tabular}
 \end{center}
 \end{table}
-%-------------------------------------------------------------------- 
+%%
 \begin{figure}
 \centering
 \includegraphics[height=7cm, angle=0]{./images/CentralizedComm.eps}
 \caption{\small A centralized communication scheme} % for implementing AFM}
 \label{fig:ccm} % Give a unique label
 \end{figure}
+%------------------------------------------------------------
 \subsection{Parameters}
 Table \ref{table:params} lists a set of essential parameters of our experiments. We intend to have a set-up that is relatively complex, i.e., with a high number of robots and tasks in a large area. The diameter of the marker of our e-puck robot is 0.08m. So, if we put 4 robots in an area of one square meter, this will give us a robot-occupied-space to free-space ratio of about 1:49 per square meter. This ratio reasonable in order to allow the robots to move at a speed of 5 cm/sec without much interference to each other. 
 
@@ -623,7 +696,28 @@ The initial values of task urgencies correspond to 100 units of production work-
 %
 Eq. \ref{eqn:task-urgency} establishes the fact that task urgency will increase at a higher rate than that of its decrease. As we do not like to keep a task left unattended for a long time we choose a higher rate of increase of task urgency. This difference is set on the basis of our assumption that at least half of the expected number of robots (ratio of number of robots to tasks) would be available to work on a task. So they would produce similar types of increase and decrease behaviours in task urgencies.
 
-Eq. \ref{eqn:sensitization} suggests that the learning will happen much faster than the forgetting. The difference in these two rates is based on the fact that faster leaning gives a robot more chances to select a task in next time-step and thus it becomes more specialized on it. 
+Eq. \ref{eqn:sensitization} suggests that the learning will happen much faster than the forgetting. The difference in these two rates is based on the fact that faster leaning gives a robot more chances to select a task in next time-step and thus it becomes more specialized on it.
+
+%% local
+Our local communication experiments follow the similar design of experimental parameters and observables of Series B experiments as outlined above. Table \ref{table:local-expt-design} highlights the major parameters of these experiments. Here, we can see that there are two new parameters in Series C and Series D experiments, i.e. communication and sensing ranges. For the sake of simplicity, both of these values are kept same in both series of experiments.
+Series D uses larger ranges that enables our robot to capture more task information at a time. That is similar to  ``global sensing and global communication'' of information by the robots, since in a large group of robots, it is not practical that a robot communicates with all other robots. On the other hand, Series C uses the half of the range values of Series D. This enables our robots to capture less information, that mimics a true LSLC strategy. The main motivation for using two different ranges is to find any significant difference in performance from these two types of experiments.
+%%
+\begin{table}
+\caption{Experimental parameters of Series C \& D experiments}
+\label{table:local-expt-design}
+\begin{center}
+\begin{tabular}{|l|c|c|}
+\hline Parameter & \hspace*{0.2cm} Series C $\mid$ Series D\\
+\hline task-perception range ($r_{task}$) & $0.5 m \mid 1 m$\\
+\hline Communication range ($r_{comm}$) & $0.5 m \mid 1 m$\\
+\hline Total number of robots ($N$) & 16 \\
+\hline Total number of tasks ($M$) & 4 \\
+\hline Experiment area ($A$) & 4 $m^2$\\
+\hline
+\end{tabular}
+\end{center}
+\end{table}
+% 
 %-------------------------------------------------------
 \subsection{Implementation}
 \label{afm:impl}
@@ -653,95 +747,100 @@ In our current implementation, instead of doing any real work with powerful robo
 In this section we have presented our experimental results. We ran those experiments for about 40 minutes and averaged them over five iterations. 
 %%-------------------------------------------------
 \subsection*{Shop-floor work-load history}
-In our experiments we have defined shop-floor work-load in terms of task urgencies. For example, Eq. \ref{eqn:task-urgency-prod-init} shows how we have calculated initial production work-load of our manufacturing shop-floor scenario. Fig. \ref{fig:raw-urgencies-SA} and Fig. \ref{fig:raw-urgencies-SB}  show the dynamic changes in task-urgencies for the single iteration of Series A and Series B experiments respectively. The fluctuations in these plots are resulted from the different levels of task-performance of our robots.
+In our experiments we have defined shop-floor work-load in terms of task urgencies. For example, Eq. \ref{eqn:task-urgency-prod-init} shows how we have calculated initial production work-load of our manufacturing shop-floor scenario. Fig. \ref{fig:raw-urgencies}  show the dynamic changes in task-urgencies for the single iteration of each experiment. The fluctuations in these plots are resulted from the different levels of task-performance of our robots. In case of Series D, we can see that an unattended task, \textit{Task4}, was not served by any robot for a long period and later it was picked up by some of the robots. 
+%%
 \begin{figure}
-%\begin{minipage}[t]{0.48\linewidth}
 \centering
-\includegraphics[height=8cm, angle=0]
-{images/global-8robots/PlotUrgencyLog-2010Apr30-095755.eps}
-%figure caption is below the figure
-\caption{\small Changes in task-urgencies in Series A experiments}
-\label{fig:raw-urgencies-SA} 
-%\end{minipage}
-%\hspace{0.5cm}
-%\begin{minipage}[t]{0.48\linewidth}
-\centering
-\includegraphics[height=8cm, angle=0]{images/PlotUrgencyLog-2010May10-115549.eps}
-\caption{\small Changes in task-urgencies in Series B experiments} 
-\label{fig:raw-urgencies-SB} 
-%\end{minipage}
+\subfloat[Series A]
+{\includegraphics[width=0.48\linewidth, angle=0]
+{images/SA-PlotUrgencyLog-2010Apr30-095755.eps}}
+%\hspace{0.2cm}
+\subfloat[Series B]
+{\includegraphics[width=0.48\linewidth, angle=0]
+{images/SB-PlotUrgencyLog-2010May10-115549.eps}}
+\newline
+\subfloat[Series C]
+{\includegraphics[width=0.48\linewidth, angle=0]
+{images/SC-PlotUrgencyLog-2010Feb15-171017.eps}}
+%\hspace{0.2cm}
+\subfloat[Series D]
+{\includegraphics[width=0.48\linewidth, angle=0]
+{images/SD-PlotUrgencyLog-2010Feb17-112141.eps}}
+\caption{Changes in task-urgencies} 
+\label{fig:raw-urgencies} 
 \end{figure}
+%%
 In order to measure the task-related work-loads on our system we have summed up the changes in all task-urgencies over time. We call this as {\em shop-floor work-load history} and formalized as follows. Let $ \phi_{j, q}$ be the urgency of a task $j$ at $q^{th}$ step and $\phi_{j, q+1}$ be the task urgency of $(q+1)^{th}$ step. We can calculate the sum of changes in urgencies of all $M$ tasks at $(q+1)^{th}$ step:
 \begin{equation} 
 \Delta \Phi_{j, q+1} = \sum_{j=1}^{M} (\phi_{j, q+1} - \phi_{j, q})
 \label{eqn:Delta-Phi}
 \end{equation}
-From Fig. \ref{fig:urgency-stat-SA} and Fig. \ref{fig:urgency-stat-SB} shows the dynamic shop-floor workload for Series A and Series B experiments respectively. From these plots, we can see that initially the sum of changes of task urgencies (shop-floor workload) is going towards negative direction. This implies that tasks are being served by a high number of robots. 
+From Fig. \ref{fig:urgency-stat} shows the dynamic shop-floor workload for all four series of experiments. From these plots, we can see that initially the sum of changes of task urgencies (shop-floor workload) is going towards negative direction. This implies that tasks are being served by a high number of robots. 
 %%
 \begin{figure}
-%\begin{minipage}[t]{0.48\linewidth}
 \centering
-\includegraphics[height=8cm, angle=0]
-{images/global-8robots/8robots2tasks-TaskUrgencyStat.eps}
-%figure caption is below the figure
-\caption{\small Shop-floor workload change history in Series A} 
-\label{fig:urgency-stat-SA} % Give a unique label
-%\end{minipage}
-%\hspace{0.5cm}
-%\begin{minipage}[t]{0.48\linewidth}
-\centering
-\includegraphics[height=8cm, angle=0]{images/TaskUrgencyStat.eps}
-\caption{\small Shop-floor workload change history in Series B} % measured in terms of task urgencies
-\label{fig:urgency-stat-SB} % Give a unique label
-%\end{minipage}
+\subfloat[Series A]
+{\includegraphics[width=0.48\linewidth, angle=0]
+{images/SA-8robots2tasks-TaskUrgencyStat.eps}}
+%\hspace{0.2cm}
+\subfloat[Series B]
+{\includegraphics[width=0.48\linewidth, angle=0]
+{images/SB-TaskUrgencyStat.eps}}
+\newline
+\subfloat[Series C]
+{\includegraphics[width=0.48\linewidth, angle=0]
+{images/SC-TaskUrgencyStat.eps}}
+%\hspace{0.2cm}
+\subfloat[Series D]
+{\includegraphics[width=0.48\linewidth, angle=0]
+{images/SD-TaskUrgencyStat.eps}}
+\caption{Shop-floor workload change history} 
+\label{fig:urgency-stat} 
 \end{figure}
 %%
 %%----------------------------------------------------------------
 \subsection*{Ratio of active workers}
 %%
 \begin{figure}
-%\begin{minipage}[t]{0.48\linewidth}
 \centering
-\includegraphics[height=8cm, angle=0]
-{images/global-8robots/Plasticity-8robots2tasks.eps}
-%figure caption is below the figure
-\caption{\small Self-organized allocation of robots in Series A}
-\label{fig:worker-stat-SA}
-%\end{minipage}
-%
-%\hspace{0.5cm}
-%\begin{minipage}[t]{0.48\linewidth}
-\centering
-\includegraphics[height=8cm, angle=0]{images/WorkerRatio.eps}
-\caption{\small Self-organized allocation of robots in Series B }
-\label{fig:worker-stat-SB} % Give a unique label
-%\end{minipage}
+\subfloat[Series A]
+{\includegraphics[width=0.48\linewidth, angle=0]
+{images/SA-Plasticity-8robots2tasks.eps}}
+%\hspace{0.2cm}
+\subfloat[Series B]
+{\includegraphics[width=0.48\linewidth, angle=0]
+{images/SB-WorkerRatio.eps}}
+\newline
+\subfloat[Series C]
+{\includegraphics[width=0.48\linewidth, angle=0]
+{images/SC-Local50cm-Plasticity.eps}}
+%\hspace{0.2cm}
+\subfloat[Series D]
+{\includegraphics[width=0.48\linewidth, angle=0]
+{images/SD-Local1m-Plasticity.eps}}
+\caption{Self-organized allocation of robots} 
+\label{fig:worker-stat} 
 \end{figure}
 %%
-From both Fig. \ref{fig:worker-stat-SA} and Fig. \ref{fig:worker-stat-SB}, we can  see that in production stage, when work-load is high, many robots are active in tasks. Here active workers ratio is the ratio of those robots that work on tasks to the total number of robots $N$ of a particular experiment.   Here we can see that this ratio varies according to the shop-floor work-load changes.
+From Fig. \ref{fig:worker-stat}, we can  see that in production stage, when work-load is high, many robots are active in tasks. Here active workers ratio is the ratio of those robots that work on tasks to the total number of robots $N$ of a particular experiment.   Here we can see that this ratio varies according to the shop-floor work-load changes.
 %%-------------------------------------------------------------
 \subsection*{Shop-task performance}
+%%
 \begin{figure}
-%\begin{minipage}[t]{0.48\linewidth}
 \centering
-\includegraphics[height=7cm, angle=0]{images/apcd-SA-SB.eps}
-\caption{APCD of Series A and Series B experiments.}
-\label{fig:apcd-SA-SB} 
-%\end{minipage} 
-%%%
-%\hspace{0.5cm}
-%\begin{minipage}[t]{0.48\linewidth}
-\centering
-\includegraphics[height=7cm, angle=0]
-{images/apmw-SA-SB.eps}
-\caption{APMW of Series A and Series B experiments.}
-\label{fig:apmw-SA-SB} % Give a unique label
-%\end{minipage}
+\subfloat[APCD]
+{\includegraphics[width=0.48\linewidth, angle=0]
+{images/apcd.eps}}
+%\hspace{0.2cm}
+\subfloat[APMW]
+{\includegraphics[width=0.48\linewidth, angle=0]
+{images/apmw.eps}}
+\label{fig:mfg-stat} 
 \end{figure}
 %%
-In our manufacturing shop-floor scenario, we have calculated the APCD\\ and APMW for both Series A and Series B experiments. For Series A we have got  average production completion time 111 time-steps (555s) where sample size is (5 x 2) = 10 tasks, SD = 10 time-steps (50s). According to Eq. \ref{eqn:min-pmm}, our theoretical minimum production completion time is 50 time-steps (250s) assuming the non-stop task performance of all 8 robots with an initial task urgency of 0.5 for all 2 tasks and task urgency decrease rate $\Delta \Phi_{DEC }$ = 0.0025 per robot per time-step.  Hence, Eq. \ref{eqn:appd} gives us APCD, $\zeta$ = 1.22 which means that in Series A experiments, it took 1.22 times more time (305s) than the estimated minimum production completion time (250s). For Series B, we have got average production completion time 165 time-steps (825s) where sample size is (5 x 4) = 20 tasks, SD = 72 time-steps (360s).  Hence, Eq. \ref{eqn:appd} gives us APCD, $\zeta$ = 2.3. Fig. \ref{fig:apcd-SA-SB} shows the APCD for both Series A and Series B experiments. \\
-%%
-For APMW, Series A experiments give us an average time length of 369 time-steps (1845s).  In this period we calculated APMW and it is 1 time-step with SD = 1 time-step (5s) and $\Delta \Phi_{INC}$ = 0.005 per task per time-step. This shows a very low APMW ($\chi$ = 0.000235) and a very high robustness of the system. For Series B experiments, from the average 315 time-steps (1575s) maintenance activity of our robots per experiment run, we have got APMW, $\chi$ = 0.012756 which corresponds to the pending work of 3 time-steps (15s) where SD = 13 time-steps (65s). This tells us the robust task performance of our robots which can return to an abandoned task within a minute or so. Fig. \ref{fig:apmw-SA-SB} plots the APMW for both Series A and Series B experiments. 
+In our manufacturing shop-floor scenario, we have calculated the APCD and APMW as shown in Fig. \ref{fig:mfg-stat}. For Series A we have got  average production completion time 111 time-steps (555s) where sample size is (5 x 2) = 10 tasks, SD = 10 time-steps (50s). According to Eq. \ref{eqn:min-pmm}, our theoretical minimum production completion time is 50 time-steps (250s) assuming the non-stop task performance of all 8 robots with an initial task urgency of 0.5 for all 2 tasks and task urgency decrease rate $\Delta \Phi_{DEC }$ = 0.0025 per robot per time-step.  Hence, Eq. \ref{eqn:appd} gives us APCD, $\zeta$ = 1.22 which means that in Series A experiments, it took 1.22 times more time (305s) than the estimated minimum production completion time (250s). For Series B, we have got average production completion time 165 time-steps (825s) where sample size is (5 x 4) = 20 tasks, SD = 72 time-steps (360s).  Hence, Eq. \ref{eqn:appd} gives us APCD, $\zeta$ = 2.3. For Series C we have got average production completion time 121 time-steps (605s) with SD = 36 time-steps (180s). For Series D,  average production completion time is 123 time-steps (615s) with SD = 40 time-steps (200s). According to Eq. \ref{eqn:min-pmm}, our theoretical minimum production completion time is 50 time-steps (250s) as discussed in Sec \ref{afm:results}.  The values of APCD are as follows. For Series C, $\zeta$ = 1.42 and for Series D, $\zeta$ = 1.46. For both series of experiments APCD values are very close.
+
+For APMW, Series A experiments give us an average time length of 369 time-steps (1845s).  In this period we calculated APMW and it is 1 time-step with SD = 1 time-step (5s) and $\Delta \Phi_{INC}$ = 0.005 per task per time-step. This shows a very low APMW ($\chi$ = 0.000235) and a very high robustness of the system. For Series B experiments, from the average 315 time-steps (1575s) maintenance activity of our robots per experiment run, we have got APMW, $\chi$ = 0.012756 which corresponds to the pending work of 3 time-steps (15s) where SD = 13 time-steps (65s). This tells us the robust task performance of our robots which can return to an abandoned task within a minute or so. The APMW of Series C experiments give us an average time length of 359 time-steps (1795s). In this period we calculated APMW and it is 5 time-steps with SD = 17 time-steps and $\chi$ = 0.023420. For Series D experiments, from the average 357 time-steps (1575s) of maintenance activity of our robots per experiment run, we have got APMW, $\chi$ = 0.005359 which corresponds to the pending work of 2 time-steps (10s) where SD = 7 time-steps.
 %%-------------------------------------------------
 \subsection*{Task specializations}
 We have measured the task-specialization of the robots based-on their peak value of sensitization. This maximum value represents how long a robot has repeatedly been selecting a particular task. Since tasks are homogeneous we have considered the maximum sensitization value of a robot among all tasks during an experiment run. This value is then averaged for all robots using the following  equation. 
@@ -811,23 +910,80 @@ In Eq. \ref{eqn:Q-G}, $q^i_{k=k_{max}}$ represents the time-step of robot $r_i$ 
 Table \ref{table:K-G-SA} and Table \ref{table:K-G-SB} show the peak sensitization values of Series A and Series B experiments respectively.  Based on Eq. \ref{eqn:K-G} and Eq. \ref{eqn:Q-G}, we have got the peak task-sensitization $K^G_{avg} 
 $ values: 0.40 (SD=0.08)  and 0.30 (SD=0.03), and their respective time-step $Q^G_{avg}$ values: 38 (SD=13) and 18 (SD=5) time-step.  They are shown in Fig. \ref{fig:K-G-SA-SB} and Fig. \ref{fig:Q-G-SA-SB}. Here we can see that the robots in Series A had higher chances of task-specialization than that of Series B experiments.
 %%
+% Series C raw data
+\begin{table}
+\centering
+\caption{Peak task-sensitization values of robots in a Series C experiment.}
+% 16Feb-1 expt
+\begin{tabular}{|c|c|c|c|}
+\hline\textbf{ Robot ID} & \textbf{Maximum k} & \textbf{At time-step (q)} & \textbf{Task} \\
+\hline 16 & 1.00 & 52 & Task1\\
+\hline 12 & 0.58 & 24 & ,,\\  
+\hline 1 & 0.16 & 2 & ,,\\ 
+\hline 13 & 0.13 & 1 & ,,\\
+%%
+\hline 9 & 1.00 & 41 & Task2\\
+\hline 3 & 0.55 & 23 & ,,\\ 
+\hline 19 & 0.24 & 6 & ,,\\
+\hline 35 & 0.24 & 6 & ,,\\
+\hline 15 & 0.13 & 1 & ,,\\
+\hline 33 & 0.13 & 2 & ,,\\ 
+%%
+\hline 6 & 0.61 & 29 & Task3\\
+\hline 31 & 0.59 & 35 & ,,\\ 
+\hline 5 & 0.13 & 1 & ,,\\ 
+%%
+\hline 17 & 0.36 & 10 & Task4\\
+\hline 20 & 0.09 & 1 & ,,\\ 
+\hline 22 & 0.09 & 1 & ,,\\ 
+ \hline 
+\end{tabular} 
+\label{table:K-Q-SC}
+\end{table}
+%% Series D
+\begin{table}
+\centering
+\caption{Peak task-sensitization values of robots in a Series D experiment.}
+%% 17 feb-1 expt
+\begin{tabular}{|c|c|c|c|}
+\hline\textbf{ Robot ID} & \textbf{Maximum k} & \textbf{At time-step (q)} & \textbf{Task} \\
+\hline 19 & 1.00 & 34 & Task1\\
+\hline 35 & 1.00 & 60 & ,,\\
+\hline 24 & 0.41 & 16 & ,,\\
+\hline 12 & 0.20 & 6 & ,,\\  
+%%
+\hline 1 & 1.00 & 41 & Task2\\
+\hline 31 & 1.00 & 47 & ,,\\
+\hline 22 & 0.40 & 10 & ,,\\
+\hline 9 & 0.38 & 12 & ,,\\
+\hline 15 & 0.16 & 2 & ,,\\
+\hline 33 & 0.13 & 1 & ,,\\ 
+%%   
+\hline 5 & 0.92 & 70 & Task3\\ 
+\hline 13 & 0.74 & 36 & ,,\\
+%% 
+\hline 17 & 0.76 & 62 & Task4\\ 
+\hline 6 & 0.22 & 4 & ,,\\ 
+\hline 3 & 0.13 & 2 & ,,\\
+\hline 16 & 0.13 & 1 & ,,\\ 
+\hline 
+\end{tabular}
+\label{table:K-Q-SD} 
+\end{table}
+%%
 \begin{figure}
-%\begin{minipage}[t]{0.48\linewidth}
 \centering
-\includegraphics[height=7cm, angle=0]{images/K-G-SA-SB.eps}
-\caption{ Overall task-specialization of robot groups.}
-\label{fig:K-G-SA-SB} 
-%\end{minipage} 
-%%%
-%\hspace{0.5cm}
-%\begin{minipage}[t]{0.48\linewidth}
-\centering
-\includegraphics[height=7cm, angle=0]
-{images/Q-G-SA-SB.eps}
-\caption{Time-steps to reach the peak values of task-specialization}
-\label{fig:Q-G-SA-SB} 
-%\end{minipage}
+\subfloat[Task-sensitization (K)]
+{\includegraphics[width=0.48\linewidth, angle=0]
+{images/K-Group.eps}}
+%\hspace{0.2cm}
+\subfloat[Time-steps (Q)]
+{\includegraphics[width=0.48\linewidth, angle=0]
+{images/Q-Group.eps}}
+\caption{ Overall task-specialization of robot groups based on Peak task-sensitization values.}
+\label{fig:task-specialization} 
 \end{figure}
+%%
 %% ------ Single robot----
 \begin{figure}
 \centering
@@ -845,47 +1001,65 @@ We have aggregated the changes in translation motion of all robots over time. Le
 \label{eqn:Delta-Tr}
 \end{equation}
 %%
-\begin{figure*}
-%\begin{minipage}[t]{0.5\linewidth}
+\begin{figure}
 \centering
-\includegraphics[height=8cm]{images/global-8robots/8robots-DeltaTranslationStat.eps}
-\caption{\small Sum of the translations of robots in Series A experiments}
-\label{fig:translation-stat-SA} % Give a unique label
-%\end{minipage}
-%\hspace{0.5cm}
-%\begin{minipage}[t]{0.5\linewidth}
-\centering
-\includegraphics[height=8cm]{images/global/DeltaTranslationStat.eps}
-\caption{\small Sum of the translations of robots in Series B experiments}
-\label{fig:translation-stat-SB} % Give a unique label
-%\end{minipage}
-\end{figure*}
+\subfloat[Series A]
+{\includegraphics[width=0.48\linewidth, angle=0]
+{images/SA-8robots-DeltaTranslationStat.eps}}
+%\hspace{0.2cm}
+\subfloat[Series B]
+{\includegraphics[width=0.48\linewidth, angle=0]
+{images/SB-DeltaTranslationStat.eps}}
+\newline
+\subfloat[Series C]
+{\includegraphics[width=0.42\linewidth, angle=0]
+{images/SC-DeltaTranslationStat.eps}}
+\hspace{0.2cm}
+\subfloat[Series D]
+{\includegraphics[width=0.48\linewidth, angle=0]
+{images/SD-DeltaTranslationStat.eps}}
+\caption{Sum of the translations of robots} 
+\label{fig:translation-stat}
+\end{figure}
 %%
-The results from Series A and Series B experiments are plotted in Fig. \ref{fig:translation-stat-SA} and Fig. \ref{fig:translation-stat-SB}. In this plot we can see that robot translations also vary over varying task requirements of tasks.
+The sum of translations of robots from our experiments are plotted in Fig. \ref{fig:translation-stat}. In this plot we can see that robot translations also vary over varying task requirements of tasks. In this plot we can see that robot translations also vary over varying task requirements of tasks. 
 %%%-------------------------------------------------
 \subsection*{Communication load}
-%%% Communication load %%%
-\begin{figure}
-%\begin{minipage}[t]{0.5\linewidth}
-\centering
-\includegraphics[height=8cm]
-{images/global-8robots/8Robot-SignalingFreqStat.eps}
-\caption{\small Frequency of \texttt{TaskInfo} signalling in Series A experiments}
-\label{fig:signal-frequency-stat-SA} 
-%\end{minipage}
-%\hspace{0.5cm}
-%\begin{minipage}[t]{0.5\linewidth}
-\end{figure}
+%%% Communication load 
 %%
 \begin{figure}
 \centering
-\includegraphics[height=8cm]{images/Global-SignalingFreqStat.eps}
-\caption{\small Frequency of \texttt{TaskInfo} signalling in Series B experiments}
-\label{fig:signal-frequency-stat-SB} 
-%\end{minipage}
+\subfloat[Series A]
+{\includegraphics[width=0.48\linewidth, angle=0]
+{images/SA-8Robot-SignalingFreqStat.eps}}
+%\hspace{0.2cm}
+\subfloat[Series B]
+{\includegraphics[width=0.48\linewidth, angle=0]
+{images/SB-SignalingFreqStat.eps}}
+\newline
+\subfloat[Series C]
+{\includegraphics[width=0.48\linewidth, angle=0]
+{images/SC-Local-500cm-SignalingFreqStat.eps}}
+\hspace{0.2cm}
+\subfloat[Series D]
+{\includegraphics[width=0.48\linewidth, angle=0]
+{images/SD-Local-1m-SignalingFreqStat.eps}}
+\caption{Frequency of \texttt{TaskInfo} signalling of (a) and (b) by TPS and (c) and (d) by local peers.} 
+\label{fig:signal-frequency-stat}
 \end{figure}
 %%
-Fig. \ref{fig:signal-frequency-stat-SA}  and Fig. \ref{fig:signal-frequency-stat-SB}  show the number of received \texttt{TaskInfo} signals by each robot in Series A and Series B experiments. Since the duration of each time-step is 50s long and TPS emits signal in every 2.5s, there is an average of 20 signals in each time-step.
+%%%% Single robot- number of peers
+\begin{figure}
+\centering
+\hspace*{0.5cm}
+\subfloat[Series C]{\includegraphics[height=8cm]{images/Robot12-16feb-1-LocalSignals.eps}}
+\newline
+\subfloat[Series D]{\includegraphics[height=8cm]{images/Robot12-17feb-3-LocalSignals.eps}}
+\caption{\small \texttt{LoaclTaskInfo} (P2P) signals caught by Robot12 in (a) Series C and (b) Series D experiment}
+\label{fig:local-single-robot-signal} 
+\end{figure}
+%%
+Fig. \ref{fig:signal-frequency-stat} (a) and (b) shows the number of received \texttt{TaskInfo} signals by each robot in Series A and Series B experiments. Since the duration of each time-step is 50s long and TPS emits signal in every 2.5s, there is an average of 20 signals in each time-step. The overall P2P task information signals of both of these local modes are plotted in Fig. \ref{fig:signal-frequency-stat} (c) and (d). As an example of P2P signal reception of a robot,  Fig. \ref{fig:local-single-robot-signal} show the number of received signals by Robot12 in two local experiments. It states the relative difference of peers over time in two local cases.
 %==================================================================
 \section{Discussions}
 \label{sec:discuss}
@@ -905,14 +1079,42 @@ From task-sensitization we can also see that a limited number of robots are spec
 \textbf{Scaling-up}. We have observed the effect of scaling-up the robot team size. The system size of Series B is double of that of Series A in terms of robots, tasks and experiment arena. Keeping a fixed ratio of robot-to-task and task-to-arena we have intended to see the scaling effects in our experiments. Here we see that both systems can show sufficient self-regulated DOL, but task-performance of both systems varies significantly. For example, the value of APCD in Series B is higher by 1.08. This means that performance  is decreased in Series B experiments despite having the resources in same proportion in both systems. This occurs partly due to the greater stochastic effects found in task-allocation in a larger system, e.g. presence of more tasks produce higher stochastic behaviours in robot's task selection.
 
 Similarly we can see that in larger system robots have less chances to specialize on tasks, as the Series B experiments show us that the overall average task-specialization of the group $K^G_{avg}$ is lower by 0.10 and it lasts for significantly less time (the difference of $Q^G_{avg}$  of both systems is 20 time-steps). Thus, in a large group, robots are more likely to switch among tasks more frequently and this produces more translation motions which cost more energy (e.g. battery power) in task-performance.
+
+\textbf{Comparisons between local communication and sensing strategies:} Results from Series C and Series D experiments show us many similarities and differences with respect to the results of Series A and Series B experiments. Both Series C and Series D experiments show similar APCD values: 1.42 and 1.46 respectively, which are significantly less than Series B experiment result (APCD = 2.3) and are close to Series A experiment result (APCD = 1.22). This means that for large group, task-performance  is efficient under LSLC strategy (Series C and Series D) comparing with their GSNC counterpart (Series B).
+
+Besides, in terms of task-specialization, the overall task-specialization of group in Series C ($K^G_{avg}$ = 0.4) is  closer to that of Series A experiments ($K^G_{avg}$ = 0.39) and interestingly, the value of  Series D ($K^G_{avg}$ = 0.27) is  much closer to that of Series B experiments ($K^G_{avg}$ = 0.30). So task-specialization in large group under LSLC strategy shows higher performance than their GSNC counter part. Besides task-specialization happens much faster under LSLC strategy as we can see that the average time to reach peak sensitization values  of the group,  $Q^G_{avg}$ in Series C is lower than that of Series A values by 25 time-steps.
+
+\begin{table}
+\begin{center}
+\caption{Sum of translations of robots in Series A-D experiments.}
+\begin{tabular}{|c|c|c|}
+\hline \textbf{Series} & \textbf{Average translation (m)} & \textbf{SD} \\ 
+\hline A & 2.631 & 0.804\\ 
+\hline B & 13.882 & 3.099\\
+\hline C & 4.907 & 1.678\\
+\hline D & 4.854 & 1.592\\
+\hline
+\end{tabular}
+\label{table:motion-cmp} 
+\end{center}
+\end{table}
+%%
+From the robot motion profiles found in all four series of experiments, we have found that under LSLC strategy, robot translations have been reduced significantly. Table \ref{table:motion-cmp} summarizes the average translations done by robots in all four series of experiments. From this table we can see than Series C and Series D show about 2.8 times less translation than that in Series B experiments. The translation of 16 robots in Series C and Series D experiments are approximately double (1.89 times) than that of Series A experiments with 8 robots.  Thus the energy-efficiency under LSLC strategy seems to be higher  than that under GSNC strategy.
+
+From the above results we can see that large group robots achieve better MRTA under LSLC strategy. The local sensing of tasks prevents them to attend a far-reaching task which may be more common under global sensing strategy. However, as we have seen in Fig. \ref{fig:raw-urgencies-SC-SD}
+some tasks can be left unattended for a long period of time due to the failure to discover it by any robot. For that reason we see that the values of APMW is slightly higher under LSLC strategy. But this trade-off is worth as LSLC strategy provides superior self-regulated MRTA in terms of task-performance, task-specialization and energy-efficiency. 
 %%================================================================
 \section{Conclusions}
 \label{sec:conc}
+The benefits of deploying a large number of robots in dynamic multi-tasking environment can not be fully realized without adopting an effective communication and sensing strategy for a given multi-robot system. This study has focused on comparing two bio-inspired  communication and sensing strategies in producing self-regulated MRTA by an interdisciplinary model of DOL, AFM. Under the GSNC strategy, AFM has produced the desired self-regulated MRTA among a group of 8 and 16 robots. This gives us the evidence that AFM can successfully solve the MRTA issue of a complex multi-tasking environment like a manufacturing shop-floor. Under the LSLC strategy, AFM can also produce the desired self-regulated MRTA for 16 robots with different communication and sensing ranges.
+
+From our comparative results, we can conclude that for large group of robots,  degradation in  task-performance and task-specialization of robots are likely to occur  under GSNC strategy that relies upon a centralized communication system. Thus GSNC strategy can give us better performance when the number of tasks and robots are relatively small. This confirms us the assertions made by some biologists that self-regulated DOL among small group of individuals can happen without any significant amount of local communications and interactions. However, our findings suggest that task-specialization can still be beneficial among the individuals of a small group which contradicts the claim that small groups only posses the generalist workers, but not the specialists.
+
+On the other hand, LSLC strategy is more suitable for large group of individuals that are likely to be unable to perform global sensing and global communications with all individuals of the group. The design of communication and sensing range is still remained as a critical research issue. However, our results suggest that the idea of maximizing information gain is not appropriate under a stochastic task-allocation process, as more information causes more task-switching behaviours that lowers the level of task-specialization of the group. This might not be the case under a deterministic task-allocation scheme where more information leads to better and optimum allocations, but that is limited to a small group of individuals. Nevertheless, despite having the limited communication and sensing range, LSLC strategy helps to produce comparatively better task-allocation with increased task-specialization and significantly reduced motions or savings in energy consumption.
+%%===========================================================
 %% The Appendices part is started with the command \appendix;
 %% appendix sections are then done as normal sections
-%% \appendix
-%% \section{}
-%% \label{}
+%% \appendix%% \section%% \label{}
 %% References
 %%
 %% Following citation commands can be used in the body text:
