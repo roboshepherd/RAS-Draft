@@ -17,8 +17,8 @@
 %% \documentclass[final,3p,times]{elsarticle}
 %% \documentclass[final,3p,times,twocolumn]{elsarticle}
 %% \documentclass[final,5p,times]{elsarticle}
- \documentclass[draft,5p,times,twocolumn]{elsarticle}
-
+%% \documentclass[draft,5p,times,twocolumn]{elsarticle}
+\documentclass[final,5p,times,twocolumn]{elsarticle}
 %% if you use PostScript figures in your article
 %% use the graphics package for simple commands
 %% \usepackage{graphics}
@@ -319,7 +319,7 @@ In summary, from the above diagram of the network, we can see that each of the a
 \label{afm:so}
 \begin{figure*}
 \centering
-\includegraphics[width=0.9\linewidth, angle=0]
+\includegraphics[width=0.7\linewidth, angle=0]
 {./images/self-org-2.eps}
 %figure caption is below the figure
 \caption{\small Four generic rules establish the self-regulated DOL in social systems}
@@ -394,7 +394,7 @@ We have designed a set of  manufacturing shop-floor scenario experiments for val
 %%
 \begin{figure*}
 \centering
-\includegraphics[width=0.9\linewidth, angle=0]
+\includegraphics[width=0.8\linewidth, angle=0]
 {./images/VSP.eps}
 %figure caption is below the figure
 \caption{A manufacturing shop-floor production and maintenance cycle}
@@ -737,6 +737,15 @@ Series D uses larger ranges that enables our robot to capture more task informat
 %%
 \begin{figure*}
 \centering
+\subfloat[E-puck robot]{\includegraphics[width=0.3\linewidth,height=5cm]{images/epuck-happy.eps}} 
+\hspace{0.5cm}
+\subfloat[A binary-coded marker]{\includegraphics[width=0.3\linewidth,height=5cm]{images/20-31412.eps}}
+\caption{(a) The e-puck robot with SwisTrack marker on top, (b) A binary coded marker that can be tracked by an overhead camera  using SwisTrack.}
+\label{fig:e-puck}
+\end{figure*}
+%%
+\begin{figure*}
+\centering
 \includegraphics[width=0.9\textwidth, angle=0]
 {./images/RIL-Expt-Setup1.eps}
 %figure caption is below the figure
@@ -751,6 +760,22 @@ However, in this study, we are particularly interested to find the suitable comm
 Fig. \ref{fig:ccm} shows how three robots are attracted to two different tasks and their communications with TPS. Here although the robots are selecting task independently based-on the strength of their attractive fields to different tasks, they are depended on the TPS for task-information.
 
 This centralized communication system can be converted into a decentralized one where robots can use local observation and communication with peers about tasks to estimate task-urgencies. In Chapter \ref{local-comm}, we present an emulation of this scenario where robots do not depend entirely on TPS for estimating task-urgencies, instead they get task information from TPS when they are very close to a task (inside a pre-defined task-boundary) or from local peers who know about a task via TPS.
+%%
+\begin{figure*}
+\centering
+\hspace*{1cm}
+%\includegraphics[width=10cm,height=7.5cm,angle=0]
+\subfloat[]{
+\includegraphics[width=0.7\linewidth,angle=0]
+{./images/RILSnapshot1.eps}}
+\newline
+\subfloat[]{
+\includegraphics[width=0.7\linewidth]
+{./images/RILCamcorderSnapshot1.eps}}
+\caption{Our experiment arena captured by (a) a GigE4900C camera mounted on 3m high ceiling (b) an ordinary camcorder.}
+\label{fig:expt-arena} % Give a unique label
+\end{figure*}
+%%
 
 In our current implementation, instead of doing any real work with powerful robots, we emulate a mock manufacturing shop-floor scenario that requires the robot only to travel among tasks. As discussed in Sec. \ref{expt-tools:btcom}, our robots do not have on-board CPU, they need a host PC to  control them using BTCom communication protocol. Thus our host-PC  runs one RCC for each physical robot. These RCCs also rely upon SwisTrack multi-robot tracking system for updating their real-time pose. So although our MRTA solution is distributed by design, we primarily used a centralized approach to implement it due to the limitations of our robots and the convenience of implementation. Below we describe the actual implementations of these components, i.e. D-Bus communication interfaces and detail implementations of TPS and RCC.
 %%
@@ -773,13 +798,21 @@ In our current implementation, instead of doing any real work with powerful robo
 %%
 \begin{figure*}
 \begin{center}
-\includegraphics[width=0.9\linewidth]{./images/concrete-arch} 
+\includegraphics[width=0.8\linewidth,height=10cm]{./images/concrete-arch} 
 %\centering
 \caption{General outline of {\em HEAD}. A RCC application has been split into two parts: one runs locally in server PC and another runs remotely, e.g., in an embedded PC.} 
 \label{fig:concrete-arch}
 \end{center}
 \end{figure*}
-
+%%
+\begin{figure*}
+\centering
+\includegraphics[width=0.8\linewidth,height=10cm]
+{./images/SwisTrackScreenshot.eps}
+\caption{SwisTrack tracking a team of 16 robots under Ubuntu Linux 9.10 OS.}
+\label{fig:swistrack-screenshot} 
+\end{figure*}
+%%
 Fig. \ref{fig:concrete-arch} outlines the placements of various software components of our multi-robot control architecture based on their functional characteristics and processing requirements \cite{Sarker2010control}. As shown in Fig. \ref{fig:RIL-Expt-Setup1}, each e-puck robot is controlled by a corresponding RCC. A RCC sends commands to the robot's firmware using BTCom protocol. A RCC consists of several Python modules. Each module represents a sub-process under a main process that ties all of them together by using Python's Multiprocessing module. Below we have described the detail design and implementation of these Python modules. All code are publicly accessible through GitHub repository\footnote{git://@github.com/roboshepherd/EpuckCentralizedClient.git,    
 \textit{hash:}7e3af8902e64db3fa59e}.
 %%
@@ -811,7 +844,7 @@ Similar to the \texttt{SignalListener}, \texttt{SignalEmitter} makes use of Pyth
 %%
 \begin{figure*}
 \centering
-\includegraphics[width=0.9\linewidth,height=11cm]
+\includegraphics[width=0.8\linewidth,height=11cm]
 {./images/rcc-device-controller-state.eps}
 %figure caption is below the figure
 \caption{State diagram of \texttt{DeviceController} module}
@@ -855,27 +888,25 @@ In this section we have presented our experimental results. We ran those experim
 \subsection*{Shop-floor work-load history}
 In our experiments we have defined shop-floor work-load in terms of task urgencies. For example, Eq. \ref{eqn:task-urgency-prod-init} shows how we have calculated initial production work-load of our manufacturing shop-floor scenario. Fig. \ref{fig:raw-urgencies}  show the dynamic changes in task-urgencies for the single iteration of each experiment. The fluctuations in these plots are resulted from the different levels of task-performance of our robots. In case of Series D, we can see that an unattended task, \textit{Task4}, was not served by any robot for a long period and later it was picked up by some of the robots. 
 %%
-\begin{figure}
+\begin{figure} 
+\label{fig:raw-urgencies}
 \centering
 \subfloat[Series A]
-{\includegraphics[width=0.96\linewidth, angle=0]
+{\includegraphics[width=0.8\linewidth, angle=0]
 {images/SA-PlotUrgencyLog-2010Apr30-095755.eps}}
-%\hspace{0.2cm}
 \newline
 \subfloat[Series B]
-{\includegraphics[width=0.96\linewidth, angle=0]
+{\includegraphics[width=0.8\linewidth, angle=0]
 {images/SB-PlotUrgencyLog-2010May10-115549.eps}}
 \newline
 \subfloat[Series C]
-{\includegraphics[width=0.96\linewidth, angle=0]
+{\includegraphics[width=0.8\linewidth, angle=0]
 {images/SC-PlotUrgencyLog-2010Feb15-171017.eps}}
-%\hspace{0.2cm}
 \newline
 \subfloat[Series D]
-{\includegraphics[width=0.96\linewidth, angle=0]
+{\includegraphics[width=0.8\linewidth, angle=0]
 {images/SD-PlotUrgencyLog-2010Feb17-112141.eps}}
-\caption{Changes in task-urgencies} 
-\label{fig:raw-urgencies} 
+\caption{Changes in task-urgencies.}
 \end{figure}
 %%
 In order to measure the task-related work-loads on our system we have summed up the changes in all task-urgencies over time. We call this as {\em shop-floor work-load history} and formalized as follows. Let $ \phi_{j, q}$ be the urgency of a task $j$ at $q^{th}$ step and $\phi_{j, q+1}$ be the task urgency of $(q+1)^{th}$ step. We can calculate the sum of changes in urgencies of all $M$ tasks at $(q+1)^{th}$ step:
@@ -886,52 +917,50 @@ In order to measure the task-related work-loads on our system we have summed up 
 From Fig. \ref{fig:urgency-stat} shows the dynamic shop-floor workload for all four series of experiments. From these plots, we can see that initially the sum of changes of task urgencies (shop-floor workload) is going towards negative direction. This implies that tasks are being served by a high number of robots. 
 %%
 \begin{figure}
+\label{fig:urgency-stat}
 \centering
 \subfloat[Series A]
-{\includegraphics[width=0.96\linewidth, angle=0]
+{\includegraphics[width=0.8\linewidth, angle=0]
 {images/SA-8robots2tasks-TaskUrgencyStat.eps}}
-%\hspace{0.2cm}
 \newline
 \subfloat[Series B]
-{\includegraphics[width=0.96\linewidth, angle=0]
+{\includegraphics[width=0.8\linewidth, angle=0]
 {images/SB-TaskUrgencyStat.eps}}
 \newline
 \subfloat[Series C]
-{\includegraphics[width=0.96\linewidth, angle=0]
+{\includegraphics[width=0.8\linewidth, angle=0]
 {images/SC-TaskUrgencyStat.eps}}
-%\hspace{0.2cm}
 \newline
 \subfloat[Series D]
-{\includegraphics[width=0.96\linewidth, angle=0]
+{\includegraphics[width=0.8\linewidth, angle=0]
 {images/SD-TaskUrgencyStat.eps}}
-\caption{Shop-floor workload change history} 
-\label{fig:urgency-stat} 
+\caption{Shop-floor workload change history.}
 \end{figure}
 %%
 %%----------------------------------------------------------------
 \subsection*{Ratio of active workers}
 %%
 \begin{figure}
+\label{fig:worker-stat}
 \centering
 \subfloat[Series A]
-{\includegraphics[width=0.96\linewidth, angle=0]
+{\includegraphics[width=0.8\linewidth, angle=0]
 {images/SA-Plasticity-8robots2tasks.eps}}
 %\hspace{0.2cm}
 \newline
 \subfloat[Series B]
-{\includegraphics[width=0.96\linewidth, angle=0]
+{\includegraphics[width=0.8\linewidth, angle=0]
 {images/SB-WorkerRatio.eps}}
 \newline
 \subfloat[Series C]
-{\includegraphics[width=0.96\linewidth, angle=0]
+{\includegraphics[width=0.8\linewidth, angle=0]
 {images/SC-Local50cm-Plasticity.eps}}
 %\hspace{0.2cm}
 \newline
 \subfloat[Series D]
-{\includegraphics[width=0.96\linewidth, angle=0]
+{\includegraphics[width=0.8\linewidth, angle=0]
 {images/SD-Local1m-Plasticity.eps}}
-\caption{Self-organized allocation of robots} 
-\label{fig:worker-stat} 
+\caption{Self-organized allocation of robots.} 
 \end{figure}
 %%
 From Fig. \ref{fig:worker-stat}, we can  see that in production stage, when work-load is high, many robots are active in tasks. Here active workers ratio is the ratio of those robots that work on tasks to the total number of robots $N$ of a particular experiment.   Here we can see that this ratio varies according to the shop-floor work-load changes.
@@ -939,16 +968,18 @@ From Fig. \ref{fig:worker-stat}, we can  see that in production stage, when work
 \subsection*{Shop-task performance}
 %%
 \begin{figure}
-\centering
+\label{fig:mfg-stat} 
+\begin{centering}
 \subfloat[APCD]
-{\includegraphics[width=0.96\linewidth, angle=0]
+{\includegraphics[width=0.8\linewidth, angle=0]
 {images/apcd.eps}}
 %\hspace{0.2cm}
 \newline
 \subfloat[APMW]
-{\includegraphics[width=0.96\linewidth, angle=0]
+{\includegraphics[width=0.8\linewidth, angle=0]
 {images/apmw.eps}}
-\label{fig:mfg-stat} 
+\caption{Performance of manufacturing shop-floor tasks.} 
+\end{centering}
 \end{figure}
 %%
 In our manufacturing shop-floor scenario, we have calculated the APCD and APMW as shown in Fig. \ref{fig:mfg-stat}. For Series A we have got  average production completion time 111 time-steps (555s) where sample size is (5 x 2) = 10 tasks, SD = 10 time-steps (50s). According to Eq. \ref{eqn:min-pmm}, our theoretical minimum production completion time is 50 time-steps (250s) assuming the non-stop task performance of all 8 robots with an initial task urgency of 0.5 for all 2 tasks and task urgency decrease rate $\Delta \Phi_{DEC }$ = 0.0025 per robot per time-step.  Hence, Eq. \ref{eqn:appd} gives us APCD, $\zeta$ = 1.22 which means that in Series A experiments, it took 1.22 times more time (305s) than the estimated minimum production completion time (250s). For Series B, we have got average production completion time 165 time-steps (825s) where sample size is (5 x 4) = 20 tasks, SD = 72 time-steps (360s).  Hence, Eq. \ref{eqn:appd} gives us APCD, $\zeta$ = 2.3. For Series C we have got average production completion time 121 time-steps (605s) with SD = 36 time-steps (180s). For Series D,  average production completion time is 123 time-steps (615s) with SD = 40 time-steps (200s). According to Eq. \ref{eqn:min-pmm}, our theoretical minimum production completion time is 50 time-steps (250s) as discussed in Sec \ref{afm:results}.  The values of APCD are as follows. For Series C, $\zeta$ = 1.42 and for Series D, $\zeta$ = 1.46. For both series of experiments APCD values are very close.
@@ -1087,12 +1118,12 @@ $ values: 0.40 (SD=0.08)  and 0.30 (SD=0.03), and their respective time-step $Q^
 \begin{figure}
 \centering
 \subfloat[Task-sensitization (K)]
-{\includegraphics[width=0.96\linewidth, angle=0]
+{\includegraphics[width=0.8\linewidth, angle=0]
 {images/K-Group.eps}}
 %\hspace{0.2cm}
 \newline
 \subfloat[Time-steps (Q)]
-{\includegraphics[width=0.96\linewidth, angle=0]
+{\includegraphics[width=0.8\linewidth, angle=0]
 {images/Q-Group.eps}}
 \caption{ Overall task-specialization of robot groups based on Peak task-sensitization values.}
 \label{fig:task-specialization} 
@@ -1118,12 +1149,12 @@ We have aggregated the changes in translation motion of all robots over time. Le
 \begin{figure}
 \centering
 \subfloat[Series A]
-{\includegraphics[width=0.96\linewidth, angle=0]
+{\includegraphics[width=0.8\linewidth, angle=0]
 {images/SA-8robots-DeltaTranslationStat.eps}}
 %\hspace{0.2cm}
 \newline
 \subfloat[Series B]
-{\includegraphics[width=0.96\linewidth, angle=0]
+{\includegraphics[width=0.8\linewidth, angle=0]
 {images/SB-DeltaTranslationStat.eps}}
 \newline
 \subfloat[Series C]
@@ -1131,7 +1162,7 @@ We have aggregated the changes in translation motion of all robots over time. Le
 {images/SC-DeltaTranslationStat.eps}}
 \newline
 \subfloat[Series D]
-{\includegraphics[width=0.96\linewidth, angle=0]
+{\includegraphics[width=0.8\linewidth, angle=0]
 {images/SD-DeltaTranslationStat.eps}}
 \caption{Sum of the translations of robots} 
 \label{fig:translation-stat}
@@ -1143,37 +1174,37 @@ The sum of translations of robots from our experiments are plotted in Fig. \ref{
 %%% Communication load 
 %%
 \begin{figure}
+\label{fig:signal-frequency-stat}
 \centering
 \subfloat[Series A]
-{\includegraphics[width=0.96\linewidth, angle=0]
+{\includegraphics[width=0.8\linewidth, angle=0]
 {images/SA-8Robot-SignalingFreqStat.eps}}
 %\hspace{0.2cm}
 \newline
 \subfloat[Series B]
-{\includegraphics[width=0.96\linewidth, angle=0]
+{\includegraphics[width=0.8\linewidth, angle=0]
 {images/SB-SignalingFreqStat.eps}}
 \newline
 \subfloat[Series C]
-{\includegraphics[width=0.96\linewidth, angle=0]
+{\includegraphics[width=0.8\linewidth, angle=0]
 {images/SC-Local-500cm-SignalingFreqStat.eps}}
 %\hspace{0.2cm}
 \newline
 \subfloat[Series D]
-{\includegraphics[width=0.96\linewidth, angle=0]
+{\includegraphics[width=0.8\linewidth, angle=0]
 {images/SD-Local-1m-SignalingFreqStat.eps}}
-\caption{Frequency of \texttt{TaskInfo} signalling of (a) and (b) by TPS and (c) and (d) by local peers.} 
-\label{fig:signal-frequency-stat}
+\caption{Frequency of \texttt{TaskInfo} signalling of (a) and (b) by TPS and (c) and (d) by local peers.}
 \end{figure}
 %%
 %%%% Single robot- number of peers
 \begin{figure}
-\centering
-\hspace*{0.5cm}
-\subfloat[Series C]{\includegraphics[width=0.96\linewidth]{images/Robot12-16feb-1-LocalSignals.eps}}
+\label{fig:local-single-robot-signal}
+\begin{centering}
+\subfloat[Series C]{\includegraphics[width=0.8\linewidth]{images/Robot12-16feb-1-LocalSignals.eps}}
 \newline
-\subfloat[Series D]{\includegraphics[width=0.96\linewidth]{images/Robot12-17feb-3-LocalSignals.eps}}
+\subfloat[Series D]{\includegraphics[width=0.8\linewidth]{images/Robot12-17feb-3-LocalSignals.eps}}
 \caption{\small \texttt{LoaclTaskInfo} (P2P) signals caught by Robot12 in (a) Series C and (b) Series D experiment}
-\label{fig:local-single-robot-signal} 
+\end{centering}
 \end{figure}
 %%
 Fig. \ref{fig:signal-frequency-stat} (a) and (b) shows the number of received \texttt{TaskInfo} signals by each robot in Series A and Series B experiments. Since the duration of each time-step is 50s long and TPS emits signal in every 2.5s, there is an average of 20 signals in each time-step. The overall P2P task information signals of both of these local modes are plotted in Fig. \ref{fig:signal-frequency-stat} (c) and (d). As an example of P2P signal reception of a robot,  Fig. \ref{fig:local-single-robot-signal} show the number of received signals by Robot12 in two local experiments. It states the relative difference of peers over time in two local cases.
