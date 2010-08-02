@@ -17,7 +17,7 @@
 %% \documentclass[final,3p,times]{elsarticle}
 %% \documentclass[final,3p,times,twocolumn]{elsarticle}
 %% \documentclass[final,5p,times]{elsarticle}
-%% \documentclass[draft,5p,times,twocolumn]{elsarticle}
+% \documentclass[draft,5p,times,twocolumn]{elsarticle}
 \documentclass[final,5p,times,twocolumn]{elsarticle}
 %% if you use PostScript figures in your article
 %% use the graphics package for simple commands
@@ -151,13 +151,15 @@
 \title{Self-regulated Multi-robot Task~Allocation:\\ A Taxonomy and Comparison of Centralized and Local Communication Strategies}
 %%
 %% use optional labels to link authors explicitly to addresses:
-\author[label1]{Md Omar Faruque Sarker and Torbj{\o}rn S. Dahl}
+\author[label1]{Md Omar Faruque Sarker} 
+\author[label1]{Torbj{\o}rn S. Dahl\corref{cor1}}
 \address[label1]{Cognitive Robotics Research Centre\\
 Newport Business School,
 Allt-yr-yn Campus\\ %Allt-yr-yn Avenue\\
 Newport, NP20 5DA,
-United Kingdom.\\
-Mdomarfaruque.Sarker \vline Torbjorn.Dahl@newport.ac.uk}
+United Kingdom.}
+\ead{Torbjorn.Dahl@newport.ac.uk}
+\cortext[cor1]{Corresponding author.}
 %\address[label1]{<address>}
 %
 %\author{}
@@ -212,6 +214,14 @@ The main contributions of this paper are as follows:
 \item Development of a flexible multi-robot control architecture using D-Bus inter-process communication technology.
 \item Classification of MRTA solutions based on three major axes: organization of task-allocation, interaction and communication.
 \end{itemize}
+%%
+This paper has been organized as follows.
+Section 2 reviews the related literature on key solutions to MRTA. Section 3 presents a novel taxonomy of MRTA solutions.
+Section 4 interprets the AFM in our multi-robot system. 
+Section 5 presents our MRTA solution using AFM. Section 6 describes our local P2P communication model under the LSLC strategy.
+Section 7 presents our experimental design and implementation. Section 8 describes our experimental results. 
+Section 9 discusses the performance of self-regulated MRTA under both GSNC and LSLC strategies.
+Section 10 draws conclusions and presents the possibilities for future work.
 %%===================================================================
 \section{Related work}
 \label{sec:bg}
@@ -224,9 +234,9 @@ The main contributions of this paper are as follows:
 \label{fig:mrta-classification} % Give a unique label
 \end{figure*}
 %%
-Since 90s, MRTA many robot control architectures   have been solely designed to address MRTA issue from different perspectives. Based-on the high-level design of those solutions, here we have classified them into two major categories: 1) predefined or intentional task-allocation and 2) bio-inspired self-organized task-allocation. Fig. \ref{fig:mrta-classification} illustrates our classification.
+Since 90s, many robot control architectures   have been solely designed to address the MRTA issue from different perspectives. Based-on the high-level design of those solutions, we have classified them into two major categories: 1) predefined or intentional task-allocation and 2) bio-inspired self-organized task-allocation. Fig. \ref{fig:mrta-classification} illustrates our classification.
 
-In most of the traditional multi-robot system, task allocation is done using well-defined models of tasks and environments. Here it is assumed that the system designer has the precise knowledge about tasks, robot-capabilities etc. Many flavours of the type of task-allocation can be found in the literature. Knowledge-based and multi-agent based approaches use various knowledge-based techniques to represent tasks, robot capabilities etc. One of the early well-known MRTA architecture of this category was ALLIANCE  in which each robot models the ability of team-members to perform tasks by observing their current task performances and collecting relevant task quality statistics e.g. time to complete tasks \cite{Parker1998}. Robots use these models to select a task that benefit  the group as a whole. 
+In most of the traditional multi-robot systems, task allocation is achieved using well-defined models of tasks and environments. Here it is assumed that the system designer has the precise knowledge about tasks, robot-capabilities etc. Many flavours of this type of task-allocation can be found in the literature. Knowledge-based and multi-agent based approaches use various knowledge-based techniques to represent tasks, robot capabilities etc. One of the early well-known MRTA architecture of this category was ALLIANCE  in which each robot models the ability of team-members to perform tasks by observing their current task performances and collecting relevant task quality statistics e.g. time to complete tasks \cite{Parker1998}. Robots use these models to select a task that benefit  the group as a whole. 
 
 Similar to  ALLIANCE, multi-agent based task allocation also  use both centralized and decentralized approaches for allocating tasks among  its  peers. \citet{Shen+2001} presented a detailed categorization where in a multi-agent system task allocation can be done by using various agents ranging from a central supervising agent or a few mediator agents to  all independent agents. 
 
@@ -240,7 +250,7 @@ Predefined task-allocation through few other approaches are also present in the 
 
 Task performance in self-organized approaches relies on the collective behaviours resulted from the local interactions of many simple and mostly homogeneous (or interchangeable) agents. Robots choose their tasks independently using the principles of self-organization, e.g. positive and negative feedback mechanisms, randomness. Moreover interaction among individuals and their environment are modulated by the stigmergic, local and broadcast communications.  Among many variants of self-organized task-allocation, most common type is threshold-based task-allocation \cite{Bonabeau+1999}. In this approach, a robot's decision to select a particular task depends largely on its perception of stimulus (demand for a task) and its corresponding response threshold for that task. 
 
-Under deterministic response-threshold approach, each robot has a fixed or deterministic activation threshold for each task that needs to be performed. It continuously perceives or monitors the stimulus of all tasks that reflect the relative urgencies of tasks. When a particular task-stimuli exceeds a predefined  threshold the robot starts working on that task and gradually decreases this stimuli. When the task-stimuli falls below the fixed threshold the robot abandons that task. This type of approach has been effectively applied in foraging \cite{Krieger+2000,Liu+2007}, aggregation \cite{Agassounon+2002}. This fixed response-threshold can initially be same for all robots \cite{Jones+200}, or they can be different according robot capabilities or configuration of the system \cite{Krieger+2000}. Adaptive response threshold model changes or adapts the threshold over time. Response-threshold decreases often due to performance of a task and this enables a robot  to select that particular task more frequently or in other words it learns about that task \cite{Bonabeau+1999,Agassounon+2002}. 
+Under deterministic response-threshold approach, each robot has a fixed or deterministic activation threshold for each task that needs to be performed. It continuously perceives or monitors the stimulus of all tasks that reflect the relative urgencies of tasks. When a particular task-stimuli exceeds a predefined  threshold the robot starts working on that task and gradually decreases this stimuli. When the task-stimuli falls below the fixed threshold the robot abandons that task. This type of approach has been effectively applied in foraging \cite{Krieger+2000,Liu+2007}, aggregation \cite{Agassounon+2002}. This fixed response-threshold can initially be same for all robots \cite{Jones+2000}, or they can be different according robot capabilities or configuration of the system \cite{Krieger+2000}. Adaptive response threshold model changes or adapts the threshold over time. Response-threshold decreases often due to performance of a task and this enables a robot  to select that particular task more frequently or in other words it learns about that task \cite{Bonabeau+1999,Agassounon+2002}. 
 
 Unlike deterministic approach, where robots always respond to a task-stimuli that has a largest stimulus above the threshold,  probabilistic approach offers a selection process based-on a probability distribution. Robots  always have small nonzero probabilities  for all tasks.
 
@@ -283,20 +293,20 @@ The central issue of this paper is to determine the role of communication and se
 \section{Robotic interpretation of the Attractive Field Model}
 \label{sec:afm}
 %%
-The construction of AFM has been achieved through a series of collaborative interactions among our project partners. From the biological experiments of ants colonies {\em Temnothorax albipennis} we  inferred the bottom-up rules and roles of feedback in collective performance of ants brood-sorting and nest construction after emigration to a new site. We  also analysed the observational data from the self-organized infrastructural development of an {\em eco-village} by an open community of volunteers resided in Ireland. These studies helped us to formalize the generic rules into a concrete model  and to validate this model by deploying it in our robot controllers within the context of a manufacturing shop-floor scenario. In this section, we have described the robotic validation of AFM, with a brief presentation on interpretations of AFM from different social perspectives.
+The construction of AFM has been achieved through a series of collaborative interactions among our EPSRC project partners. From the biological experiments of ants colonies {\em Temnothorax albipennis} we  inferred the bottom-up rules and roles of feedback in collective performance of ants brood-sorting and nest construction after emigration to a new site. We  also analysed the observational data from the self-organized infrastructural development of an {\em eco-village} by an open community of volunteers resided in Ireland. These studies helped us to formalize the generic rules into a concrete model  and to validate this model by deploying it in our robot controllers within the context of a manufacturing shop-floor scenario. In this section, we have described the generic framework of AFM, its relationshipship with self-organization and a brief interpretation of AFM in multi-robot systems.
 \subsection{Generic framework}
 \label{afm:framework}
-Inspired from the DOL in ants, humans and robots,  we  have proposed the following four rules that are the potential ingredients to obtain self-regulation in any social system. In this dissertation, these rules are mentioned as the {\em generic rules of self-regulation}.
+Inspired from the DOL in ants, humans and robots,  we  have proposed the following four {\em generic rules of self-regulation}.
 
-\textbf{Rule 1: Continuous flow of information.} Self-regulatory social systems establish the continuous minimum flow of information over the period of time when self-regulation can be defined. This should help to maintain at least two states of an agent: 1) receiving information about task(s) and 2) ignoring information or doing no task. The up-to-date information should reflect  the changes of the system i.e. it encodes the necessary feedback for the agents. Thus, this property will act as the basis of the state switching of agents, between these two minimum states or, among multiple states e.g. in case of multiple tasks or many sub-states of a single task.
+\textbf{Rule 1: Continuous flow of information.} Self-regulatory social systems establish the continuous minimum flow of information over the period of time when self-regulation can be defined. This should help to maintain at least two states of an agent: 1) receiving information about task(s) and 2) ignoring information or doing no task. The up-to-date information should reflect  the changes of the system i.e. it should encode the necessary feedback for the agents. Thus, this property will act as the basis of the state switching of agents, between these two minimum states or, among multiple states e.g. in case of multiple tasks or many sub-states of a single task.
 
-At the individual level, information is processed differently by each individual, and is certainly not constant nor continuous. In addition, there can be lower and upper thresholds on the amount of info necessary for DOL to take place. The time scale at the individual level is very small compared to the system level's time scale.We can approximate the propagation of information at this macro time scale as the continuous flow of information.  In the model, emphasize is given to whether the information is used e.g. stimulation to perform a task, or unused e.g. random walk.
+At the individual level, information is processed differently by each individual, and is certainly not constant nor continuous. The time scale at the individual level is very small compared to the system level's time scale.We can approximate the propagation of information at this macro time scale as the continuous flow of information.  In the model, emphasize is given to whether the information is used e.g. stimulation to perform a task, or unused e.g. random walk.
 
 \textbf{Rule 2: Sensitization}. Self-regulatory social systems allow the differentiation in the use of  (or access to) information, e.g. through sensitization or learning of some tasks. This differentiation is regulated by the characteristics of the system, e.g. the ability of the agents to learn tasks that are repeatedly performed.
 
-\textbf{Rule 3: Concurrence.} Self-regulatory social systems include concurrent access to information from different spatial positions with certain preferences. This preference is not fixed and can change with the dynamics of the system. 
+\textbf{Rule 3: Concurrence.} Self-regulatory social systems include concurrent access to information from different spatial locations with certain preferences. This preference is not fixed and can change with the dynamics of the system. 
 
-\textbf{Rule 4: Forgetting.} Self-regulatory social systems include forgetting, e.g. the ability of the agents to diminish information over time, if not used. The system determines the amount of information being released, and this changes over time. For example, specialists might have to attend an emergency situation and switch tasks that contributes to the forgetting of old task experiences. This is considered as crucial to allow flexibility in the system.
+\textbf{Rule 4: Forgetting.} Self-regulatory social systems include forgetting, e.g. the ability of the agents to diminish information over time, if not used. The system determines the amount of information being released, and this may change over time. For example, specialists might have to attend an emergency situation and switch tasks that contributes to the forgetting of old task experiences. This is considered as crucial to allow flexibility in the system.
 %%
 \begin{figure}
 \centering
@@ -304,6 +314,7 @@ At the individual level, information is processed differently by each individual
 \caption{The attractive filed model (AFM)}
 \label{fig:afm} % Give a unique label
 \end{figure}
+
 Having this general framework of self-regulatory social systems, we can now formalize AFM that will describe the properties of individual  agents and the system as a whole. In terms of networks, the model is a bipartite network, i.e. there are two different types of nodes. One set of nodes describes the sources of the attractive fields and the other set describes the agents. Links only exist between different types of nodes and they encode the flow of information so that, even if there is no direct link between two agents, their interaction is taken into account in the information flow. This is an instance of {\em weak} interaction. The strength of the field primarily depends upon the distance between the task and the agent. This relationship is represented using weighted links. Besides, there is a permanent field that represents the {\em no-task} or  option for ignoring information. The model can be mapped to a network as shown in Fig. \ref{fig:afm}. The correspondence is given below:
 \begin{enumerate}
 \item Source nodes (o) are tasks that can be divided between a number of agents.
@@ -326,11 +337,11 @@ In summary, from the above diagram of the network, we can see that each of the a
 \label{fig:afm-rules} % Give a unique label
 \end{figure*}
 
-It is interesting to note that our proposed four generic rules can be considered as  the four major foundations of a self-organized system (Fig.  \ref{fig:afm-rules}). Self-organized systems exhibit four distinct perspectives known as so-called ingredients or properties of self-organization \cite{Camazine+2001}. However, it is not clear how those properties can come into existence. Here, we have described the four underlying mechanisms that explains how self-organization can be realized in different social systems using our generic framework of self-regulation. From our understanding, we can explain it in the following ways.
+It is interesting to note that our proposed four generic rules can be considered as  the four major foundations of a self-organized system (Fig.  \ref{fig:afm-rules}). Self-organized systems exhibit four distinct perspectives known as so-called ingredients or properties of self-organization \cite{Camazine+2001}. However, it is not clear how those properties can come into existence. Here, we have described the four underlying mechanisms that explains how self-organization can be realized in different social systems using our generic framework of self-regulation.This can be explained in the following ways.
 
 Firstly, multiple interactions become meaningful when {\em continuous flow of information} occurs  by exchanging signals or cues among agents or their environment  that regulates their behaviours. This, in turn, contribute to the task-allocation  and task-switching in the social level.  In swarm intelligence literature, multiple interactions are often described as an essential ingredient of self-organization. However, interactions without definite purposes may not contribute to the self-organization.
 
-Secondly, in swarm intelligence, positive feedback has been attributed as another mechanism of  self-organization. But it is not easy to understand what creates positive feedback in a social system. Possible answers might be the characteristic of the environment e.g. ants select shorter path since density of pheromones becomes higher and thus more ants becomes attracted in that path, the gradual decrease of response-threshold of individuals which increases the probability of selecting a task etc.  To make the answer more concrete, we have explicitly attributed {\em sensitisation} or learning as a mechanism of positive feedback. There might exist other mechanisms too. But clearly sensitisation will be one of the reliable mechanisms for achieving positive feedback.
+Secondly, in swarm intelligence, positive feedback has been attributed as another mechanism of  self-organization. But it is not easy to understand what creates positive feedback in a social system. Possible answers might be the characteristic of the environment e.g. ants select shorter path since density of pheromones becomes higher and thus more ants becomes attracted in that path, by causing the gradual decrease of response-threshold of individuals. This increases the probability of selecting a task.  To make the answer more specific, we have explicitly attributed {\em sensitisation} or learning as a mechanism of positive feedback. There might exist other mechanisms too. But clearly sensitisation will be one of the reliable mechanisms for achieving positive feedback.
 
 Thirdly, similar to positive feedback, we have proposed {\em forgetting} that contributes to provide negative feedback about a task or decreasing the probability to select it. Other negative feedback mechanisms can be implemented by assigning a saturation level to each task which is also present in our model, for details see \citet{Arcaute+2008}.
 
@@ -339,10 +350,9 @@ Since emergencies do not always pop-up on request, we provide the rule of {\em c
 %%
 \subsection{Interpretation of AFM in multi-robot systems}
 \label{afm:mrs-interpretation}
-The interpretation of AFM in a multi-robot system also follows almost exactly as in generic interpretation. However, in order to make the interpretation more concrete, let us consider a manufacturing shop floor scenario, where $N$ number of autonomous mobile robots are required to attend $J$ number of shop tasks spread over a fixed area $A$. Let these tasks be represented by a set of small rectangular boxes resembling to manufacturing machines.
+The interpretation of AFM in a multi-robot system follows the above mentioned generic interpretation. Let us consider a multi-tasking environment, where $N$ number of autonomous mobile robots are required to attend $J$ number of tasks spread over a fixed area $A$. 
 
-%%
-Let $R$ be the set of robots ${r_1, r_2,...,r_n}$. Let a task $j$ has an associated task-urgency $\phi_j$ indicating its relative importance over time.
+Let a task $j$ has an associated task-urgency $\phi_j$ indicating its relative importance over time.
 If a robot attends a task $j$ in the $x^{th}$ time-step, the value of $\phi_j$ will decrease by an amount $\delta_{\phi_{INC}}$ in the $(x+1)^{th}$ time-step.
 On the other hand, if a task has not been served by any robot in the $x^{th}$ time-step, $\phi_j$ will increase by another amount  $\delta_{\phi_{DEC}}$  in $(x+1)^{th}$ time-step. Thus
 %-- Phi update
@@ -359,7 +369,7 @@ urgency of a task is updated by the following rules.
 Eq. \ref{eqn:delta-phi1} refers to a case where no robot attend to task $j$ and Eq. \ref{eqn:delta-phi2} refers to another case where $n$ robots are concurrently performing the task $j$.
 
 In order to complete a task $j$, a robot $r_i$ needs to be within a fixed boundary $D_{j}$. If a robot completes a task $j$ it learns about it and this will influence $r_i$'s likelihood of selecting that task in future, say through increasing  its sensitization to $j$ by a small amount, $k_{INC}$. Here, the variable affinity of a robot $r_i$ to task $j$ is called as its {\em sensitization} $k^{i}_{j}$. If a robot $i$ does not do a task $j$ for some time, it forgets about $j$ and $k^i_j$ is decreased, by another small amount, say $k_{DEC}$ .
-Thus a robot's task-sensitization update follows these rules.
+Thus a robot's task-sensitization is updated by following these rules.
 \begin{equation}
  If\hspace*{0.15cm}task\hspace*{0.15cm}is\hspace*{0.15cm}done:\hspace*{0.15cm}  k^i_j \rightarrow   k^i_j \hspace*{0.15cm} + \hspace*{0.15cm} k_{INC}
 \label{eqn:k-inc}
@@ -369,7 +379,7 @@ Thus a robot's task-sensitization update follows these rules.
 \label{eqn:k-dec}
 \end{equation}
 
-According to AFM, all robots will establish attractive fields to all tasks due to the presence of a system-wide continuous flow of information. The strength of these attractive fields will vary according to the dynamic distances between robots and tasks, task-urgencies and corresponding sensitizations of robots. Simplifying the generic implementation of AFM from \citet{Arcaute+2008}, we can formally encode this stimuli of attractive field as follows.
+According to AFM, all robots will establish attractive fields to all tasks due to the presence of a system-wide continuous flow of information. The strength of these attractive fields will vary according to the dynamic distances between the robots and tasks, task-urgencies and corresponding sensitizations of robots. Simplifying the generic implementation of AFM from \citet{Arcaute+2008}, we can formally encode this stimuli of attractive field as follows.
 %% S
 \begin{equation}
 S_{j}^{i} = tanh\{\frac{k_{j}^{i}}{d_{ij}+\delta } \phi _{j}\}
@@ -386,11 +396,12 @@ P_{j}^{i} = \frac{S_{j}^{i}}{\sum_{j=0}^{J} S_{j}^{i}} \hspace*{0.25cm}where,\hs
 \label{eqn:afm3}
 \end{equation}
 
-Eq. \ref{eqn:afm1} states that the stimuli of a robot $r_i$ to a particular task $j$, $S^{i}_{j}$ depends on $r_i$'s spatial distance to $j$ ($d_{ij}$), level of sensitization to $j$ ($k_{j}^{i}$), and perceived urgency of that task ($\phi _{j}$). In  Eq. \ref{eqn:afm1}, we have used a very small constant value $\delta$ to avoid division by zero, in the case when a robot has reached to a task. Since $S^{i}_{j}$ is a probability function, it is chosen as a $tanh$ in order to keep the values between 0 and 1. Eq. \ref{eqn:afm2} suggests us how we can estimate the stimuli of random walk or no-task option. This stimuli of random walk depends on the sum of stimulus of $J$ real tasks. Here, random-walk is also considered as a task. Thus the total number of tasks become $J+1$. The probability of selecting each task has been determined by a probabilistic method outlined in Eq. \ref{eqn:afm3} which states that the probability of choosing a task $j$ by robot $r_i$ is directly proportional to its calculated stimuli $ S^i_j$. Finally, let $T_a$ be the allocated time to accomplish a task. If a robot can enter inside the task boundary within $T_a$ time it waits there until $T_a$ elapsed. Otherwise it will select a different task.
+Eq. \ref{eqn:afm1} states that the stimuli of a robot $r_i$ to a particular task $j$, $S^{i}_{j}$ depends on $r_i$'s spatial distance to $j$ ($d_{ij}$), level of sensitization to $j$ ($k_{j}^{i}$), and perceived urgency of that task ($\phi _{j}$). In  Eq. \ref{eqn:afm1}, we have used a very small constant value $\delta$, called {\em delta distance}, to avoid division by zero, in the case when a robot has reached to a task. Since $S^{i}_{j}$ is a probability function, it is chosen as a $tanh$ in order to keep the values between 0 and 1. Eq. \ref{eqn:afm2} suggests us how we can estimate the stimuli of random walk or no-task option. This stimuli of random walk depends on the sum of stimulus of $J$ real tasks. Here, random-walk is also considered as a task. Thus the total number of tasks become $J+1$. The probability of selecting each task has been determined by a probabilistic method outlined in Eq. \ref{eqn:afm3} which states that the probability of choosing a task $j$ by robot $r_i$ is directly proportional to its calculated stimuli $ S^i_j$. 
+%Finally, let $T_a$ be the allocated time to accomplish a task. If a robot can enter inside the task boundary within $T_a$ time it waits there until $T_a$ elapsed. Otherwise it will select a different task.
 %%============================================================ 
 \section{AFM based task-allocation solution}
 \label{sec:mrta}
-We have designed a set of  manufacturing shop-floor scenario experiments for validating the effectiveness of our AFM in producing self-regulated MRTA.  The overall aim of this design is to analyse the various properties of task-allocation and related other issues. In this section, we have described our manufacturing shop-floor scenario and our task-allocation solution for robot-controllers.
+We have designed a set of  manufacturing shop-floor scenario experiments for validating the effectiveness of our AFM in producing self-regulated MRTA.  In this section, we have described our manufacturing shop-floor scenario and our task-allocation solution for robot-controllers.
 %%
 \begin{figure*}
 \centering
@@ -467,10 +478,10 @@ By considering $\mu = 1$, Eq. \ref{eqn:task-urgency-maint-case} will reduces to 
 %\end{multicols}
 %----------------------------------------------------------------
 \subsection{Robot-controller algorithms}
-\textbf{Task-allocation algorithm:}\\
-\textbf{Stage 1.} In the beginning of our task-allocation algorithm, we count the total number of tasks and initialize the sum of the stimuli all tasks to zero. Then for each task, we extract its pose, urgency, sensitisation from input data.\\  \textit{CalculateTaskDistance()} function calculates the Euclidian distance between a task and a the robot by taking the current robot-pose and static task-pose as the input. These values are enough to get a task's stimuli based on Eq. \ref{eqn:afm1}. In this loop finally we update \textit{TaskRecords} for using it in next task-allocation cycle. We get the random-walk task's stimuli from Eq. \ref{eqn:afm2}. It requires total number of shop-tasks and sum of their stimulus.\\
+\label{ss:rcc-alg}
+In the beginning of our task-allocation algorithm, we count the total number of tasks and initialize the sum of the stimuli all tasks to zero. Then for each task, we extract its pose, urgency, sensitisation from input data.\\  \textit{CalculateTaskDistance()} function calculates the Euclidian distance between a task and a the robot by taking the current robot-pose and static task-pose as the input. These values are enough to get a task's stimuli based on Eq. \ref{eqn:afm1}. In this loop finally we update \textit{TaskRecords} for using it in next task-allocation cycle. We get the random-walk task's stimuli from Eq. \ref{eqn:afm2}. It requires total number of shop-tasks and sum of their stimulus.\\
 
-\textbf{Algorithm 1: Self-regulated task-allocation based on AFM}
+\textbf{Algorithm 1: Self-regulated task-allocation by AFM}
 \vspace{-3mm}
 \newline
 \HRule
@@ -528,11 +539,11 @@ $DistToTask, TaskSensitization, TaskUrgency, DeltaDistance$\textbf{)}
 \vspace{-3mm} 
 \HRule\\
 %%
-\textbf{Stage 2.} In the second stage of our task-allocation algorithm, we  find the probability of each task (including random-walk) based on Eq. \ref{eqn:afm3}. Then this probability value of each task, between 0 and 1, is rounded to the closest two-digit fractions and multiplied by 100 and put into a linear scale. For example, if two tasks probability values are: 0.15 and  0.25, the probability range of first  task becomes 0 to 15 and for second task, it becomes 16 to 40.\\
-%% 
-\textbf{Stage 3.} After converting each task's probability values into a linear range, we use a random-number generator that draws a random-number between 0 and the highest value of task-probability range, say 40 for the previous example. Then this random number is compared against the task probability range of each task. For the above example, if the random-number becomes 37, our task-probability range checking function selects \textit{Task2} since 37 falls between 16 to 40. Under this probabilistic method, the task with larger probability range has a  higher chance to be selected, but low probability tasks are also got selected time-to-time.\\
+In the second stage of our task-allocation algorithm, we  find the probability of each task (including random-walk) based on Eq. \ref{eqn:afm3}. Then this probability value of each task, between 0 and 1, is rounded to the closest two-digit fractions and multiplied by 100 and put into a linear scale. For example, if two tasks probability values are: 0.15 and  0.25, the probability range of first  task becomes 0 to 15 and for second task, it becomes 16 to 40.
+ 
+After converting each task's probability values into a linear range, we use a random-number generator that draws a random-number between 0 and the highest value of task-probability range, say 40 for the previous example. Then this random number is compared against the task probability range of each task. For the above example, if the random-number becomes 37, our task-probability range checking function selects \textit{Task2}. Under this probabilistic method, the task with larger probability range has a  higher chance to be selected, but low probability tasks can also be selected time-to-time.\\
 
-\textbf{Algorithm 2: Robot's learning and forgetting of tasks based on AFM}
+\textbf{Algorithm 2: Robot's learning and forgetting of tasks}
 \vspace{-3mm}
 \newline
 \HRule
@@ -555,21 +566,19 @@ $DistToTask, TaskSensitization, TaskUrgency, DeltaDistance$\textbf{)}
 \vspace{-3mm} 
 \HRule\\
 %%
-\textbf{Robot learning and forgetting algorithm:}\\
-Algorithm 4.2 lists the pseudo-code for updating the robot's task-sensitization values. Along with previously mentioned \textit{TaskRecords}, and  \textit{SelectedTaskID}, it takes two other inputs: \textit{LeranRate} ($\Delta k_{INC} $) and \textit{ForgetRate} ($\Delta k_{INC} $) as outlined in Eq. {eqn:k-inc} and {eqn:k-dec} respectively.  In addition to that it also keep the value of task-sensitization between the fixed limit of 0 and 1.
+
+Algorithm 2 lists the pseudo-code for updating the robot's task-sensitization values. Along with previously mentioned \textit{TaskRecords}, and  \textit{SelectedTaskID}, it takes two other inputs: \textit{LeranRate} ($\Delta k_{INC} $) and \textit{ForgetRate} ($\Delta k_{INC} $) as outlined in Eq. {eqn:k-inc} and {eqn:k-dec} respectively.  In addition to that it also keep the value of task-sensitization between the fixed limit of 0 and 1.
 %==============================================================
 \section{Local P2P communication model (LPCM)}
-From our understanding of different kinds of communication strategies of biological social systems, this is obvious that an effective LSLC strategy can greatly enhance the self-regulated MRTA.  In fact, most  researchers in the field of swarm robotics now acknowledge that LSLC is the one of the most critical components of a swarm robotic system, as global behaviours emerges from local interactions among the individuals and their environment.
+AFM requires a system-wide continuous flow of information which can be realized using both centralized GSNC (Fig. \ref{fig:ccm} ) and local LSLC communication strategies. In most swarm robotic research LSLC is considered as the one of the most critical components of self-regulated MRTA, as the global behaviours emerges from the local interactions among the individuals and their environment. In this study, we have used the concepts of pheromone active-space of ants to realize our simple LSLC scheme. From the biological study of ant colonies we know that ants use various chemical pheromones with different active spaces (or communication ranges) to communicate different messages with their group members \cite{Holldobler1990}. Ants sitting near the source of this pheromone sense and respond quicker than others who wander in far distances. Thus both communication and sensing occurs within a small communication range\footnote{Although, generally communication and sensing are two different issues, however within the context of our self-regulated MRTA, we have broadly viewed sensing as the part of communication process, either implicitly via environment, or explicitly via local peers.}. We have used this concept of communication range or locality in our LPCM.
 
-In this study, we have used the concepts of pheromone active-space of ants to realize our simple LSLC scheme. As discussed in Sec. \ref{bg:bio-comm}, ants use various chemical pheromones with different active spaces (or communication ranges) to communicate different messages with their group members. Ants sitting near the source of this pheromone sense and respond quicker than others who wander in far distances. Thus both communication and sensing occurs within a small communication range\footnote{Although, generally communication and sensing are two different issues, however within the context of our self-regulated DOL, we have broadly viewed sensing as the part of communication process, either implicitly via environment, or explicitly via local peers.}. We have used this concept of communication range or locality in our LPCM.
-
-In order to find a suitable  range (or radius) of communication and sensing, some researchers have argued that this range can be set at design time based on the capabilities of robots \cite{Agassounon+2002}. Some other researchers have argued that they can be dynamically varied over time depending on the  cost of communication and sensing, e.g. density of peers, ambient noise in the communication channels, or even by aiming for maximizing information spread  \cite{Yoshida+2000}. In this study, we have followed the former approach as our robots do not have the precise hardware to dynamically vary their communication and sensing ranges.
+In order to find a suitable  range (or radius) of communication and sensing, some researchers have argued that this range can be set at design time based on the capabilities of robots \cite{Agassounon+2002}. Some other researchers have argued that they can be dynamically varied over time depending on the  cost of communication and sensing, e.g. density of peers, ambient noise in the communication channels, or even by aiming for maximizing information spread  \cite{Yoshida+2000}. In this study, we have followed the former approach as our robots do not have the precise hardware to dynamically vary their communication and sensing ranges. Below we describe the general characteristics and implementation algorithms of LPCM.
 %%---------------------------------------------------------
 \subsection{General characteristics of LPCM}
 Our LPCM relies on the local P2P communications among robots. we have assumed that robots can communicate to its nearby peers within a certain communication radius, $r_{comm}$ and they can sense tasks within another radius $r_{task}$. They exchange communication signals reliably without any significant loss of information. A robot $R_1$ is a {\em peer} of robot $R_2$, if spatial distance between $R_1$ and $R_2$ is less than this $r_{comm}$.
 Similarly, when a robot comes within this $r_{task}$ of a task, it can sense the status of this task. Although the communication and sensing  range can be different based on robot capabilities, we have considered them same for the simplicity of our implementation.
 
-Local communication can also give robots similar task information as in centralized communication. In this case, it is not necessary for each robot to communicate with every other robot to get information on all tasks. Since robots can random walk and explore the environment we assume that for a reasonably high robot-to-space density, all task will be known to all robots after an initial exploration period. In order to update the urgency of a task, robots can estimate the number of robots working on a task in two ways:  by either using their sensory perception (e.g., camera) or  doing local P2P communication with others.
+Local communication can also give robots similar task information as in centralized communication. In this case, it is not necessary for each robot to communicate with every other robot to get information on all tasks. Since robots can random walk and explore the environment we assume that for a reasonably high robot-to-space density, all task will be known to all robots after an initial exploration period. In order to update the urgency of a task, robots can estimate the number of robots working on a task in two ways:  by either using their sensory perception (e.g. on-board camera) or  doing local P2P communication with others.
 
 We characterize our communication model in terms of three fundamental issues of communication \cite{Gerkey+2001}. 
 \begin{enumerate}
@@ -625,37 +634,37 @@ In terms of target recipients, our model differs from a traditional publish/subs
 %\HRule\\
 Within the context of our self-regulated MRTA experiments under AFM,  we have formalized the following three aspects of LPCM into an implementation algorithm. 
 \begin{enumerate}
-\item Local sensing of peers and tasks.
-\item Listening to the task-information peer signals.
-\item Emitting local task-information signals to peers.
+\item Sensing the presence of the local peers and task, if any.
+\item Listening to the task-information signals from local peers.
+\item Emitting local task-information signals to local peers.
 \end{enumerate}
 %%
-From Algorithm 5.1, we see that a robot controller is initialized with its specific $RobotID$ and default values of $r_{comm}$ and $r_{task}$ that correspond to the robot's communication and sensing range respectively. We have assumed that these values are same for all robots and for all tasks. Initially a robot has no information about tasks, i.e. {$TaskInfoDB$} is empty. It has neither received nor transmitted any information yet, i.e. corresponding data buffers, $ListeningBuffer$ and $EmissionBuffer$, are also empty. Upon sensing a task, robot determines the task's pose and urgency of that task (according AFM rules described in Sec. \ref{afm:mrs-interpretation}). This is not strictly necessary as this information can also be available from alternate sources, e.g. via communicating with a TPS which is discussed later.
+From Algorithm 3, we see that a robot controller is initialized with its specific $RobotID$ and default values of $r_{comm}$ and $r_{task}$ that correspond to the robot's communication and sensing range respectively. We have assumed that these values are same for all robots and for all tasks. Initially a robot has no information about tasks, i.e. {$TaskInfoDB$} is empty. It has neither received nor transmitted any information yet, i.e. corresponding data buffers, $ListeningBuffer$ and $EmissionBuffer$, are also empty. Upon sensing a task, robot determines the task's pose and urgency of that task. This is not strictly necessary as this information can also be available from alternate sources, e.g. via communicating with a TPS which is discussed later.
 
 Robot controller then executes the \textbf{UpdateTaskInfoDB()} that modified the robot's information about the corresponding task. In second step, robot senses its nearby peers located within $r_{comm}$ and add them in $RobotPeers$. The potential textit{LocalTaskInfo} signal reception from a  peer again triggers the \textbf{UpdateTaskInfoDB()} function. In the last step, robot emits its own task information as a \textit{LocalTaskInfo} signal to its peers. Finally it cleans up the current values of $RobotPeers$ for running a new cycle.
 %====================================================================
 \section{Experiments}
 \label{sec:expt}
 %%
-We have designed a set of manufacturing shop-floor scenario experiments for validating the effectiveness of our AFM in producing self-regulated MRTA. The overall aim of this experiments is to compare the various properties of self-regulated MRTA under GSNC and LSLC strategies. These experiments are grouped into four series labelled using the following letters: A, B C and D. Series A and B experiments are done using a centralized communication system under GSNC strategy and Series C and D experiments are carried out using an emulated local P2P communication under LSLC stategty. Below we describe the observables, parameters and implementation of our experiments.
+The overall aim of our MRTA experiments is to compare the various properties of self-regulated MRTA under both GSNC and LSLC strategies. These experiments are grouped into four series labelled using the following letters: \textit{A, B, C} and \textit{D}. Series A and B experiments are done using a centralized communication system under GSNC strategy and Series C and D experiments are carried out using an emulated local P2P communication under LSLC stategty. Below we describe the observables, parameters and implementation of our experiments.
 %----------------------------------------------------------
 \subsection{Observables}
 \textbf{Plasticity:} %As we have discussed in Sec. \ref{bg:def:dol},  
-Self-regulated DOL can be characterised by plasticity and task-specialization, in both macroscopic and microscopic levels. Within manufacturing shop-floor context, plasticity refers to the collective ability of the robots to switch from doing no-task option (random-walking) to doing a task (or vice-versa) depending on the work-load present in the system. Here we expect to see that most of the robots would be able to engage in tasks when there would be high workloads (or task-urgencies) during PMM. Similarity, when there would be low workload in case of MOM only a few robots would do the task, rest of them would either be idle (not doing any task) or perform a random-walk.  The changes of task-urgencies and the ratio of robots engaged in tasks can be good metrics to observe plasticity in MRTA.\\
-%%
-\textbf{Task-specialization:} Under heavy work-load most of the robots should attend to tasks. But self-regulated DOL is always accompanied with task-specializations of agents. That means that few robots will be more active than others. From AFM, we can see that after doing a task a few times, a robot will soon be sensitized to it. Therefore, from the raw log of task-sensitization of robots, we can be able to find the pattern of task-sensitization of robots per task basis. If a few robots specializes on a particular task that will help to reduce traffic near the task and improves overall efficiency of the system. Thus, at the end of our production cycle in manufacturing shop-floor scenario, we can count the percentage of robots specializes on each task in our experiments.\\
-%%
-\textbf{Quality of task-performance:} As discussed in Sec. \ref{afm:vms} we can measure the quality of MRTA from the APCD. It first calculates the ideal minimum production time and then finds the delay in production process from the actual production completion data. Thus this will indicate how much more time is  spent in the production process due to the self-regulation of robots in this distributed task-allocation scheme.  In order to calculate APCD, we can find the production completion time for each task from the raw log of task-urgency and make an average from them.\\
-%%
-\textbf{Robustness:} In order to see if our system can respond to the gradually increasing workloads,  we can measure APMW within the context of our manufacturing shop-floor scenario. This can show the robustness of our system where a task can be  unattended for long time. When a task is not being served by any robot for some time we can see that its urgency will rise and robots will respond to this dynamic demand. For measuring APMW we need only the task-urgency data.\\
-%%
-\textbf{Flexibility:} From the design of AFM, we know that robots that are not doing a task will be de-sensitized to it or forget that task. So at an overall low work-load (or task urgency), less robots will do the tasks and hence less robots will have the opportunity to learn tasks. From the shop-floor work-load data, we can confirm the presence of flexibility in MRTA.\\
-%%
-\textbf{Energy-efficiency:} In order to characterize the energy-efficiency in MRTA we can log the pose data of each robot that can give us the total translations occurred by all robots in our experiments. This can give us a rough indication of energy-usage by our robots. \\
-%%
+Self-regulated MRTA is often characterised by the plasticity and task-specialization, in both macroscopic and microscopic levels. Within our manufacturing shop-floor context, plasticity refers to the collective ability of the robots to switch from doing no-task option (random-walking) to doing a task (or vice-versa) depending on the work-load present in the system. Here we expect to see that most of the robots would be able to engage in tasks when there would be high workloads (or task-urgencies) during PMM. Similarity, when there would be low workload in case of MOM only a few robots would do the task, rest of them would either be idle (not doing any task) or perform a random-walk.  The changes of task-urgencies and the ratio of robots engaged in tasks can be good metrics to observe plasticity in MRTA.
+
+\textbf{Task-specialization:} Self-regulated MRTA is generally accompanied with task-specializations of agents. That means that few robots will be more active than others. From the interpretation of AFM, we can see that after doing a task a few times, a robot will soon be sensitized to it. Therefore, from the raw log of task-sensitization of robots, we can be able to find the pattern of task-sensitization of robots per task basis.
+
+\textbf{Quality of task-performance:} As discussed in Sec. \ref{afm:vms} we can measure the quality of MRTA from the APCD. It first calculates the ideal minimum production time and then finds the delay in production process from the actual production completion data. Thus this will indicate how much more time is  spent in the production process due to the self-regulation of robots in this distributed task-allocation scheme.  In order to calculate APCD, we can find the production completion time for each task from the raw log of task-urgency and make an average from them.
+
+\textbf{Robustness:} In order to see if our system can respond to the gradually increasing workloads,  we can measure APMW within the context of our manufacturing shop-floor scenario. This can show the robustness of our system. When a task is not being served by any robot for some time we can see that its urgency will rise and robots will respond to this dynamic demand. For measuring APMW we need only the task-urgency data.
+
+\textbf{Flexibility:} From the design of AFM, we know that robots that are not doing a task will be de-sensitized to it or forget that task. So at an overall low work-load (or task urgency), less robots will do the tasks and hence less robots will have the opportunity to learn tasks. From the shop-floor work-load data, we can confirm the presence of flexibility in MRTA.
+
+\textbf{Energy-efficiency:} In order to characterize the energy-efficiency in MRTA we can log the pose data of each robot that can give us the total translations occurred by all robots in our experiments. This can give us a rough indication of energy-usage by our robots. 
+
 \textbf{Information flow:} Since AFM requires a system-wide continuous flow of information, we can measure the communication load to bench-mark our implementation of communication system. This bench-mark data can be used to compare among various communication strategies. Here we can measure  how much task-related information, i.e. task-urgency, location etc. are sent to the robots at each time step. This  amount of information or communication load can be constant or variable depending on the design of the communication system.
-%%
-\textbf{Scalability:} In order to see the effects of scaling on MRTA, we have designed two series of experiments. {\em Series A} corresponds to a small group where we have used 8 robots, 2 tasks under an arena of 2 $m^2$. We have doubled these numbers in {Series B}, i.e. 16 robots, 4 tasks under an arena of 4 $m^2$. This proportional design can give us a valuable insight about the effects of scaling on self-regulated MRTA. All of the above metrics of Set A and Set B can be compared to find those scalability effects.
+
+\textbf{Scalability:} In order to see the effects of scaling on MRTA, we have designed two group of experiments. Series A corresponds to a small group where we have used 8 robots, 2 tasks under an arena of 2 $m^2$. We have doubled these numbers in Series B, C and D, i.e. 16 robots, 4 tasks under an arena of 4 $m^2$. This proportional design can give us a valuable insight about the effects of scaling on self-regulated MRTA. 
 
 Thus, in order to observe the above properties of self-regulated MRTA , we have designed our experiments to record the following  observables in each time-step.
 \begin{enumerate}
@@ -675,7 +684,7 @@ Thus, in order to observe the above properties of self-regulated MRTA , we have 
 \hline Total number of robots ($N$) & \hspace*{0.1cm} 8 $\mid$ 16\\
 \hline Total number of tasks ($M$) & 2 $\mid$ 4\\
 \hline Experiment area ($A$) & 2 $m^2$ $\mid$  4 $m^2$\\
-\hline Initial production work-load/machine ($\Omega_{j}^{p}$) & 100 unit \\
+\hline Initial production work load/machine ($\Omega_{j}^{p}$) & 100 unit \\
 \hline Task urgency increase rate ($\Delta\phi_{INC}$) & 0.005\\
 \hline Task urgency decrease rate ($\Delta\phi_{DEC}$) & 0.0025\\
 \hline Initial sensitization ($K_{INIT}$) & 0.1\\
@@ -694,9 +703,9 @@ Thus, in order to observe the above properties of self-regulated MRTA , we have 
 \end{figure}
 %------------------------------------------------------------
 \subsection{Parameters}
-Table \ref{table:params} lists a set of essential parameters of our experiments. We intend to have a set-up that is relatively complex, i.e., with a high number of robots and tasks in a large area. The diameter of the marker of our e-puck robot is 0.08m. So, if we put 4 robots in an area of one square meter, this will give us a robot-occupied-space to free-space ratio of about 1:49 per square meter. This ratio reasonable in order to allow the robots to move at a speed of 5 cm/sec without much interference to each other. 
+Table \ref{table:params} lists a set of essential parameters of our GSNC startegy based experiments (Series A and B). We intend to have a set-up that is relatively complex, i.e., with a high number of robots and tasks in a large area. The diameter of the marker of our e-puck robot is 0.08m (Fig \ref{fig:e-puck}). So, if we put 4 robots in an area of one square meter, this will give us a robot-occupied-space to free-space ratio of about 1:49 per square meter. This ratio reasonable in order to allow the robots to move at a speed of 5 cm/sec without causing much interference to each other. 
 
-The initial values of task urgencies correspond to 100 units of production work-load without any maintenance work-load as outlined in Eq. \ref{eqn:task-urgency-prod-init}. We choose a limit of 0 and 1, where 0 means no urgency and 1 means maximum urgency. Same rule applies to sensitisation, where 0 means no sensitisation and 1 means maximum sensitisation. This also implies that if sensitization is 0, task has been forgotten completely. On the other hand, if sensitization is 1, the task has been learnt completely. We choose a default sensitization value of 0.1 for all tasks. The following relationships are maintained for selecting task-urgency and sensitization parameters.
+The initial values of task urgencies correspond to 100 units of production work-load without any maintenance work-load as outlined in Eq. \ref{eqn:task-urgency-prod-init}. We choose a limit of 0 and 1, where 0 means no urgency and 1 means maximum urgency. Same rule applies to sensitisation, where 0 means no sensitisation and 1 means maximum sensitisation. This also implies that if sensitization is 0, task has been forgotten completely. On the other hand, if sensitization is 1, the task has been learnt completely. We choose a initial sensitization value of 0.1 for all tasks. The following relationships are maintained for selecting task-urgency and sensitization parameters.
 \begin{equation}
 \Delta\phi_{INC} = \frac{\Delta\phi_{DEC} \times N}{2 \times M}
 \label{eqn:task-urgency}
@@ -712,8 +721,8 @@ Eq. \ref{eqn:task-urgency} establishes the fact that task urgency will increase 
 Eq. \ref{eqn:sensitization} suggests that the learning will happen much faster than the forgetting. The difference in these two rates is based on the fact that faster leaning gives a robot more chances to select a task in next time-step and thus it becomes more specialized on it.
 
 %% local
-Our local communication experiments follow the similar design of experimental parameters and observables of Series B experiments as outlined above. Table \ref{table:local-expt-design} highlights the major parameters of these experiments. Here, we can see that there are two new parameters in Series C and Series D experiments, i.e. communication and sensing ranges. For the sake of simplicity, both of these values are kept same in both series of experiments.
-Series D uses larger ranges that enables our robot to capture more task information at a time. That is similar to  ``global sensing and global communication'' of information by the robots, since in a large group of robots, it is not practical that a robot communicates with all other robots. On the other hand, Series C uses the half of the range values of Series D. This enables our robots to capture less information, that mimics a true LSLC strategy. The main motivation for using two different ranges is to find any significant difference in performance from these two types of experiments.
+Our LSLC startegy based experiments (Series C and D) follow the similar design of experimental parameters and observables of Series B experiments as outlined above. Table \ref{table:local-expt-design} highlights the major parameters of these experiments. For the sake of simplicity, the communication and sensing range values are kept same in both series of experiments.
+Series D uses larger ranges that enables our robot to capture more task information at a time. That is similar to  ``global sensing and global communication'' of information by the robots, since in a large group of robots, it is not often practical that a robot communicates with all other robots. On the other hand, Series C uses the half of the range values of Series D. This enables our robots to capture less information, that mimics a true LSLC strategy. 
 %%
 \begin{table}
 \caption{Experimental parameters of Series C \& D experiments}
@@ -738,7 +747,7 @@ Series D uses larger ranges that enables our robot to capture more task informat
 \begin{figure*}
 \centering
 \subfloat[E-puck robot]{\includegraphics[width=0.3\linewidth,height=5cm]{images/epuck-happy.eps}} 
-\hspace{0.5cm}
+\hspace{1cm}
 \subfloat[A binary-coded marker]{\includegraphics[width=0.3\linewidth,height=5cm]{images/20-31412.eps}}
 \caption{(a) The e-puck robot with SwisTrack marker on top, (b) A binary coded marker that can be tracked by an overhead camera  using SwisTrack.}
 \label{fig:e-puck}
@@ -759,38 +768,38 @@ However, in this study, we are particularly interested to find the suitable comm
 
 Fig. \ref{fig:ccm} shows how three robots are attracted to two different tasks and their communications with TPS. Here although the robots are selecting task independently based-on the strength of their attractive fields to different tasks, they are depended on the TPS for task-information.
 
-This centralized communication system can be converted into a decentralized one where robots can use local observation and communication with peers about tasks to estimate task-urgencies. In Chapter \ref{local-comm}, we present an emulation of this scenario where robots do not depend entirely on TPS for estimating task-urgencies, instead they get task information from TPS when they are very close to a task (inside a pre-defined task-boundary) or from local peers who know about a task via TPS.
+This centralized communication system can be converted into a decentralized one where robots can use local observation and communication with peers about tasks to estimate task-urgencies. Under LSLC strategy, we present an emulation of this scenario where robots do not depend entirely on TPS for estimating task-urgencies, instead they get task information from TPS when they are very close to a task (inside a pre-defined task-boundary) or from local peers who know about a task via TPS.
 %%
 \begin{figure*}
 \centering
 \hspace*{1cm}
 %\includegraphics[width=10cm,height=7.5cm,angle=0]
 \subfloat[]{
-\includegraphics[width=0.7\linewidth,angle=0]
+\includegraphics[width=0.65\linewidth,angle=0]
 {./images/RILSnapshot1.eps}}
 \newline
 \subfloat[]{
-\includegraphics[width=0.7\linewidth]
+\includegraphics[width=0.65\linewidth]
 {./images/RILCamcorderSnapshot1.eps}}
 \caption{Our experiment arena captured by (a) a GigE4900C camera mounted on 3m high ceiling (b) an ordinary camcorder.}
 \label{fig:expt-arena} % Give a unique label
 \end{figure*}
 %%
 
-In our current implementation, instead of doing any real work with powerful robots, we emulate a mock manufacturing shop-floor scenario that requires the robot only to travel among tasks. As discussed in Sec. \ref{expt-tools:btcom}, our robots do not have on-board CPU, they need a host PC to  control them using BTCom communication protocol. Thus our host-PC  runs one RCC for each physical robot. These RCCs also rely upon SwisTrack multi-robot tracking system for updating their real-time pose. So although our MRTA solution is distributed by design, we primarily used a centralized approach to implement it due to the limitations of our robots and the convenience of implementation. Below we describe the actual implementations of these components, i.e. D-Bus communication interfaces and detail implementations of TPS and RCC.
+In our current implementation of multi-robot system, instead of doing any real work with powerful robots, we emulate a mock manufacturing shop-floor scenario that requires the robot only to travel among tasks. As our robots do not have on-board CPU, they need a host PC to  control them using BTCom communication protocol \cite{Mondada+2009}. Thus our host-PC runs one \acf{RCC} for each physical robot. These RCCs also rely upon SwisTrack multi-robot tracking system \cite{Lochmatter+2008} for updating their real-time pose. So although our MRTA solution is distributed by design, we primarily used a centralized approach to implement it due to the limitations of our robots and the convenience of implementation. Table \ref{table:dbus-signals} list the D-Bus communication interfaces among our software components. Below we describe the actual implementations of these components. 
 %%
 \begin{table*}
 \caption{D-Bus signal interfaces among software components.}
-\label{table:dbus-interfaces}
+\label{table:dbus-signals}
 \begin{center}
-\begin{tabular}{|l|l|l|p{2in}|}
-\hline D-Bus Signal &  Source & Destination  & Payload \\ 
-\hline RobotPose & SwisTrack & RCC  & Robot-pose x, y and oientation (theta). \\ 
-\hline TaskInfo & TPS & RCC & An array of all tasks' information each of them contains: task-id, time-stamp, task pose (x,y), task-urgency. \\ 
-\hline RobotStatus & RCC & TPS & Robot's id and its currently executing task's id. \\ 
-\hline RobotPeers & SwisTrack & RCC & List of IDs of peers of each robot within its communication range.  \\ 
-\hline TaskNeighbour & SwisTrack & TPS &  List of IDs of robots that are co-located within a task's perception range.\\ 
-\hline LocalTaskInfo & RCC & RCC & An array of known tasks' information.\\
+\begin{tabular}{|l|l|l|p{1.8in}|p{0.5in}|}
+\hline D-Bus Signal &  Source & Destination  & Payload & Used in\\ 
+\hline RobotPose & SwisTrack & RCC  & Robot-pose x, y and oientation theta. & GSNC \& LSLC\\ 
+\hline TaskInfo & TPS & RCC & An array of all tasks' information each of them contains: task-id, time-stamp, task pose (x,y), task-urgency. & ,, \\ 
+\hline RobotStatus & RCC & TPS & Robot's id and its currently executing task's id. & ,, \\ 
+\hline RobotPeers & SwisTrack & RCC & List of IDs of peers of each robot within its communication range. & LSLC \\ 
+\hline TaskNeighbour & SwisTrack & TPS &  List of IDs of robots that are co-located within a task's perception range. & ,,\\ 
+\hline LocalTaskInfo & RCC & RCC & An array of known tasks' information. & ,,\\
 \hline 
 \end{tabular}
 \end{center} 
@@ -813,7 +822,7 @@ In our current implementation, instead of doing any real work with powerful robo
 \label{fig:swistrack-screenshot} 
 \end{figure*}
 %%
-Fig. \ref{fig:concrete-arch} outlines the placements of various software components of our multi-robot control architecture based on their functional characteristics and processing requirements \cite{Sarker2010control}. As shown in Fig. \ref{fig:RIL-Expt-Setup1}, each e-puck robot is controlled by a corresponding RCC. A RCC sends commands to the robot's firmware using BTCom protocol. A RCC consists of several Python modules. Each module represents a sub-process under a main process that ties all of them together by using Python's Multiprocessing module. Below we have described the detail design and implementation of these Python modules. All code are publicly accessible through GitHub repository\footnote{git://@github.com/roboshepherd/EpuckCentralizedClient.git,    
+Fig. \ref{fig:concrete-arch} outlines the placements of various software components of our multi-robot control architecture based on their functional characteristics and processing requirements \cite{Sarker2010control}. As shown in Fig. \ref{fig:RIL-Expt-Setup1}, each e-puck robot is controlled by a corresponding RCC. A RCC sends commands to the robot's firmware using BTCom protocol. A RCC consists of several Python modules. Each module represents a sub-process under a main process that ties all of them together by using Python's Multiprocessing module\footnote{http://docs.python.org/library/multiprocessing.html}. Below we have described briefly the implementation of these Python modules. All code are publicly accessible through GitHub repository\footnote{git://@github.com/roboshepherd/EpuckCentralizedClient.git,    
 \textit{hash:}7e3af8902e64db3fa59e}.
 %%
 %%
@@ -834,13 +843,11 @@ Fig. \ref{fig:concrete-arch} outlines the placements of various software compone
 \label{table:data-mgr}
 \end{table} 
 
-In the implementation of RCC, we have employed a data and event management process called \texttt{DataManager} that acts as a data warehouse and event management centre for RCC. Table \ref{table:data-mgr} list the major data structures and corresponding event channels of \texttt{Data Manager}. Here \texttt{mRobotID}, an integer type data,  represents the e-puck robot's marker ID (converted to decimal number from the binary code) which uniquely identifies a robot from others. This is given as a command-line argument during RCC start-up. We have used Python {\em dictionary} type data structure for all other data structures that are managed by the Python Multiprocessing's {\em Manager()} object. Any other process e.g. \texttt{TaskSelector}, can access \texttt{DataManager}'s data and event channels locally  by taking a reference of \texttt{DataManager} object from the Multiprocessing's parent process. \texttt{DataManager} object also runs a tiny TCP/IP server process powered by the Multiprocessing's {\em RemoteManager()} interface. So, if necessary,  any other process e.g. \texttt{DeviceController}, can access all of the DataManger's data structures and event channels remotely by instantiating a proxy client  that connects to this embedded TCP/IP server of \texttt{DataManager} and  fetch data from it.
+In the implementation of RCC, we have employed a data and event management process called \texttt{DataManager} that acts as a data warehouse and event management centre for RCC. Table \ref{table:data-mgr} list the major data structures and corresponding event channels of \texttt{Data Manager}. Here \texttt{mRobotID} represents the e-puck robot's marker ID (converted to decimal number from the binary code) which uniquely identifies a robot from others.  We have used Python {\em dictionary} type data structure for all other data structures that are managed by the Python Multiprocessing's {\em Manager()} object.  \texttt{DataManager} object also runs a tiny TCP/IP server process powered by the Multiprocessing's {\em RemoteManager()} interface. So, if necessary,  any other process can access all of the DataManger's data structures and event channels remotely by instantiating a proxy client  that connects to this TCP/IP server of \texttt{DataManager}.
 
-We have employed two D-Bus communication modules in RCC: \texttt{SignalListener} and \texttt{SignalEmitter}, that are responsible for listening and emitting D-Bus signals respectively. \texttt{SignalListener}, has subscribed to D-Bus session bus for listening  to D-Bus \texttt{RobotPose} and \texttt{TaskInfo} signals that are discussed above. \texttt{SignalListener} uses two call-back functions that handles both of these signal reception events. For example when SwisTrack emits \texttt{RobotPose} signal  the corresponding handler function becomes activated and receive this \texttt{RobotPose} signal's payload data (i.e. x, y , theta). It then makes a copy of these data  to \texttt{DataManager}'s \texttt{mRobotPose} data structure and label them as dictionary key/value pairs, where x, y, theta etc. becomes the dictionary keys. In addition to copying the data, \texttt{SignalListener} also set the \texttt{DataMager}'s   \texttt{mRobotPoseAvailable} event to {\em \texttt{True}}. In consequence, those processes that are waiting for \texttt{mRobotPose} data, e.g. \texttt{TaskSelector}, finishes their waiting and try to access this newly arrived \texttt{mRobotPose} data. After reading to this data they marks this \texttt{mRobotPoseAvailable} event as  {\em \texttt{False}} so that this pose data can be treated as outdated and waiting processes can wait for new pose update. This strategy ensures the consistent and real-time data read/write by all subscribing processes.
+We have employed two D-Bus communication modules in RCC: \texttt{SignalListener} and \texttt{SignalEmitter}, that are responsible for listening and emitting D-Bus signals respectively. \texttt{SignalListener}, has subscribed to D-Bus session bus for listening  to D-Bus \texttt{RobotPose} and \texttt{TaskInfo} signals that are discussed above. \texttt{SignalEmitter} makes use of Python {\em sched} module that enables it to check periodically \texttt{mSelectedTaskStarted} event and emit a robot's task status containing signal, \texttt{RobotStatus}. 
 
-Similar to the \texttt{SignalListener}, \texttt{SignalEmitter} makes use of Python\\ {\em sched} module that enables it to check periodically \texttt{mSelectedTaskStarted} event and emit a robot's task status containing signal, \texttt{RobotStatus}.  This is done by subscribing to the  \texttt{mSelectedTaskStarted} event channel. When a robot executes a task, this event channel becomes  activated by\\ \texttt{DeviceController} (discussed below).\\ At a very close time, \texttt{SignalEmitter} gets this event update and finishes waiting for this event. It then picks up the \texttt{mSelectedTask} data from \texttt{DataManager} and prepare the \texttt{RobotStatus} signal and emits it to the session bus. Upon a successful emission event, it clears \texttt{ mSelected TaskStarted} event so that only one \texttt{RobotStatus}  signal is emitted per task-cycle.
-
-\texttt{TaskSelector} works in the application layer of our multi-robot control architecture. It plugs the AFM algorithms into RCC to select task based-on \texttt{DataManger}'s event notifications , i.e. \texttt{mRobotPoseAvailable} and\\ \texttt{mTaskInfoAvailable} and upon running task-allocation algorithm it updates  \texttt{mSelectedTask} (and \texttt{mSelectedTaskAvailable}) with selected task information.
+\texttt{TaskSelector} works in the application layer of our multi-robot control architecture. It plugs the AFM algorithms (Sec. \ref{ss:rcc-alg}) into RCC to select task based-on \texttt{DataManger}'s event notifications, i.e. \texttt{mRobotPoseAvailable} and \texttt{mTaskInfoAvailable} and upon running task-allocation algorithm it updates  \texttt{mSelectedTask} (and \texttt{mSelectedTaskAvailable}) with selected task information.
 %%
 \begin{figure*}
 \centering
@@ -851,39 +858,31 @@ Similar to the \texttt{SignalListener}, \texttt{SignalEmitter} makes use of Pyth
 \label{fig:dc-states} % Give a unique label
 \end{figure*}
 
-The final code that moves a robot to desired task location or make random-walk resides in \texttt{DeviceController} module. This is also a separate sub-process of our Python Multiprocessing based mother process. It waits for the \texttt{DataManager}'s \texttt{mRobotPoseAvailable} and \texttt{mSelectedTaskAvailable} events. When \texttt{TaskSelector} sets  \texttt{mSelectedTaskAvailable} event,\\ \texttt{DeviceController} sub-process checks the Bluetooth link-connectivity with physical robot. In case of successful task start-up it sets\\ \texttt{mSelectedTaskStarted} event that, in turn, triggers \texttt{SignalEmitter} to emit a D-Bus signal publishing the robot's currently engaged task. The full state switching policies of\\ \texttt{DeviceController} is illustrated in Fig. \ref{fig:dc-states}. Externally we can observe two distinct physical state of a robot: it is either idle or in motion (separated by dotted line). These two physical states are mapped into several logical steps:\\
-%%
+The final code that moves a robot to desired task location or make random-walk resides in \texttt{DeviceController} module. It waits for the \texttt{DataManager}'s \texttt{mRobotPoseAvailable} and \texttt{mSelectedTaskAvailable} events. When \texttt{TaskSelector} sets  \texttt{mSelectedTaskAvailable} event \texttt{DeviceController} sub-process checks the Bluetooth link-connectivity with physical robot. In case of successful task start-up it sets \texttt{mSelectedTaskStarted} event that, in turn, triggers \texttt{SignalEmitter} to emit a D-Bus signal publishing the robot's currently engaged task. The full state switching policies of \texttt{DeviceController} is illustrated in Fig. \ref{fig:dc-states}. Externally we can observe two distinct physical state of a robot: it is either idle or in motion (separated by dotted line). These two physical states are mapped into several logical steps as described below.
+
 \textbf{DeviceUnavailable: }
-Initially, \texttt{DeviceController} sets it state as \textit{DeviceUnavailable} (e.g. not connected with Bluetooth link) and after a fixed short-time intervals it checks whether the device has connected to host-PC, i.e. after the  wireless link becomes up. In that case, \texttt{DeviceController} switches its state to \textit{DeviceAvailable} (i.e device connected). We can see that from every other state, device can come to this unavailable state (shown by dotted arrow) when the  link is lost e.g. in case of robot's low battery or any other disconnection event (i.e device disconnected).\\
-%%
+Initially, \texttt{DeviceController} sets it state as \textit{DeviceUnavailable} (e.g. not connected with Bluetooth link) and after a fixed short-time intervals it checks whether the device has connected to host-PC, i.e. after the  wireless link becomes up. In that case, \texttt{DeviceController} switches its state to \textit{DeviceAvailable} (i.e device connected). We can see that from every other state, device can come to this unavailable state (shown by dotted arrow) when the  link is lost e.g. in case of robot's low battery or any other disconnection event (i.e device disconnected).
+
 \textbf{DeviceAvailable: }
-\texttt{DeviceController} stays in this state until\\ \texttt{Data-Manager}'s mSelectedTaskAvailable event fires ({\em Device connected, no task selected}). Then it switches to either \textit{MoveToTask} or \textit{RandomWalk} state depending on the selected task.  \texttt{DeviceController}  returns to this state from \textit{RandomWalk}, \textit{MoveToTask} or \textit{AtTask} states after a pre-set task time-out period has elapsed.  In that case it triggers the \texttt{DataManager}'s \texttt{mTaskTimedOut} event.\\
-%%
+\texttt{DeviceController} stays in this state until\\ \texttt{Data-Manager}'s mSelectedTaskAvailable event fires ({\em Device connected, no task selected}). Then it switches to either \textit{MoveToTask} or \textit{RandomWalk} state depending on the selected task.  \texttt{DeviceController}  returns to this state from \textit{RandomWalk}, \textit{MoveToTask} or \textit{AtTask} states after a pre-set task time-out period has elapsed.  In that case it triggers the \texttt{DataManager}'s \texttt{mTaskTimedOut} event.
+
 \textbf{RandomWalk: }
-Robot can random walk in two cases: 1) when \texttt{TaskSelector} selects this random-walk task or 2) when the robot can not get its pose information for a moment. The latter helps the pose tracker to recover the robot-pose from a crowd of robots. Robot continues to do random-walk until it's task time-out period elapses or it regains it pose remains unavailable from the pose tracker (i.e. random-walk pending).\\
-%%
+Robot can random walk in two cases: 1) when \texttt{TaskSelector} selects this random-walk task or 2) when the robot can not get its pose information for a moment. The latter helps the pose tracker to recover the robot-pose from a crowd of robots. Robot continues to do random-walk until it's task time-out period elapses or it regains it pose remains unavailable from the pose tracker (i.e. random-walk pending).
+
 \textbf{MoveToTask: }
-In this state, robot takes step-by-step navigation approach to reach a task boundary. Until the robot reaches the task boundary ({\em Away from task}), in every navigation-step it adjusts its heading to task based on both  robot and task pose information and then makes a fixed-time translation movement. In worse cases, when time-out happens early before reaching a task  \texttt{DeviceController}\\ switches from this state to\textit{ DeviceAvailable} state. However, if the same task is selected immediately, it is more likely that it will go to \textit{AtTask} state in next step.
-%%
+In this state, robot takes step-by-step navigation approach to reach a task boundary. Until the robot reaches the task boundary ({\em Away from task}), in every navigation-step it adjusts its heading to task based on both  robot and task pose information and then makes a fixed-time translation movement. In worse cases, when time-out happens early before reaching a task  \texttt{DeviceController} switches from this state to\textit{ DeviceAvailable} state. However, if the same task is selected immediately, it is more likely that it will go to \textit{AtTask} state in next step.
+
 \textbf{AtTask: }
 In this state  \texttt{DeviceController} discovers itself neat the task and normally until task time-out happens (i.e. task pending) it stays at this state.
 
-We have added three new D-Bus signal interfaces in this version of our implementation. They are briefly discussed below.\\
-\textbf{\texttt{RobotPeers}: }This signal is emitted by SwisTrack to each robot's signal path in a common \texttt{ac.uk.newport.ril.SwisTrack} interface. The payload of this signal contains the list of IDs of peers of each robot within it's $r_{comm}$.  These peer-IDs are extracted by analysing the captured image frame.  This signal is caught by RCCs and used in emitting the \texttt{LocalTaskInfo} signal (discussed below).\\
-\textbf{\texttt{TaskNeighbohood}: }This signal is emitted by SwisTrack for TPS and the payload of this signal contains the list of IDs of robots that are co-located within a task's perception range, $r_{task}$. TPS catches one signal per task and based-on the robot IDs, it emits the \texttt{TaskInfo} signal to those robot's RCC path (as discussed in Sec. \ref{afm:impl}).\\ 
-\textbf{\texttt{LocalTaskInfo}: }This signal is emitted by RCCs to their peers that are co-located within the same communication range $r_{comm}$. The payload of this signal contains the known task information of a  RCC. This task-information can be gathered either through task-perception (via \texttt{TaskInfo} signal received from TPS) or via communications i.e. through \texttt{LocalTaskInfo} signals from its peers.
+We have added three new D-Bus signal interfaces in this version of our implementation. They are briefly specified in Table \ref{table:dbus-signals}. Our base implementation of RCC's task-allocation (i.e. \texttt{TaskSelector}) is almost unchanged in this local implementation. The only thing we need to extend is the D-Bus signal reception and emission interfaces that catches the above signals and put the signal payload in \texttt{DataManager}. For the sake of simplicity, we have merges the perceived \texttt{Task-}\\ \texttt{Info} with communicated \texttt{LocalTaskInfo} into one so that \texttt{TaskAllocator} always gets all available task information. We have not made any major change in other modules of RCC, i.e. \texttt{DeviceController}. The full Python implementation of this RCC is available for download from the GitHub repository\footnote{http://github.com/roboshepherd/EpuckDistributedClient }.
 
-%% local
-As shown in Fig. \ref{fig:local-setup}, RCCs disseminate task information to each other by\\ \texttt{LocalTaskInfo} D-Bus signal. The contents of task information are physical locations of tasks and their urgencies. However as our robots are incapable of sensing task directly. So it relies on TPS for a task-perception signal, \texttt{TaskInfo}, that contains the actual task location and urgency. When a robot $r_i$ comes within $r_{task}$ of a task $j$, SwisTrack reports it to TPS (by \texttt{TaskNeighbors} signal) and TPS then gives it current task information to $r_i$ by  \texttt{TaskInfo} signal. As we have discussed, TPS catches feedback signals from robots via \texttt{RobotStatus} signal. This can be used to inform TPS about a robot's current task id, its device status and so on. TPS uses this information to update relevant part of task information such as, task-urgency. This up-to-date information is encoded in next \texttt{TaskInfo} signal.
-
-From the above discussions, we can see that our base implementation of RCC's task-allocation (i.e. \texttt{TaskSelector}) is almost unchanged in this local implementation. The only thing we need to extend is the D-Bus signal reception and emission interfaces that catches the above signals and put the signal payload in \texttt{DataManager}. For the sake of simplicity, we have merges the perceived \texttt{Task-}\\ \texttt{Info} with communicated \texttt{LocalTaskInfo} into one so that \texttt{TaskAllocator} always gets all available task information. We have not made any major change in other modules of RCC, i.e. \texttt{DeviceController}. The full Python implementation of this RCC is available for download from the GitHub repository\footnote{http://github.com/roboshepherd/EpuckDistributedClient }.
-
-In our base implementation TPS periodically broadcasts \texttt{TaskInfo }signals to all robots. But in this local version, TPS only emits \texttt{TaskInfo} signal when a robot is within a task's perception range, $r_{task}$ based-on the \texttt{TaskNeighbour} signal from SwisTrack. For this additional interface, we have extended D-Bus \texttt{SignalListener} to catch this additional D-Bus signal.  No major changes are done in the other parts of TPS implementation. The full Python implementation of TPS is available for download from the GitHub repository\footnote{http://github.com/roboshepherd/DitributedTaskServer}.
+In our GSNC strategy based implementation TPS periodically broadcasts \texttt{TaskInfo }signals to all robots. But in this local version, TPS only emits \texttt{TaskInfo} signal when a robot is within a task's perception range, $r_{task}$ based-on the \texttt{TaskNeighbour} signal from SwisTrack. For this additional interface, we have extended D-Bus \texttt{SignalListener} to catch this additional D-Bus signal.  No major changes are done in the other parts of TPS implementation. The full Python implementation of TPS is available for download from the GitHub repository\footnote{http://github.com/roboshepherd/DitributedTaskServer}.
 %%==================================================================
 \section{Results}
 \label{sec:res}
 %%
-In this section we have presented our experimental results. We ran those experiments for about 40 minutes and averaged them over five iterations. 
+In this section we have presented our experimental results. We ran those experiments for about 40 minutes duration.  They are averaged over five iterations for Series A and B experiments and three iterations for Series C and D experiments . 
 %%-------------------------------------------------
 \subsection*{Shop-floor work-load history}
 In our experiments we have defined shop-floor work-load in terms of task urgencies. For example, Eq. \ref{eqn:task-urgency-prod-init} shows how we have calculated initial production work-load of our manufacturing shop-floor scenario. Fig. \ref{fig:raw-urgencies}  show the dynamic changes in task-urgencies for the single iteration of each experiment. The fluctuations in these plots are resulted from the different levels of task-performance of our robots. In case of Series D, we can see that an unattended task, \textit{Task4}, was not served by any robot for a long period and later it was picked up by some of the robots. 
@@ -986,7 +985,7 @@ From Fig. \ref{fig:worker-stat}, we can  see that in production stage, when work
 \end{centering}
 \end{figure}
 %%
-In our manufacturing shop-floor scenario, we have calculated the APCD and APMW as shown in Fig. \ref{fig:mfg-stat}. For Series A we have got  average production completion time 111 time-steps (555s) where sample size is (5 x 2) = 10 tasks, SD = 10 time-steps (50s). According to Eq. \ref{eqn:min-pmm}, our theoretical minimum production completion time is 50 time-steps (250s) assuming the non-stop task performance of all 8 robots with an initial task urgency of 0.5 for all 2 tasks and task urgency decrease rate $\Delta \Phi_{DEC }$ = 0.0025 per robot per time-step.  Hence, Eq. \ref{eqn:appd} gives us APCD, $\zeta$ = 1.22 which means that in Series A experiments, it took 1.22 times more time (305s) than the estimated minimum production completion time (250s). For Series B, we have got average production completion time 165 time-steps (825s) where sample size is (5 x 4) = 20 tasks, SD = 72 time-steps (360s).  Hence, Eq. \ref{eqn:appd} gives us APCD, $\zeta$ = 2.3. For Series C we have got average production completion time 121 time-steps (605s) with SD = 36 time-steps (180s). For Series D,  average production completion time is 123 time-steps (615s) with SD = 40 time-steps (200s). According to Eq. \ref{eqn:min-pmm}, our theoretical minimum production completion time is 50 time-steps (250s) as discussed in Sec \ref{afm:results}.  The values of APCD are as follows. For Series C, $\zeta$ = 1.42 and for Series D, $\zeta$ = 1.46. For both series of experiments APCD values are very close.
+In our manufacturing shop-floor scenario, we have calculated the APCD and APMW as shown in Fig. \ref{fig:mfg-stat}. For Series A we have got  average production completion time 111 time-steps (555s) where sample size is (5 x 2) = 10 tasks, SD = 10 time-steps (50s). According to Eq. \ref{eqn:min-pmm}, our theoretical minimum production completion time is 50 time-steps (250s) assuming the non-stop task performance of all 8 robots with an initial task urgency of 0.5 for all 2 tasks and task urgency decrease rate $\Delta \Phi_{DEC }$ = 0.0025 per robot per time-step.  Hence, Eq. \ref{eqn:appd} gives us APCD, $\zeta$ = 1.22 which means that in Series A experiments, it took 1.22 times more time (305s) than the estimated minimum production completion time (250s). For Series B, we have got average production completion time 165 time-steps (825s) where sample size is (5 x 4) = 20 tasks, SD = 72 time-steps (360s).  Hence, Eq. \ref{eqn:appd} gives us APCD, $\zeta$ = 2.3. For Series C we have got average production completion time 121 time-steps (605s) with SD = 36 time-steps (180s). For Series D,  average production completion time is 123 time-steps (615s) with SD = 40 time-steps (200s). According to Eq. \ref{eqn:min-pmm}, our theoretical minimum production completion time is 50 time-steps (250s).  The values of APCD are as follows. For Series C, $\zeta$ = 1.42 and for Series D, $\zeta$ = 1.46. For both series of experiments APCD values are very close.
 
 For APMW, Series A experiments give us an average time length of 369 time-steps (1845s).  In this period we calculated APMW and it is 1 time-step with SD = 1 time-step (5s) and $\Delta \Phi_{INC}$ = 0.005 per task per time-step. This shows a very low APMW ($\chi$ = 0.000235) and a very high robustness of the system. For Series B experiments, from the average 315 time-steps (1575s) maintenance activity of our robots per experiment run, we have got APMW, $\chi$ = 0.012756 which corresponds to the pending work of 3 time-steps (15s) where SD = 13 time-steps (65s). This tells us the robust task performance of our robots which can return to an abandoned task within a minute or so. The APMW of Series C experiments give us an average time length of 359 time-steps (1795s). In this period we calculated APMW and it is 5 time-steps with SD = 17 time-steps and $\chi$ = 0.023420. For Series D experiments, from the average 357 time-steps (1575s) of maintenance activity of our robots per experiment run, we have got APMW, $\chi$ = 0.005359 which corresponds to the pending work of 2 time-steps (10s) where SD = 7 time-steps.
 %%-------------------------------------------------
@@ -1056,7 +1055,7 @@ In Eq. \ref{eqn:Q-G}, $q^i_{k=k_{max}}$ represents the time-step of robot $r_i$ 
 \label{table:K-G-SB}
 \end{table}
 Table \ref{table:K-G-SA} and Table \ref{table:K-G-SB} show the peak sensitization values of Series A and Series B experiments respectively.  Based on Eq. \ref{eqn:K-G} and Eq. \ref{eqn:Q-G}, we have got the peak task-sensitization $K^G_{avg} 
-$ values: 0.40 (SD=0.08)  and 0.30 (SD=0.03), and their respective time-step $Q^G_{avg}$ values: 38 (SD=13) and 18 (SD=5) time-step.  They are shown in Fig. \ref{fig:K-G-SA-SB} and Fig. \ref{fig:Q-G-SA-SB}. Here we can see that the robots in Series A had higher chances of task-specialization than that of Series B experiments.
+$ values: 0.40 (SD=0.08)  and 0.30 (SD=0.03), and their respective time-step $Q^G_{avg}$ values: 38 (SD=13) and 18 (SD=5) time-step.  They are shown in Fig. \ref{fig:task-specialization}. Here we can see that the robots in Series A had higher chances of task-specialization than that of Series B experiments.
 %%
 % Series C raw data
 \begin{table}
@@ -1145,7 +1144,7 @@ $ values: 0.40 (SD=0.08)  and 0.30 (SD=0.03), and their respective time-step $Q^
 Fig. \ref{fig:k-single-task-SB} shows us the task specialization of five robots on Task3 in a particular run of Series B experiment. This shows us how some of the robots can specialize (learn) and de-specialize (forget) tasks over time.
 %%-------------------------------------------------
 \subsection*{Robot motions}
-We have aggregated the changes in translation motion of all robots over time. Let $u_{i,q}$ and $u_{i,q+1}$ be the translations of a robot $i$ in two consecutive steps. If the difference between these two translations be $\delta u_{i}$, we can find the sum of changes of translations of all robots in $(q+1)^{th}$ step using the following equation.
+We have aggregated the changes in translation motion of all robots over time based on their travelled distances in Euclidean metric. Let $u_{i,q}$ and $u_{i,q+1}$ be the translations of a robot $i$ in two consecutive steps. If the difference between these two translations be $\delta u_{i}$, we can find the sum of changes of translations of all robots in $(q+1)^{th}$ step using the following equation.
 \begin{equation}
 \Delta U_{q+1} = \sum_{i=1}^{N} \delta u_{i, q+1} 
 \label{eqn:Delta-Tr}
@@ -1215,34 +1214,32 @@ The sum of translations of robots from our experiments are plotted in Fig. \ref{
 \end{centering}
 \end{figure}
 %%
-Fig. \ref{fig:signal-frequency-stat} (a) and (b) shows the number of received \texttt{TaskInfo} signals by each robot in Series A and Series B experiments. Since the duration of each time-step is 50s long and TPS emits signal in every 2.5s, there is an average of 20 signals in each time-step. The overall P2P task information signals of both of these local modes are plotted in Fig. \ref{fig:signal-frequency-stat} (c) and (d). As an example of P2P signal reception of a robot,  Fig. \ref{fig:local-single-robot-signal} show the number of received signals by Robot12 in two local experiments. It states the relative difference of peers over time in two local cases.
+Fig. \ref{fig:signal-frequency-stat} (a) and (b) shows the number of received \texttt{TaskInfo} signals by each robot in Series A and Series B experiments. Since the duration of each time-step is 50s long and TPS emits signal in every 2.5s, there is an average of 20 signals in each time-step. The overall P2P task information signals of both of these local modes are plotted in Fig. \ref{fig:signal-frequency-stat} (c) and (d). As an example of P2P signal reception of a robot,  Fig. \ref{fig:local-single-robot-signal} show the number of received signals by Robot12 in two local experiments. It states the relative difference of peers over time in two different cases.
 %==================================================================
 \section{Discussions}
 \label{sec:discuss}
 %%
-\textbf{Self-regulated DOL}. From our experimental results, we have noted several aspects of self-regulated DOL that exposes the power of AFM. As we have pointed out that this self-regulated DOL, as observed in biological and human social systems, needs to satisfy several important characteristics, e.g. plasticity, task-specialization. In addition to satisfying those basic qualities, AFM has demonstrated many other aspects. Our self-regulated robots, driven by AFM, effectively handle the dynamic work-load in our manufacturing shop-floor. They can dynamically support the need to work on currently demanding tasks, if there any. The variations of active worker ratio supports this. 
+\textbf{Self-regulated MRTA}. From our experimental results, we have noted several aspects of self-regulated MRTA that exposes the effectiveness of AFM. As we have pointed out that this self-regulated MRTA, as observed in biological and human social systems, needs to satisfy several important characteristics, e.g. plasticity, task-specialization. In addition to satisfying those basic qualities, AFM has demonstrated many other aspects. Our self-regulated robots, driven by AFM, effectively handle the dynamic work-load in our manufacturing shop-floor. They can dynamically support the need to work on currently demanding tasks, if there any. The variations of active worker ratio supports this. 
 
 From the self-organized worker allocations of AFM, it is clear to us that although in larger system (Series B) the degree of variations of active-worker ratio can show us significantly unpredictable patterns, nevertheless the self-regulated rules drive the robots to respond to the dynamic needs of the system. This means that AFM can sufficiently produce the plasticity of DOL in order to meets the dynamic work-load of the system.
 
-\textbf{Learning and Forgetting}. From the individual and group-level task-\\ specialization, we can see that robots can maintain both task-specialization and flexibility. In a self-organized system, it is very common that only a few individuals specialize on tasks and others generally do not. From two samples data sets, we can see that in particular runs of Series A and Series B experiments, task-sensitization values of  only 2-3 robots reach above the group-level average score. Thus in both types of experiments, robots exhibit similar task-specialization behaviours. 
+\textbf{Learning and Forgetting}. From the individual and group-level task-specialization, we can see that robots can maintain both task-specialization and flexibility. In a self-organized system, it is very common that only a few individuals specialize on tasks and others generally do not. From two sample data sets, we can see that in particular runs of Series A and Series B experiments, task-sensitization values of  only 2-3 robots reach above the group-level average score. Thus in both types of experiments, robots exhibit similar task-specialization behaviours. 
 
-From task-sensitization we can also see that a limited number of robots are specialized in tasks. Thus most of the other robots are flexible in selecting any tasks as their task-specializations do not bind them to particular tasks.
+\textbf{Concurrency and robustness}. As a consequence of fewer robots specializing in tasks, we can also see that robots can concurrently  consider different tasks without being biased to a particular task all the time. Our experiments also show us the robust MRTA as in case of  both high and low work-loads present in the system. This is evident from the manufacturing shop-floor task performance during PMM and MOM. For example,  in case of Series B experiments APMW was 13 time-steps (65s) which corresponded  to pending work-load of 0.065 unit for a single robot. Thus, on an average, before the work-load exceeded by about 13 percent of initial work-load, robots were able to respond to  a task.
 
-\textbf{Concurrency and robustness}. As a consequence of fewer robots specializing in tasks, we can also see that robots can concurrently  consider different tasks without being biased to a particular task all the time. Our experiments also show us the robust DOL as in case of  both high and low work-loads present in the system. This is evident from the manufacturing shop-floor task performance during PMM and MOM. For example,  in case of Series B experiments APMW was 13 time-steps (65s) which corresponded  to pending work-load of 0.065 unit for a single robot. Thus, on an average, before the work-load exceeded by about 13 percent of initial work-load, robots were able to respond to  a task.
-
-\textbf{Communication load.} In these experiments we used a centralized communication system (source of attractive fields) that serves the robot with necessary task-perception information. Although our robot-controllers software RCC was also co-located in the same host-PC, they can be distributed to several PCs or robot's on-board PCs. Our centralized communication system has the advantage of minimising the communication load and the disadvantage of a single point of failure as well as single point of load. In the next chapter we present how the task perception can be decentralized by P2P communications among RCCs.
+\textbf{Communication load.} In GSNC strategy based experiments we used a centralized communication system (source of attractive fields) that serves the robot with necessary task-perception information.  Our centralized communication system has the advantage of minimising the communication load and the disadvantage of a single point of failure as well as single point of load. Under LSLC strategy based implementation, we present how the task perception can be decentralized by P2P communications among RCCs.
 
 \textbf{Scaling-up}. We have observed the effect of scaling-up the robot team size. The system size of Series B is double of that of Series A in terms of robots, tasks and experiment arena. Keeping a fixed ratio of robot-to-task and task-to-arena we have intended to see the scaling effects in our experiments. Here we see that both systems can show sufficient self-regulated DOL, but task-performance of both systems varies significantly. For example, the value of APCD in Series B is higher by 1.08. This means that performance  is decreased in Series B experiments despite having the resources in same proportion in both systems. This occurs partly due to the greater stochastic effects found in task-allocation in a larger system, e.g. presence of more tasks produce higher stochastic behaviours in robot's task selection.
 
 Similarly we can see that in larger system robots have less chances to specialize on tasks, as the Series B experiments show us that the overall average task-specialization of the group $K^G_{avg}$ is lower by 0.10 and it lasts for significantly less time (the difference of $Q^G_{avg}$  of both systems is 20 time-steps). Thus, in a large group, robots are more likely to switch among tasks more frequently and this produces more translation motions which cost more energy (e.g. battery power) in task-performance.
 
-\textbf{Comparisons between local communication and sensing strategies:} Results from Series C and Series D experiments show us many similarities and differences with respect to the results of Series A and Series B experiments. Both Series C and Series D experiments show similar APCD values: 1.42 and 1.46 respectively, which are significantly less than Series B experiment result (APCD = 2.3) and are close to Series A experiment result (APCD = 1.22). This means that for large group, task-performance  is efficient under LSLC strategy (Series C and Series D) comparing with their GSNC counterpart (Series B).
+\textbf{Comparisons between GSNC and LSLC strategies:} Results from Series C and Series D experiments show us many similarities and differences with respect to the results of Series A and Series B experiments. Both Series C and Series D experiments show similar APCD values: 1.42 and 1.46 respectively, which are significantly less than Series B experiment result (APCD = 2.3) and are close to Series A experiment result (APCD = 1.22). This means that for large group, task-performance  is efficient under LSLC strategy (Series C and Series D) comparing with their GSNC counterpart (Series B).
 
 Besides, in terms of task-specialization, the overall task-specialization of group in Series C ($K^G_{avg}$ = 0.4) is  closer to that of Series A experiments ($K^G_{avg}$ = 0.39) and interestingly, the value of  Series D ($K^G_{avg}$ = 0.27) is  much closer to that of Series B experiments ($K^G_{avg}$ = 0.30). So task-specialization in large group under LSLC strategy shows higher performance than their GSNC counter part. Besides task-specialization happens much faster under LSLC strategy as we can see that the average time to reach peak sensitization values  of the group,  $Q^G_{avg}$ in Series C is lower than that of Series A values by 25 time-steps.
 
 \begin{table}
 \begin{center}
-\caption{Sum of translations of robots in Series A-D experiments.}
+\caption{Sum of translations of robots in our experiments.}
 \begin{tabular}{|c|c|c|}
 \hline \textbf{Series} & \textbf{Average translation (m)} & \textbf{SD} \\ 
 \hline A & 2.631 & 0.804\\ 
@@ -1257,8 +1254,7 @@ Besides, in terms of task-specialization, the overall task-specialization of gro
 %%
 From the robot motion profiles found in all four series of experiments, we have found that under LSLC strategy, robot translations have been reduced significantly. Table \ref{table:motion-cmp} summarizes the average translations done by robots in all four series of experiments. From this table we can see than Series C and Series D show about 2.8 times less translation than that in Series B experiments. The translation of 16 robots in Series C and Series D experiments are approximately double (1.89 times) than that of Series A experiments with 8 robots.  Thus the energy-efficiency under LSLC strategy seems to be higher  than that under GSNC strategy.
 
-From the above results we can see that large group robots achieve better MRTA under LSLC strategy. The local sensing of tasks prevents them to attend a far-reaching task which may be more common under global sensing strategy. However, as we have seen in Fig. \ref{fig:raw-urgencies-SC-SD}
-some tasks can be left unattended for a long period of time due to the failure to discover it by any robot. For that reason we see that the values of APMW is slightly higher under LSLC strategy. But this trade-off is worth as LSLC strategy provides superior self-regulated MRTA in terms of task-performance, task-specialization and energy-efficiency. 
+From the above results we can see that large group robots achieve better MRTA under LSLC strategy. The local sensing of tasks prevents them to attend a far-reaching task which may be more common under global sensing strategy. However, as we have seen in Fig. \ref{fig:raw-urgencies} some tasks can be left unattended for a long period of time due to the failure to discover it by any robot. For that reason we see that the values of APMW is slightly higher under LSLC strategy. But this trade-off is worth as LSLC strategy provides superior self-regulated MRTA in terms of task-performance, task-specialization and energy-efficiency. 
 %%================================================================
 \section{Conclusions}
 \label{sec:conc}
@@ -1267,6 +1263,9 @@ The benefits of deploying a large number of robots in dynamic multi-tasking envi
 From our comparative results, we can conclude that for large group of robots,  degradation in  task-performance and task-specialization of robots are likely to occur  under GSNC strategy that relies upon a centralized communication system. Thus GSNC strategy can give us better performance when the number of tasks and robots are relatively small. This confirms us the assertions made by some biologists that self-regulated DOL among small group of individuals can happen without any significant amount of local communications and interactions. However, our findings suggest that task-specialization can still be beneficial among the individuals of a small group which contradicts the claim that small groups only posses the generalist workers, but not the specialists.
 
 On the other hand, LSLC strategy is more suitable for large group of individuals that are likely to be unable to perform global sensing and global communications with all individuals of the group. The design of communication and sensing range is still remained as a critical research issue. However, our results suggest that the idea of maximizing information gain is not appropriate under a stochastic task-allocation process, as more information causes more task-switching behaviours that lowers the level of task-specialization of the group. This might not be the case under a deterministic task-allocation scheme where more information leads to better and optimum allocations, but that is limited to a small group of individuals. Nevertheless, despite having the limited communication and sensing range, LSLC strategy helps to produce comparatively better task-allocation with increased task-specialization and significantly reduced motions or savings in energy consumption.
+%%
+\section*{Acknowledgement}
+This research has been funded by the Engineering and Physical Sciences Research Council (EPSRC), UK, grant reference EP/E061915/1.
 %%===========================================================
 %% The Appendices part is started with the command \appendix;
 %% appendix sections are then done as normal sections
