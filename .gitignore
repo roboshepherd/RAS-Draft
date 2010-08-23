@@ -7,7 +7,7 @@ elsart
 *.dvi
 *.log
 *.toc
-*.eps
+#*.eps
 *.dia~
 *.ps
 *.png
