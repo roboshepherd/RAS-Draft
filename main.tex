@@ -261,24 +261,33 @@ Most predefined task-allocation solutions are proposed within the context of a k
 
 On the other hand, bio-inspired self-organized MRTA solutions are free from extensive modelling of environment, tasks or robot capabilities. Most of the existing research considers very simple form of one global task e.g. foraging, area cleaning, box-pushing etc. This is due to the fact that major focus of this approach is limited mainly to design individual robot controllers in such a way that a few simple  or {\em specific} tasks can be accomplished \cite{Gerkey+2003}. More research is needed to verify the capabilities of self-organized approach in doing multiple complex tasks. %At this moment, the bottom line remains as ``select simple robots for simple tasks (self-organized approach) and complex robots for complex tasks (predefined approach)''.
 %%
-\begin{figure*}
-\centering
-\includegraphics[width=0.7\linewidth, angle=0]
-{./images/mrta-lines.eps}
-%figure caption is below the figure
-\caption{ Three major axes of complexities in MRTA}
-\label{fig:mrta-complexities} % Give a unique label
-\end{figure*}
-
 Both of the above task-allocation approaches expose their relative strengths and weaknesses when they are put under real-time experiments with variable number of robots and dynamic tasks. In an arbitrary event handling domain, a comparison between self-organized and predefined market-based task-allocation has been reported in \citet{kalra+2007} where they found that predefined  task-allocation was more efficient when the information was accurate, but threshold-based  approach offered similar quality of allocation at a fraction of cost  under noisy environment.  
 
 A a comparative study reported in \cite{Gerkey+2003} reveals  the complexity and optimality of key architectures, e.g.  ALLIANCE \cite{Parker1998}, BLE \cite{Werger2001}, M+ \cite{Botelho+1999}, MURDOCH \cite{Gerkey+2002}, First piece auctions \cite{Zlot+2002} and Dynamic role assignment \cite{Chaimowicz2002}, all of them relied upon predefined task-allocation methods. The computational and communication requirements of these MRTA solutions were expressed in terms of number of robots and tasks. Although this study does not explicitly measure the scalability of those key architectures, it clearly shows us that many predefined task-allocation solutions will fail to scale well in challenging environments  where the number of  robots and tasks are huge, under the given limited overall communication bandwidth and processing power of individual robots. 
 
 %From above discussions we can see that, self-organized task-allocation methods are advantageous as they can provide fully distributed, scalable and robust MRTA solutions through redundancy and parallelism in task-executions. Moreover, the interaction and communication requirements of robots can also be kept under a minimum limit.  So for large multi-robot system, self-organized task-allocation methods  can potentially be selected, if the complex tasks can be divided into simple pieces that can be carried out by multiple simple robots in parallel with limited communication and interaction requirements.
 %%
-\section{A three-axes taxonomy of MRTA solutions}
+\section{A taxonomy of MRTA solutions}
 \label{sec:taxonomy}
 %%
+
+\begin{figure}
+\centering
+\includegraphics[width=0.99\linewidth, angle=0]
+{./images/taxonomy-ta-comm-OK.eps}
+%figure caption is below the figure
+\caption{Classification of MRTA solutions based on task-allocation and communication strategies}
+\label{fig:taxonomy-ta-comm} % Give a unique label
+\end{figure}
+%%
+\begin{figure}
+\centering
+\includegraphics[width=0.99\linewidth, angle=0]
+{./images/taxonomy-comm-interaction-OK.eps}
+%figure caption is below the figure
+\caption{Information flow caused by different levels of communication and interaction}
+\label{fig:taxonomy-comm-interaction} % Give a unique label
+\end{figure}
 In order to characterize both predefined and self-organized approaches in terms of their deployment, we propose three distinct axes: 1) organization of task-allocation (X), 2) degree of interaction (Y) and 2) degree of communication (Z). Fig. \ref{fig:mrta-complexities} depicts these axes with a reference point $O$. These axes can be used to measure the complexities involved in various kinds of MRTA problems and the design of their solutions. 
 
 In Fig. \ref{fig:mrta-complexities}, X axis represents the number of active nodes that provides the task-allocation to the group. For example, in any predefined  task-allocation approach, we can use one external centralized entity or one of the robots (aka leader) to manage the task-allocation. In many predefined methods, e.g. in market-based systems,  multiple nodes can act as mediators or task-allocators. Under predefined task-allocation approach,  a small number of robots can have fully distributed task-allocation where each robot acts as an independent task-allocator (e.g. as in ALLIANCE architecture). 
@@ -331,16 +340,14 @@ In summary, from the above diagram of the network, we can see that each of the a
 %%--------------------------------------------------------------------
 \subsection{Relationship of AFM with self-organization}
 \label{afm:so}
-\begin{figure*}
-\centering
-\includegraphics[width=0.7\linewidth, angle=0]
-{./images/self-org-2.eps}
-%figure caption is below the figure
-\caption{\small Four generic rules establish the self-regulated DOL in social systems}
-\label{fig:afm-rules} % Give a unique label
-\end{figure*}
-
-Fig.  \ref{fig:afm-rules} labels the four distinct perspectives known as so-called ingredients or properties of self-organization:  A) positive feedback, B) negative feedback, C) presence of multiple interactions among individuals and their environment, and D) amplification of fluctuations  e.g., random walks, errors, random task-switching \cite{Camazine+2001}. However, it is not clear how those properties can come into existence. Fig.  \ref{fig:afm-rules} depicts  the four underlying mechanisms (label 1 to 4) that explain how self-organization can be realized in different social systems using our generic framework. These are explained in the following paragraphs.
+%\begin{figure*}
+%\centering
+%\includegraphics[width=0.7\linewidth, angle=0]
+%{./images/self-org-2.eps}
+%\caption{\small Four generic rules establish the self-regulated DOL in social systems}
+%\label{fig:afm-rules} % Give a unique label
+%\end{figure*}
+The four distinct perspectives known as so-called ingredients or properties of self-organization:  A) positive feedback, B) negative feedback, C) presence of multiple interactions among individuals and their environment, and D) amplification of fluctuations  e.g., random walks, errors, random task-switching \cite{Camazine+2001}. However, it is not clear how those properties can come into existence. Fig.  \ref{fig:afm-rules} depicts  the four underlying mechanisms (label 1 to 4) that explain how self-organization can be realized in different social systems using our generic framework. These are explained in the following paragraphs.
 
 Firstly, multiple interactions become meaningful when {\em continuous flow of information} occurs  by exchanging signals or cues among agents or their environment  that regulates their behaviours. This, in turn, contribute to the task-allocation  and task-switching in the social level.  In swarm intelligence literature, multiple interactions are often described as an essential ingredient of self-organization. However, interactions without definite purposes may not contribute to the self-organization.
 
@@ -742,7 +749,7 @@ Thus, in order to observe the above properties of self-regulated MRTA , we have 
 %%
 %------------------------------------------------------------
 \subsection{Parameters}
-Table \ref{table:params} lists a set of essential parameters of our GSNC startegy based experiments (Series A and B). We intend to have a set-up that is relatively complex, i.e., with a high number of robots and tasks in a large area. The diameter of the marker of our e-puck robot is 0.08m (Fig \ref{fig:e-puck}). So, if we put 4 robots in an area of one square meter, this will give us a robot-occupied-space to free-space ratio of about 1:49 per square meter. This ratio is reasonable in order to allow the robots to move at a speed of 5 cm/sec without causing much interference to each other. 
+Table \ref{table:params} lists a set of essential parameters of our GSNC strategy based experiments (Series A and B). We intend to have a set-up that is relatively complex, i.e., with a high number of robots and tasks in a large area. The diameter of the marker of our e-puck robot is 0.08m (Fig \ref{fig:e-puck}). So, if we put 4 robots in an area of one square meter, this will give us a robot-occupied-space to free-space ratio of about 1:49 per square meter. This ratio is reasonable in order to allow the robots to move at a speed of 5 cm/sec without causing much interference to each other. 
 
 The initial values of task urgencies correspond to 100 units of production work-load without any maintenance work-load as outlined in Eq. \ref{eqn:task-urgency-prod-init}. We choose a limit of 0 and 1, where 0 means no urgency and 1 means maximum urgency. Same rule applies to sensitisation, where 0 means no sensitisation and 1 means maximum sensitisation. This also implies that if sensitization is 0, task has been forgotten completely. On the other hand, if sensitization is 1, the task has been learnt completely. We choose a initial sensitization value of 0.1 for all tasks. The following relationships are maintained for selecting task-urgency and sensitization parameters.
 \begin{equation}
