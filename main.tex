@@ -168,11 +168,11 @@ United Kingdom.}
 %\address{}
 %
 \begin{abstract}
-This paper proposes to solve the multi-robot task-allocation (MRTA) problem using a set of previously published generic rules for division of labour derived from the observation of ant, human and robotic social systems. The concrete form of these rules, the \textit{attractive filed model} (AFM), provides sufficient abstraction to local communication and sensing which is uncommon in existing MRTA solutions. We have validated the effectiveness of AFM to address MRTA  using two bio-inspired communication and sensing strategies: \textit{global sensing - no communication} and \textit{local sensing - local communication}. The former is realized using a centralized communication system and the latter is emulated under a peer-to-peer local communication scheme. They are applied in a  manufacturing shop-floor scenario using 16 e-puck robots.
+This paper proposes to solve multi-robot task-allocation (MRTA) problems using a set of previously published generic rules for self-organised division of labour derived from the observation of ant, human and robotic social systems. The concrete form of these rules, the \textit{attractive filed model} (AFM), are sufficiently abstraction to accommodate different sensing and communication models. We have validated the effectiveness of AFM for MRTA using two bio-inspired communication and sensing strategies: \textit{global sensing - no communication} and \textit{local sensing - local communication}. The former is realized using a centralized communication system and the latter is emulated as a peer-to-peer local communication scheme. Both strategies are evaluated using 16 e-puck robots.
 %%
 %A flexible multi-robot control architecture, \textit{hybrid event-driven architecture on D-Bus}, has been outlined which uses the state-of-the-art D-Bus interprocess communication.  
 %Based-on the organization of task-allocation, communication and interaction among robots, a  novel taxonomy of MRTA solutions has been proposed to remove the ambiguities found in existing MRTA solutions. %Besides, a set of domain-independent metrics, e.g., plasticity, task-specialization and energy usage, has been formalized to compare the performances of the above two strategies.
-Comparative results show that local communication strategy helps to produce comparatively better task-allocation with increased task-specialization and significantly reduced robot motions.
+Comparative results show that a local communication strategy increases task-specialization and significantly reduces robot motion.
 \end{abstract}
 %%
 %\begin{keyword}
@@ -195,36 +195,39 @@ Comparative results show that local communication strategy helps to produce comp
 %%
 %% [MRTA problem at a glance]
 %-------------------------------
- Multi-robot systems can provide improved performance, fault-tolerance and robustness in complex and distributed tasks through parallelism and redundancy \cite{Arkin1998,Parker+2006}. However in order to get the potential benefits of \aclp{MRS}, we need to answer a common research question. \textit{How can we allocate tasks among multiple robots dynamically?} Traditionally, this issue has been identified as the \acfi{MRTA} \cite{Gerkey+2004}. This issue can be treated as the \acfi{DOL} among robots, analogous to the DOL in biological and human social systems\footnote{Although the term ``division of labour'' is often used in biological literature and the term ``task-allocation'' is primarily used in multi-agent literature,  in this paper we have used these terms interchangeably.} \cite{Sendova-Franks+1999}.
+ Multi-robot systems can provide high levels of performance, fault-tolerance and robustness in complex and distributed tasks through parallelism and redundancy \cite{Arkin1998,Parker+2006}. However, in order to get the potential benefits of \aclp{MRS}, we need to answer a common research question. \textit{How can we allocate the tasks among robots?} Traditionally, this issue has been identified as \acfi{MRTA} \cite{Gerkey+2004}. This issue is equivalent to \acfi{DOL} among robots, analogous to DOL in biological and human social systems\footnote{Although the term ``division of labour'' is often used in biological literature and the term 'task-allocation' is primarily used in multi-agent literature.  In this paper we have used these terms interchangeably.} \cite{Sendova-Franks+1999}.
 
-MRTA is generally identified as the question of assigning tasks in an appropriate time to the appropriate robots considering the changes of the environment and/or the performance of other team members \cite{Gerkey+2003}. This is a {\em NP-hard} optimal assignment problem where optimum solutions can not be found quickly for large and complex problems \cite{Parker2008}.The complexities of the distributed MRTA problem arise from the fact that there is no central planner or coordinator for task assignments, and in a large \acl{MRS}, generally robots have limited capabilities to sense, to communicate and to interact locally. None of them has the complete knowledge of the past, present or future actions of other robots.
+MRTA is generally defined as the problem of assigning tasks in an appropriate time to the appropriate robots considering the changes of the environment and/or the performance of other team members \cite{Gerkey+2003}. This is an {\em NP-hard} optimal assignment problem where optimal solutions can not be found quickly for large and complex problems \cite{Parker2008}.  The further complexities of the {\em distributed} MRTA problem arise from the fact that there is no central planner or coordinator for task assignments, and in a large \acl{MRS}, robots are generally limited to local sensing, communication and to interaction. No robot has complete knowledge of the past, present or future actions of the other robots.
 
-Early research on predefined task-allocation was dominated by intentional coordination \cite{Parker2008}, use of dynamic role assignment \cite{Chaimowicz2002} and market-based bidding approach \cite{Dias+2006}. Under these approaches, robots use direct task-allocation method, often to communicate with group members for negotiating on tasks. These approaches are intuitive, comparatively straight forward to design and implement and can be analysed formally. However, these approaches typically works well only when the number of robots are small ($\leq 10$) \cite{Lerman+2006}.
+Early research on predefined task-allocation was dominated by explicit coordination \cite{Parker2008}, use of dynamic role assignment \cite{Chaimowicz2002} and market-based bidding approach \cite{Dias+2006}. When taking these approaches, robots perform explicit task-allocation activities, commonly including communication with other group members for negotiating tasks. These approaches are intuitive and comparatively straight forward to design and implement and can be analysed formally. However, these approaches typically work well only when the number of robots are small ($\leq 10$) \cite{Lerman+2006}.
 
-On the other hand, self-organized task-allocation approach relies on the emergent group behaviours, such as emergent cooperation \cite{Kube+1993}, adaptation rules \cite{Liu+2007} etc. They are more robust and scalable to large team sizes. However, most of the robotic researchers found that self-organized task-allocation approach is difficult to design, to analyse (formally) and to implement in real robots. The solutions from these systems are also sub-optimal. It is also difficult to predict exact behaviours of robots and overall system performance.
+Self-organized task-allocation approaches, on the other hand, rely on emergent group behaviours, such as emergent cooperation \cite{Kube+1993}, adaptation rules \cite{Liu+2007} and similar mechanisms. They are generally more robust and scale better to large team sizes. However, emergent or self-organized task-allocation is difficult to design, to analyse formally and to implement in real robots. The solutions from self-organized systems are also commonly sub-optimal and it is very difficult to predict the exact behaviours of robots and the overall system performance.
 
-Within the context of the Engineering and Physical Sciences Research Council (EPSRC) project, ``Defying the Rules: How Self-regulatory Systems Work'', we have proposed to solve the above mentioned self-regulated DOL problem in an alternate way \cite{Arcaute+2008}. Our approach is inspired from the studies of emergence of task-allocation in both biological and human social systems. We have proposed four generic rules to explain self-regulation in those social systems. These four rules are: \textit{continuous flow of information}, \textit{concurrency}, \textit{learning} and \textit{forgetting} - all of them will be explained later. Primarily, these rules deal with the issue of deriving local control laws for regulating an individual's task-allocation behaviour that can facilitate the DOL in the entire group. In order to  employ these rules in the individual level, we have developed a formal model of self-regulated DOL, called the \acfi{AFM}.
+Within the context of the Engineering and Physical Sciences Research Council (EPSRC) project, 'Defying the Rules: How Self-regulatory Systems Work', we have presented the attractive field model (AFM) \cite{Arcaute+2008}, a model of self-regulated DOL  informed by studies of self-regulated task-allocation in ant and human social systems. AFM suggests four generic rules to explain self-regulation in those social systems. These four rules are: \textit{continuous flow of information}, \textit{concurrency}, \textit{learning} and \textit{forgetting}.  All of them are explained below. Primarily, these rules enable the derivation of local control laws for regulating an individual's task-allocation behaviour in a way that facilitates DOL in the entire group.
 
-In biological social systems, communications among the group members, as well as sensing the task-in-progress, are two key components of self-organized DOL. In robotics, existing self-organized task-allocation methods rely heavily upon local sensing and local communication of individuals for achieving self-organized task-allocation. However, AFM differs significantly in this point by avoiding the strong dependence on the local communications and interactions found in many existing approaches to MRTA. AFM provides a rich abstraction to this requirement through a system-wide continuous flow of information about tasks, agent states etc. This flow of information can be achieved by using both centralized and decentralized communication strategies under explicit and implicit communication  modes.
+In biological social systems, communications among the group members, as well as the perception of tasks, are two key components of self-organized DOL. In robotics, existing self-organized task-allocation methods rely heavily upon local sensing and local communication between individuals. AFM however, differs significantly in this point.  Being a highly abstract model, it avoids a strong dependence on any specific communication strategy such as the local communications and interactions found in many existing approaches to MRTA. AFM uses the abstraction of attractive fields or continuous flows of information from tasks to agents.  This flow of information can be realized by through either centralized or decentralized communication strategies under explicit and implicit communication modes.
 
-In order to enable continuous flow of information in our \acl{MRS}, we have implemented two types of sensing and communication strategies inspired by the self-regulated DOL found in two types of social wasps: {\em polistes} and {\em polybia} \cite{Jeanne1999}. Depending on the group size, these species follow different strategies for communication and sensing of tasks. Polistes wasps are called the {\em independent founders} in which reproductive females establish colonies alone or in small groups (in the order of $10^2$), but independent of any sterile workers. On the other hand, polybia wasps are called the {\em swarm founders} where a swarm of workers and queens initiate colonies consisting of several hundreds to millions of individuals. The most notable difference in the organization of work of these two social wasps is: independent founders do not rely on any cooperative task performance while swarm founders interact with each-other locally to accomplish their tasks. The work mode of independent founders can be considered as {\em global sensing - no communication (GSNC)} where the individuals sense the task requirements throughout a small colony and do these tasks without communicating with each other. On the other hand, the work mode of swarm founders can be treated as {\em local sensing - local communication (LSLC)} where the individuals can only sense tasks locally due to large colony size and they can communicate locally to exchange information, e.g. task-requirements (although their exact mechanism is unknown). In this study, we have used these two sensing and communication strategies to compare the performance of the self-regulated DOL of our robots under AFM. 
+In order to enable continuous flow of information in our \acl{MRS}, we have implemented two types of sensing and communication strategies inspired by the self-regulated DOL found in two types of social wasps: {\em polistes} and {\em polybia} \cite{Jeanne1999}. Depending on the group size, these species follow different strategies for communication and sensing of tasks. Polistes wasps are called {\em independent founders}.  In this species reproductive females establish colonies alone or in small groups (in the order of $10^2$), but independent of any sterile workers.  Polybia wasps, on the other hand, are called {\em swarm founders} where a swarm of workers and queens initiate colonies consisting of several hundreds to millions of individuals.  The most notable difference in the organization of work in these two social wasps is that independent founders do not rely on any cooperative task performance while swarm founders interact with each-other locally to accomplish their tasks.  The work mode of independent founders can be considered as {\em global sensing - no communication (GSNC)} where the individuals sense the task requirements throughout a small colony and do these tasks without communicating with each other.  The work mode of the swarm founders, on the other hand, can be treated as {\em local sensing - local communication (LSLC)} where the individuals can only sense tasks locally due to the large colony size and can communicate locally to exchange information, e.g. task-requirements (although their exact communication mechanism is unknown).  In the study presented here, we have compare the performance of these two sensing and communication strategies for self-regulated DOL in robots under AFM. 
 
 The main contributions of this paper are as follows:
 \begin{itemize}
-\item Interpretation of AFM for a multi-robot system, as a basic mechanism of self-regulated MRTA.
-\item Validation of AFM through experiments with reasonably large number of real robots i.e., 16 e-puck robots.
-\item Comparisons of the performances of two bio-inspired sensing and communication strategies in achieving self-regulated MRTA.
+\item An interpretation of AFM for a multi-robot system, as a basic mechanism for self-regulated MRTA.
+\item A validation of the AFM model through experiments with 16 e-puck robots.
+\item A comparison of the performance of two bio-inspired sensing and communication strategies for self-regulated MRTA.
+\item A novel taxonomy of MRTA solutions based on three major axes: organization of task-allocation, interaction and communication.
 \item Development of a flexible multi-robot control architecture using D-Bus inter-process communication technology.
-\item Classification of MRTA solutions based on three major axes: organization of task-allocation, interaction and communication.
 \end{itemize}
 %%
 This paper has been organized as follows.
-Section 2 reviews the related literature on key solutions to MRTA. Section 3 presents a novel taxonomy of MRTA solutions.
+Section 2 reviews the related literature on MRTA.
+Section 3 presents the new taxonomy of MRTA solutions.
 Section 4 interprets the AFM for multi-robot systems. 
-Section 5 presents our MRTA solution using AFM. Section 6 and 7 describe our centralized and local P2P communication model respectively.
-Section 8 presents our experimental design and implementation. Section 9 describes our experimental results. 
-Section 10 discusses the performance of self-regulated MRTA under both GSNC and LSLC strategies.
-Section 11 draws conclusions and presents the possibilities for future work.
+Section 5 presents our AFM-based MRTA solution.
+Sections 6 and 7 describe our centralized and local communication models respectively.
+Section 8 presents the design and implementation of our experiments.
+Section 9 describes our results. 
+Section 10 discusses the performance of self-regulated MRTA under both the GSNC and LSLC strategies.
+Section 11 draws conclusions and presents possibilities for future work.
 %%===================================================================
 \section{Related work}
 \label{sec:bg}
@@ -237,39 +240,49 @@ Section 11 draws conclusions and presents the possibilities for future work.
 \label{fig:mrta-classification} % Give a unique label
 \end{figure*}
 %%
-Since 90s, many robot control architectures  have been solely designed to address the MRTA issue from different perspectives. Based-on the high-level design of those solutions, we have classified them into two major categories: 1) predefined or intentional task-allocation and 2) bio-inspired self-organized task-allocation. Fig. \ref{fig:mrta-classification} illustrates our classification.
+Since the 90s, many robot control architectures have been designed with thed sole purpose of addressing the MRTA issue from different perspectives. Based on the high-level design of those solutions, we have classified them into two categories: 1) {\em predefined} or {\em explicit} task-allocation and 2) {\em bio-inspired self-organized} task-allocation. Fig. \ref{fig:mrta-classification} illustrates our classification.
 
-In most of the traditional multi-robot systems, task allocation is achieved using well-defined models of tasks and environments. Here it is assumed that the system designer has the precise knowledge about tasks, robot-capabilities etc. Many flavours of this type of task-allocation can be found in the literature. Knowledge-based and multi-agent based approaches use various knowledge-based techniques to represent tasks, robot capabilities etc. One of the early well-known MRTA architecture of this category is ALLIANCE in which each robot models the ability of team-members to perform tasks by observing their current task performances and collecting relevant task quality statistics e.g. time to complete tasks \cite{Parker1998}. Similar to  ALLIANCE, multi-agent based task allocation also  use both centralized and decentralized approaches for allocating tasks among  its  peers. A  detailed categorization has been reported in \citet{Shen+2001} where in a multi-agent system task allocation can be done by using various agents ranging from a central supervising agent or a few mediator agents to  all independent agents. 
+In most of the traditional multi-robot systems, task allocation is achieved using well-defined models of tasks and environments. Here it is assumed that the system designer has precise knowledge of tasks and robot-capabilities. Many flavours of this type of task-allocation can be found in the literature. Knowledge-based and multi-agent based approaches use various knowledge-based techniques to represent tasks and robot-capabilities. An early well-known MRTA architecture of this category is ALLIANCE in which each robot models the ability of team-members to perform tasks by observing their current task performances and collecting relevant task quality statistics, e.g., the time it takes a robot to complete a task \cite{Parker1998}. Multi-agent systems also use both centralized and decentralized approaches for allocating tasks among  its  peers. A detailed categorization has been reported in by Shen \citet{Shen+2001} where in a multi-agent task allocation systems are divided into those that use a central supervising agent , those that use a few mediator agents and those that use all independent agents. 
 
-As a feasible alternative to the above common multi-agent based task-allocation techniques, many researchers have been following the market-based bidding approach \citet{Dias+2006}. Originated from the Contract-Net Protocol, market-based approach can be implemented as a centralized auctioning system or as a combination of {\em a few auctioneers -- all bidders} or, independently {\em all auctioneers -- all bidders}. 
+As a feasible alternative to the above multi-agent based task-allocation mechanisms, many researchers have been following the market-based approaches \citet{Dias+2006}.  These approaches originated from the Contract-Net Protocol.  Market-based approaches can be implemented as a centralized auctioning system  as a set of a few auctioneers or as all independent auctioneers.
 %For example, in a completely distributed system, when a robot needs to perform a task for which it does not have necessary expertise or resources, it broadcasts a task-announcement message, often with  a expiry time of that message. Robots, that received the message and can perform that task, return a bid message. The initiating robot or {\em  manager} selects one (or more) bidder, called as {\em contractor}, and offers the opportunity to complete the task. The choice of contractor is done by the manager with a mutual agreement with contractor that maximizes the individual profits.
 
-Under role or value-based task-allocation scheme, each role assumes several specific tasks and each robot selects roles that best suit their individual skills and capabilities \cite{Chaimowicz2002}. In this case, robots are typically heterogeneous, each one having variety of different sensing, computation and effector capabilities. In multi-robot soccer \cite{Stone+1999}, positions played by different  robots are often defined as roles, e.g. goal-keeper, left/right defender, left/right forwarder etc. 
+Under role or value-based task-allocation schemes, each role assumes several specific tasks and each robot selects roles that best suit their individual skills and capabilities \cite{Chaimowicz2002}. In this case, robots are typically heterogeneous, each one having variety of different sensing, computation and effector capabilities. In multi-robot soccer \cite{Stone+1999}, positions played by different robots are often defined as roles, e.g. goal-keeper, left/right defender and left/right forward. 
 
-Under control-theoretic approaches, a model of the system is usually developed that converts the task specification into an objective function to be optimized. This model typically  uses  the rigid  body dynamics of the robots assuming the masses and other parameters well-known. Control laws of individual robots are derived either by analytically or by run-time iterations. 
+Under control-theoretic approaches, a model of the system is usually developed, that converts the task specification into an objective function to be optimized. This model typically uses the rigid body dynamics of the robots and requires that the mass and other parameters are well-known. Control laws for individual robots are derived either analytically either in advance or at run-time.
 %Unlike most other approaches where task-allocation problem is taken as discrete, control-theoretic approaches can produce continuous  solutions. The formalisms of these systems allow system designer to check the system's controllability, stability and related other properties.  These systems typically use some degree of centralization, e.g. choosing a leader robot.  
-Example of control-theoretic approach include: multi-robot formation control \cite{Belta+2004}, multi-robot box-pushing \cite{Pereira+2003}.
-Predefined task-allocation through few other approaches are also present in the literature. For example, inspired by the vacancy chain phenomena in nature, a vacancy chain scheduling algorithm has been applied for a restricted class of MRTA problems in spatially classifiable domains \cite{Dahl+2004}.
+Control-theoretic approaches have been developed for multi-robot formation control \cite{Belta+2004} and multi-robot box-pushing \cite{Pereira+2003}.
+Predefined task-allocation through other approaches are also present in the literature. For example, inspired by the vacancy chain phenomena in nature, a vacancy chain scheduling algorithm has been applied to a restricted class of MRTA problems in spatially classifiable domains \cite{Dahl+2004}.
 
-Task performance in self-organized approaches relies on the collective behaviours resulted from the local interactions of many simple and mostly homogeneous or interchangeable agents. Robots choose their tasks independently using the principles of self-organization, e.g. positive and negative feedback mechanisms, multiple interactions among entities and their environment, and randomness or amplification of fluctuations (see label A-D in Fig. \ref{fig:afm-rules}) \cite{Camazine+2001}. Moreover interaction among individuals and their environment are modulated by the stigmergic, local and broadcast communications.  Among many variants of self-organized task-allocation, most common type is threshold-based task-allocation \cite{Bonabeau+1999}. In this approach, a robot's decision to select a particular task depends largely on its perception of stimulus (demand for a task) and its corresponding response threshold for that task. 
+Task performance in self-organized approaches relies on the collective behaviours resulting from the local interactions of many simple and mostly homogeneous or interchangeable agents. Robots choose their tasks independently using general principles of self-organization such as: positive and negative feedback, multiple interactions among entities and their environment, and randomness or amplification of fluctuations (see label A-D in Fig. \ref{fig:afm-rules}) \cite{Camazine+2001}. Moreover. interaction among individuals and their environment can be modulated by stigmergic, local and global communications.  Among many variants of self-organized task-allocation mechanisms, the most common type is threshold-based task-allocation \cite{Bonabeau+1999}. In this approach, a robot's decision to select a particular task depends largely on its perception of a stimulus, e.g., the demand for a task to be performed, and its corresponding response threshold for that task.
 
-Under deterministic response-threshold approach, each robot has a fixed or deterministic activation threshold for each task that needs to be performed. It continuously perceives or monitors the stimulus of all tasks that reflect the relative urgencies of tasks. When a particular task-stimuli exceeds a predefined  threshold the robot starts working on that task and gradually decreases this stimuli. When the task-stimuli falls below the fixed threshold the robot abandons that task. This type of approach has been effectively applied in foraging \cite{Liu+2007,Krieger+2000}, aggregation \cite{Agassounon+2002}. This fixed response-threshold can initially be same for all robots \cite{Jones+2000}, or they can be different according robot capabilities or configuration of the system \cite{Krieger+2000}. Adaptive response threshold model changes or adapts the threshold over time. Response-threshold decreases often due to performance of a task and this enables a robot  to select that particular task more frequently or in other words it learns about that task \cite{Bonabeau+1999,Agassounon+2002}. 
+Under the deterministic response-threshold approach, each robot has an activation threshold for each task that needs to be performed. It continuously perceives or monitors the stimulus of all tasks that reflect the relative urgencies of tasks. When a particular task-stimulus exceeds a predefined threshold the robot starts working on that task, typically reducing thie related stimuli. When the task-stimuli falls below the fixed threshold the robot abandons that task. This type of approach has been effectively applied in foraging \cite{Liu+2007,Krieger+2000} and aggregation \cite{Agassounon+2002}. The fixed response threshold can initially be same for all robots \cite{Jones+2000} or they can be different according robot capabilities or the configuration of the system \cite{Krieger+2000}. Adaptive response-threshold models change the thresholds over time.  A robot's response threshold for a given task is often decreased as a result of the robot performing that task.  This enables a robot to select that particular task more frequently or in other words specialise on that task \cite{Bonabeau+1999,Agassounon+2002}.
 
-Unlike deterministic approach, where robots always respond to a task-stimuli that has a largest stimulus above the threshold,  probabilistic approach offers a selection process based-on a probability distribution. Robots  always have small nonzero probabilities  for all tasks.
+Unlike the deterministic approach, where robots respond preditably, e.g., to the task stimulus that is the furthest above its threshold, probabilistic or stochastic approaches offer a selection process based-on a probability distribution over the tasks.  In this case, all tasks commonly have at least a small, non-zero probability of being chosen.  This random element typically prevcents starvation of low=stimulus tasks.
 
-Most predefined task-allocation solutions are proposed within the context of a known or controlled environment where the modelling of tasks, robots, environments etc. becomes feasible. Note that here tasks can be arbitrarily complex that often require relatively higher sensory and processing abilities of robots. Robot-team can be consists of homogeneous or heterogeneous individuals, having different capabilities based on the variations in their hardware, software etc. But the uncertainty of the environment is assumed to be minimum. 
+Explicit task-allocation mechanisms require a known or controlled environment where it is possible to model the tasks, the robots and the environment.  Note that here, tasks can be arbitrarily complex and often require a high level of sensory and processing abilities in the robots.  Robot teamss can consists of homogeneous or heterogeneous individuals, having different capabilities based on the variations in their hardware or software, but the uncertainty of the environment is reduced to a minimum. 
 
-On the other hand, bio-inspired self-organized MRTA solutions are free from extensive modelling of environment, tasks or robot capabilities. Most of the existing research considers very simple form of one global task e.g. foraging, area cleaning, box-pushing etc. This is due to the fact that major focus of this approach is limited mainly to design individual robot controllers in such a way that a few simple  or {\em specific} tasks can be accomplished \cite{Gerkey+2003}. More research is needed to verify the capabilities of self-organized approach in doing multiple complex tasks. %At this moment, the bottom line remains as ``select simple robots for simple tasks (self-organized approach) and complex robots for complex tasks (predefined approach)''.
+Bio-inspired, self-organized MRTA mechanisms, on the other hand, rely to a much smaller degree on modelling the environment, tasks or robot capabilities.  Most existing research in this area considers a single global task e.g. foraging, area cleaning and box-pushin with the focus of the work being the design of individual robot controllers that can accomplish the task \cite{Gerkey+2003}. More research is needed to study the perfomance of the self-organized approach in handling several different tasks. %At this moment, the bottom line remains as ``select simple robots for simple tasks (self-organized approach) and complex robots for complex tasks (predefined approach)''.
 %%
-Both of the above task-allocation approaches expose their relative strengths and weaknesses when they are put under real-time experiments with variable number of robots and dynamic tasks. In an arbitrary event handling domain, a comparison between self-organized and predefined market-based task-allocation has been reported in \citet{kalra+2007} where they found that predefined  task-allocation was more efficient when the information was accurate, but threshold-based  approach offered similar quality of allocation at a fraction of cost  under noisy environment.  
+\begin{figure*}
+\centering
+\includegraphics[width=0.7\linewidth, angle=0]
+{./images/mrta-lines.eps}
+%figure caption is below the figure
+\caption{ Three major axes of complexities in MRTA}
+\label{fig:mrta-complexities} % Give a unique label
+\end{figure*}
 
-A a comparative study reported in \cite{Gerkey+2003} reveals  the complexity and optimality of key architectures, e.g.  ALLIANCE \cite{Parker1998}, BLE \cite{Werger2001}, M+ \cite{Botelho+1999}, MURDOCH \cite{Gerkey+2002}, First piece auctions \cite{Zlot+2002} and Dynamic role assignment \cite{Chaimowicz2002}, all of them relied upon predefined task-allocation methods. The computational and communication requirements of these MRTA solutions were expressed in terms of number of robots and tasks. Although this study does not explicitly measure the scalability of those key architectures, it clearly shows us that many predefined task-allocation solutions will fail to scale well in challenging environments  where the number of  robots and tasks are huge, under the given limited overall communication bandwidth and processing power of individual robots. 
+Both of the above task-allocation approaches expose their relative strengths and weaknesses when they are put under real-time experiments with variable number of robots and tasks. In an arbitrary event handling domain, a comparison between self-organized and predefined market-based task-allocation was reported by Kalra and Martinoli \citet{kalra+2007}.  They found that explicit task-allocation was more efficient when the required information could be captured accurately.  The threshold-based approach offered similar quality of allocation at a fraction of cost in noisy environment.  
+
+Gerkey and Mataric have presented a study \cite{Gerkey+2003} that compared the complexity and performance of key architectures, including ALLIANCE \cite{Parker1998}, the Broadcast of local eligibillity (BLE) arcgutecture \cite{Werger2001}, M+ \cite{Botelho+1999}, MURDOCH \cite{Gerkey+2002}, First piece auctions \cite{Zlot+2002} and Dynamic role assignment \cite{Chaimowicz2002}.  All of these rely on explicit task-allocation mechanisms. The computational and communication requirements of these MRTA systems were expressed as a function of the number of robots and tasks.  Although the study did not explicitly measure the scalability of the architectures, it clearly showed that many explicit task-allocation mechanisms fail to scale well in environments where the number of robots and tasks are large, given limited overall communication bandwidth and limited processing power for individual robots.
 
 %From above discussions we can see that, self-organized task-allocation methods are advantageous as they can provide fully distributed, scalable and robust MRTA solutions through redundancy and parallelism in task-executions. Moreover, the interaction and communication requirements of robots can also be kept under a minimum limit.  So for large multi-robot system, self-organized task-allocation methods  can potentially be selected, if the complex tasks can be divided into simple pieces that can be carried out by multiple simple robots in parallel with limited communication and interaction requirements.
 %%
-\section{A taxonomy of MRTA solutions}
+\section{A Three-Dimensional Taxonomy of MRTA Systems}
 \label{sec:taxonomy}
 %%
+In order to categorize both explicit and self-organized MRTA approaches we propose three distinct dimensions: 1) organization of task-allocation, 2) degree of interaction and 3) degree of communication.  Fig. \ref{fig:mrta-complexities} depicts these dimensions.  This taxonomy can be used to measure the complexities involved in various kinds of MRTA problems and to facilcilitated the design of appropriate systems form handling them.
 
 \begin{figure}
 \centering
@@ -292,33 +305,32 @@ In order to characterize both predefined and self-organized approaches in terms 
 
 In Fig. \ref{fig:mrta-complexities}, X axis represents the number of active nodes that provides the task-allocation to the group. For example, in any predefined  task-allocation approach, we can use one external centralized entity or one of the robots (aka leader) to manage the task-allocation. In many predefined methods, e.g. in market-based systems,  multiple nodes can act as mediators or task-allocators. Under predefined task-allocation approach,  a small number of robots can have fully distributed task-allocation where each robot acts as an independent task-allocator (e.g. as in ALLIANCE architecture). 
 
-Most of the self-organized task-allocation methods are fully distributed, i.e. they allocate their tasks independently without the help of a centralized entity. However, they might be dependent on external entities for getting status or descriptions of tasks. Recent studies on swarm-robotic flocking by \citet{Celikkanat+2008} show that a swarm can be guided to a target by a few informed individuals (or leaders) while  maintaining the self-organizing principles of task-allocation. Task-allocation of a swarm of robots  just by one central entity may be rare since one of the major spirits of constructing a swarm robotic system is to become fully distributed.
+Most of the self-organized task-allocation methods are fully distributed, i.e. each robot selects its tasks independently and without the help of a leader.  However, robots might be dependent on other entities for getting the latest {\em information} about tasks.  Recent studies on swarm-robotic flocking by Celikkanat {\em et al.} \citet{Celikkanat+2008} show that a swarm can be guided to a target by a few informed individuals or leaders while the remaining robots remain self-organied.  Task-allocation in a swarm of robots through one central entity may be rare since one of the major motivations behind swarm robotic systems is to make more robust by avoiding single points of failure.
 
-In Fig. \ref{fig:mrta-complexities},  Y axis corresponds to the level of robot-robot interaction present in the system. Group-level interaction can be classified into various levels: collective, cooperative, coordinative and collaborative \cite{Parker2008}. The presence of interaction can be due to the nature of the problem, e.g. cooperation is necessary in co-operative transport tasks. Alternately, this interaction can be a design choice where interaction can improves the performance of the team, e.g. cooperation in cleaning a work-site is not necessary but it can help to improve the  efficiency of this task. 
+In Fig. \ref{fig:mrta-complexities}, the y-axis corresponds to the level of robot-robot interaction present in the system.  Parker has classified group-level interaction into {\em collective}, {\em cooperative}, {\em coordinative} and {\em collaborative} \cite{Parker2008}.  The presence of interaction can be due to the nature of the problem, e.g. cooperation is necessary in co-operative transport tasks. Alternately, this interaction can be a design choice where interaction can improves the performance of the team, e.g. cooperation in cleaning a work-site is not necessary but it can help to improve the  efficiency of this task. 
 
 Y axis can also be used to refer to the degree of coupling present in the system.  In case of collective interaction, robots merely co-exist, i.e.  they may not be aware of each other except treating others as obstacles. Many multi-robot systems are loosely-coupled where robots can indirectly infer some states of the environment from their team-mates' actions.  But in many cases, e.g. in  co-operative transport, robots not only recognize others as their team-mates, but also they coordinate their actions. Thus they form a  tightly coupled system. This level of interaction and coupling also gives us the information about potential side-effects of failure of an individual robot. Tightly coupled systems with high degrees of interactions among the robots  suffer from the performance loss if some of the robots removed from the system.
 
 The Z axis in Fig. \ref{fig:mrta-complexities} represents the communication overhead of the system. This can be the result of the interactions  of robots under a given task-allocation method. As we have discussed before various task-allocation methods rely upon variable degrees of robot-robot communications.  On the other hand, the communication capabilities of individual robots can limit (or expand) the level of interaction can be made  in a given group. Thus in one way, considering the interaction requirements of a MRTA problem, the system designer can  select suitable communication strategies that both minimizes the communication overhead and maximizes the performance of the group. And in other way, the communication capabilities of robots can guide a system designer to design interaction rules of robot teams, e.g. the specification of robot's on-board camera  can determine the degree of possible visual interactions among robots. The suitable trade-offs between these two axes: communication and interaction can give us a balanced design of our MRTA solution.
 
-The central issue of this paper is to determine the role of communication and sensing strategies under an adaptive response-threshold task-allocation method. So we have focused to examine the benefits of traversing along the various axes of Fig. \ref{fig:mrta-complexities}. In this paper, we are interested on two distinct lines: 1) distributed task-allocation, with no direct robot-robot interaction and communication, say line $OX_{n}$ ($n$ being the number of robots)  and 2) distributed task-allocation, with no direct robot-robot interaction, but varying degrees of local communications, say line $X_{n}Z_{l}$  ($Z_{l}$ being a local broadcast communication strategy that involves $l$ number of peers in communication).
+The central issue of this paper is to study the performance of different communication and sensing strategies in an adaptive stochastic response-threshold task-allocation mechanism.  We have focused the benefits of traversing along the various axes of Fig. \ref{fig:mrta-complexities}. In this paper, we are interested on two distinct lines: 1) distributed task-allocation, with no direct robot-robot interaction and communication, say line $OX_{n}$ ($n$ being the number of robots)  and 2) distributed task-allocation, with no direct robot-robot interaction, but varying degrees of local communications, say line $X_{n}Z_{l}$  ($Z_{l}$ being a local broadcast communication strategy that involves $l$ number of peers in communication).
 %%============================================================
 \section{Robotic interpretation of the Attractive Field Model}
 \label{sec:afm}
 %%
-The construction of AFM has been achieved through a series of collaborative interactions among our EPSRC project partners. From the biological experiments of ants colonies {\em Temnothorax albipennis} we  inferred the bottom-up rules and roles of feedback in collective performance of ants brood-sorting and nest construction after emigration to a new site. We  also analysed the observational data from the self-organized infrastructural development of an {\em eco-village} by an open community of volunteers resided in Ireland. These studies helped us to formalize the generic rules into a concrete model  and to validate this model by deploying it in our robot controllers within the context of a manufacturing shop-floor scenario. In this section, we have described the generic framework of AFM, its relationshipship with self-organization and a brief interpretation of AFM in multi-robot systems.
-\subsection{Generic framework}
+The AFM has been developed through a collaborative between the partners on the 'Defying the Rules: How Self-Regulated Social; Systems Work' project.  Experiments on ants colonies {\em Temnothorax albipennis} studied the collective performance of ants during brood-sorting and nest construction after emigration to a new site.  The model is also inspired by observational data from the self-organized development of the infrastructure of an {\em eco-village} by an open community of volunteers.  These studies helped us to formalize the a set of necessary and sufficient requirements for self-organisation in a social systems.  We also developed a concrete model of self-organisation based on task-allocation.  This model was validated by deploying it as a robot controller mechanism.  In this section, we describe the generic AFM and how it embodies the requirements for self-organization.  We also provide an interpretation of AFM in multi-robot systems.
+\subsection{The Attractive Field Model}
 \label{afm:framework}
-Inspired from the DOL in ants, humans and robots,  we  have proposed the following four {\em generic rules of self-regulation}.
+Inspired from the DOL in ants, humans and robots, we have proposed the following necessary and sufficient set of four requirements for self-regulation in social systems.
 
-\textbf{Rule 1: Continuous flow of information.} Self-regulatory social systems establish the continuous minimum flow of information over the period of time when self-regulation can be defined. This should help to maintain at least two states of an agent: i) receiving information about tasks and ii) ignoring information or doing no task. The up-to-date information should reflect  the changes of the system i.e. it should encode the necessary feedback for the agents. Thus, this property will act as the basis of the state switching of agents, between these two minimum states or, among multiple states e.g. in case of multiple tasks or many sub-states of a single task.
+\textbf{Requirement 1: Concurrence} The simultaneous presence of several options is necessary in order to meaningfully say that the system has organised into a recognisable structure.   In task-allocation terms the minimum requirement is a single task as well as the option of not performing any task.
 
-At the individual level, information is processed differently by each individual, and is certainly not constant nor continuous. The time scale at the individual level is very small compared to the system level's time scale.We can approximate the propagation of information at this macro time scale as the continuous flow of information.  In the model, emphasize is given to whether the information is used e.g. stimulation to perform a task, or unused e.g. random walk.
+\textbf{Requirement 2: Continuous flow of information} Self-organised social systems establish a flow of information over the period of time when self-organisation can be defined.  The task information provides the basis on which the agents self-organise by enabling them to perceive tasks and receive feedback on system performance.
 
-\textbf{Rule 2: Sensitization}. Self-regulatory social systems allow the differentiation in the use of  (or access to) information, e.g. through sensitization or learning of some tasks. This differentiation is regulated by the characteristics of the system, e.g. the ability of the agents to learn tasks that are repeatedly performed.
+\textbf{Requirement 3: Sensitization} The system must have a way of representing the structure produced by self-organisation, in terms of MRTA, which tasks the robots are allocated.  One of the simplest ways of representing this information is an individual preference parameter for each task-robot combination.  A system where each robot has different levels of preference or {\em sensitivity} to the available tasks, can be said to have to embody a distinct organisation through differentiation.
 
-\textbf{Rule 3: Concurrence.} Self-regulatory social systems include concurrent access to information from different spatial locations with certain preferences. This preference is not fixed and can change with the dynamics of the system. 
+\textbf{Requirement 4: Forgetting} When a system self-organises by repeated increases in individual sensitisation levels, it is also necessary, in order to avoid saturation, to have a mechanism by which the sensitisation levels are reduced or {\em forgotten}.  In addition to avoiding the situation where a structure produced by self-organisation is eroded by an eventual increase of sensitisation values to a given maximum, forgetting also allows flexibility in the system, in that the structure can change as certain tasks become important and other tasks become less so.  This effect can be achieved by mechanisms such as a slow general decay of sensitisation values or explicit negative feedback.
 
-\textbf{Rule 4: Forgetting.} Self-regulatory social systems include forgetting, e.g. the ability of the agents to diminish information over time, if not used. The system determines the amount of information being released, and this may change over time. For example, specialists might have to attend an emergency situation and switch tasks that contributes to the forgetting of old task experiences. This is considered as crucial to allow flexibility in the system.
 %%
 \begin{figure}
 \centering
@@ -327,27 +339,76 @@ At the individual level, information is processed differently by each individual
 \label{fig:afm} % Give a unique label
 \end{figure}
 
-Having this general framework of self-regulatory social systems, we can now formalize AFM that will describe the properties of individual  agents and the system as a whole. In terms of networks, the model is a bipartite network, i.e. there are two different types of nodes. One set of nodes describes the sources of the attractive fields and the other set describes the agents. Links only exist between different types of nodes and they encode the flow of information so that, even if there is no direct link between two agents, their interaction is taken into account in the information flow. This is an instance of {\em weak} interaction. The strength of the field primarily depends upon the distance between the task and the agent. This relationship is represented using weighted links. Besides, there is a permanent field that represents the {\em no-task} or  option for ignoring information. The model can be mapped to a network as shown in Fig. \ref{fig:afm}. The correspondence is given below:
+Building on the requirements for self-organised social systems, AFM formalises these requirements in terms of the relationships between properties of individual agents and of the system as a whole \citet{Arcaute+2008}.  AFM is a bipartite network, i.e. there are two different types of nodes.  One set of nodes describes the sources of the attractive fields, the tasks, and the other set describes the agents.  Edges only exist between different types of nodes and they encode the strength of the atrractive field as perceived by the agent.  There are no edges between agent nodes.  All communication is considered part of the attractive fields.  There is also a permanent field representing the {\em no-task} option of not working in any of the available tasks.  This option is modelled as a random walk.  The model is presented graphically in Fig. \ref{fig:afm}.  The elements depicted are:
 \begin{enumerate}
-\item Source nodes (o) are tasks that can be divided between a number of agents.
-\item Agent nodes (x) an be ants, human,  robots etc.
-\item The attractive fields correspond to stimuli to perform a task, and these are given by the black solid lines.
-\item When an agent performs a task, the link becomes different, and this is denoted in the figure by a dashed line. Agents linked to a source by a red line are the agents currently doing that task. 
-\item The field of ignoring the information (w) corresponds to the stimulus to random walk, i.e. the no-task option, and this is denoted by the dotted lines in the graph. 
-\item Each of the links is weighted. The value of this weight describes the strength of the stimulus that the agent experiences. In a spatial representation of the model, it is easy to see that the strength of the field depends on the physical distance of the agent to the source. Moreover, the strength can be increased through sensitisation of the agent via experience (learning). This distance is not depicted in the network, it is represented through the weights of the links. In the figure of the network (Fig. \ref{fig:afm}), the nodes have arbitrary places. Note that even though the distance is physical in this case, the distance in the model applied to other systems, needs not to be physical. It can represent the accessibility to the information, the time the information takes to reach the receiver, etc. 
+\item Source nodes (o) are tasks to be allocated to agents
+\item Agent nodes (x) e.g., ants, humans, or robots
+\item Black solid edges represent the attractive fields and correspond to an agent's perceived stimuli from each task.
+\item Green edges represent the attractive field of the ever present no-task option, reresented as a particular task (w).
+\item The red lines are not edges, but represent how each agent is allocated to a single task at any point in time.
 \end{enumerate}
-In summary, from the above diagram of the network, we can see that each of the agents is connected to each of the fields. This means that even if an agent is currently involved in a task, the probability that it stops doing it in order to pursue a different task, or to random walk, is always non-zero. The weighted links express the probability of an agent to be attracted to each of the fields.
+
+The edges of the AFM network are weighted and the value of this weight describes the strength of the stimulus as perceived by the agent.  In a spatial representation of the model, the strength of the field depends on the physical distance of the agent to the source.  In information-based models, the distance can represent an agent's level of understanding of that task.  The strength of a field is increased through the sensitisation of the agent through experience with performing the task.  This elements is not depicted explicitly in Figure~\ref{fig:afm} but is represented in the weights of the edges.  In Figure~\ref{fig:afm}), the nodes have arbitrary positions.  Even though the distance is physical in this case, it need not be.  When the model is applied to other domains, the distance can represent the accessibility of information or the time the information takes to reach the agent. 
+In summary, from the above diagram of the network, we can see that each of the agents is connected to each of the tasks. This means that even if an agent is currently involved in a task, the probability that it stops doing it in order to pursue a different task, or to random walk, is always non-zero.
+
+AFM assumed a repeated task selection by indicidual agents.  The probability of an agent chosing to perform a task is proportional to the sttrangth of the task's attractive field, as given by Equation~\ref{eqn:afm3}.
+\begin{equation}
+P_{j}^{i} = \frac{S_{j}^{i}}{\sum_{j=0}^{J} S_{j}^{i}} \hspace*{0.25cm}where,\hspace*{0.25cm}S^{i}_{0} = S^{i}_{RW}   
+\label{eqn:afm3}
+\end{equation}
+Equation~\ref{eqn:afm3} states that the probability of an agent, $i$, selecting a task, $j$, is proportional to the stimulus, $ S^i_j$, perceived from that task, with the sum of all the task stimuli normalised to $1$.
+
+The strength of an attractive field varies according to how sensitive the agent is to that task, $k_{j}^{i}$, the distance between the task and the agent, $d_{ij}$, and the {\em urgency}, $\phi _{j}$ of the task.  In order to give a clear edge to each field, its value is modulated by the hyperbolic tangent function, $tanh$.  Equation~\ref{eqn:afm1} formalises this part of AFM.
+%% S
+\begin{equation}
+S_{j}^{i} = tanh\{\frac{k_{j}^{i}}{d_{ij}+\delta } \phi _{j}\}
+\label{eqn:afm1}
+\end{equation}
+Eqation~\ref{eqn:afm1}, used small constant $\delta$, called {\em delta distance}, to avoid division by zero, in the case when a robot has reached to a task.
+
+Equation~\ref{eqn:afm2} shows how AFM handles the the no-task, or random walk, option.  The strength of the stimuli of the random walk task depends on the strengths of the fields real tasks.  In particular, when the other tasks have a low overall level of sensitisation, i.e., relatively weak fields, the strength of the random walk field if relatively high.  On the other hand, when the agent is highly sensitised, the strength of the random walk field becomes relatively low.  We use $J$ to denote the number of real tasks.  AFM effectively considers random walking as an ever present additional task.  Thus the total number of tasks becomes $J+1$. %--P(Task)
+\begin{equation}
+S^{i}_{RW} = tanh \left \{ 1 -  \frac{ \sum_{j=1}^{J} S^{i}_{j}}{J + 1} \right \}
+\label{eqn:afm2}
+\end{equation}
+%-- P(RW)
+
+A task $j$ has an associated urgency $\phi_j$ indicating its relative importance over time.  If an agent attends a task $j$ in time step $t$, the value of $\phi_j$ will decrease by an amount $\delta_{\phi_{INC}}$ in the time-step $t+1$.  On the other hand, if a task has not been served by any of the agents in time-step $t$, $\phi_j$ will increase by a different amount, $\delta_{\phi_{DEC}}$ in time-step $t+1$.  This behaviour is formalised in Equations~\ref{eqn:delta-phi1} and~\ref{eqn:delta-phi2}.
+\begin{equation}
+ If\hspace*{0.15cm}the\hspace*{0.15cm} task\hspace*{0.15cm}is\hspace*{0.15cm}not\hspace*{0.15cm}being\hspace*{0.15cm} done:\hspace*{0.15cm} \phi_{j,t+1} \rightarrow \phi_{j,t} \hspace*{0.15cm} + \delta_{\phi_{INC}}
+\label{eqn:delta-phi1}
+\end{equation}
+%%
+\begin{equation}
+ If\hspace*{0.15cm}the \hspace*{0.15cm}task\hspace*{0.15cm}is\hspace*{0.15cm}being\hspace*{0.15cm}done:\hspace*{0.15cm}  \phi_{j,t+1} \rightarrow \phi_{j,t} \hspace*{0.15cm} - n\hspace*{0.10cm}\delta_{\phi_{DEC}}
+\label{eqn:delta-phi2}
+\end{equation}
+Equation~\ref{eqn:delta-phi1} refers to a case where no agent attends to task $j$ and Equation~\ref{eqn:delta-phi2} to the case where $n$ agens are concurrently performing task $j$.
+
+In order to complete a task, an agent needs to be within a fixed distance of that task.  When an agent performs a task, it learns about it and this will increases the probability of that agent selecting that task in the future.  This is done by increasing its sensitization to the task by a fixed amount, $k_{INC}$. The variable affinity of an agent, $i$, to a task, $j$, is called its {\em sensitization} to that task and is denoted $k^{i}_{j}$.  If an agent, $i$, does not do a task $j$, $k^i_j$ is decreased by a different fixed amount, $k_{DEC}$.  This behaviour is formalised in Equations~\ref{eqn:k-inc} and~\ref{eqn:k-dec}.
+\begin{equation}
+ If\hspace*{0.15cm}task\hspace*{0.15cm}is\hspace*{0.15cm}done:\hspace*{0.15cm}  k^i_j \rightarrow   k^i_j \hspace*{0.15cm} + \hspace*{0.15cm} k_{INC}
+\label{eqn:k-inc}
+\end{equation}
+\begin{equation}
+ If\hspace*{0.15cm}task\hspace*{0.15cm}is\hspace*{0.15cm}not\hspace*{0.15cm}done:\hspace*{0.15cm}  k^i_j \rightarrow   k^i_j \hspace*{0.15cm} - \hspace*{0.15cm} k_{DEC}
+\label{eqn:k-dec}
+\end{equation}
+
+\subsection{A Robotic Interpretation of AFM}
+\label{afm:mrs-interpretation}
+The interpretation of AFM in a multi-robot system follows the above mentioned generic interpretation.  Each robot is modelled as an agent and each task is modellled as a spatial location.  The robots repeatedly select tasks and if the robot is outside a fixed task boundry, it navigates towards the task.  If the robot is within the task boundry it remains there until the end of the time step when a new (or the same) task is selected.
+The distance between a task and a robot is simply the physical distance and the sensitivities are recorded as specific values on each robot.
+The urgency values of the tasks are calculated based on the number of robots attending each task and the updated urgency values are communicated to the robots.
+
+The sensing of the distance between the taks and robots as well as the communication of urgency values are non-trivial in a robotic systen.  Both the sensing and communication can be done either locally by the individual robots or centrally, through an overhead camera and a global communication network.
+This article presents work on exploring the effects of different sensing and communication models on the performance of MRTA systems.
+
 %%--------------------------------------------------------------------
-\subsection{Relationship of AFM with self-organization}
+\subsection{AFM and Biological Self-Organization}
 \label{afm:so}
-%\begin{figure*}
-%\centering
-%\includegraphics[width=0.7\linewidth, angle=0]
-%{./images/self-org-2.eps}
-%\caption{\small Four generic rules establish the self-regulated DOL in social systems}
-%\label{fig:afm-rules} % Give a unique label
-%\end{figure*}
-The four distinct perspectives known as so-called ingredients or properties of self-organization:  A) positive feedback, B) negative feedback, C) presence of multiple interactions among individuals and their environment, and D) amplification of fluctuations  e.g., random walks, errors, random task-switching \cite{Camazine+2001}. However, it is not clear how those properties can come into existence. Fig.  \ref{fig:afm-rules} depicts  the four underlying mechanisms (label 1 to 4) that explain how self-organization can be realized in different social systems using our generic framework. These are explained in the following paragraphs.
+
+Fig.  \ref{fig:afm-rules} labels the four distinct perspectives known as so-called ingredients or properties of self-organization:  A) positive feedback, B) negative feedback, C) presence of multiple interactions among individuals and their environment, and D) amplification of fluctuations  e.g., random walks, errors, random task-switching \cite{Camazine+2001}. However, it is not clear how those properties can come into existence. Fig.  \ref{fig:afm-rules} depicts  the four underlying mechanisms (label 1 to 4) that explain how self-organization can be realized in different social systems using our generic framework. These are explained in the following paragraphs.
 
 Firstly, multiple interactions become meaningful when {\em continuous flow of information} occurs  by exchanging signals or cues among agents or their environment  that regulates their behaviours. This, in turn, contribute to the task-allocation  and task-switching in the social level.  In swarm intelligence literature, multiple interactions are often described as an essential ingredient of self-organization. However, interactions without definite purposes may not contribute to the self-organization.
 
@@ -358,58 +419,9 @@ Thirdly, similar to positive feedback, we have proposed {\em forgetting} that co
 Finally, creating  artificial amplification of fluctuations or stochastic events is not a straight-forward issue. It throws  many open questions. Does a system designer intentionally impose irregularity in task-performance of agents?  Is random movement  enough for simulating randomness in a system?
 Since emergencies do not always pop-up on request, we provide the rule of {\em concurrency} that enables agents to  maintain even a small amount of probability of selecting a low-priority, or less sensitized or distant task. This concurrency mechanism provides a high-degree of robustness in the system such that all tasks can be attended even if specialization of agents delays them in switching to some of the tasks.
 %%
-\subsection{Interpretation of AFM in multi-robot systems}
-\label{afm:mrs-interpretation}
-The interpretation of AFM in a multi-robot system follows the above mentioned generic interpretation. Let us consider a multi-tasking environment, where $N$ number of autonomous mobile robots are required to attend $J$ number of tasks spread over a fixed area $A$. 
 
-Let a task $j$ has an associated task-urgency $\phi_j$ indicating its relative importance over time.
-If a robot attends a task $j$ in the $x^{th}$ time-step, the value of $\phi_j$ will decrease by an amount $\delta_{\phi_{INC}}$ in the $(x+1)^{th}$ time-step.
-On the other hand, if a task has not been served by any robot in the $x^{th}$ time-step, $\phi_j$ will increase by another amount  $\delta_{\phi_{DEC}}$  in $(x+1)^{th}$ time-step. Thus
-%-- Phi update
-urgency of a task is updated by the following rules.
-\begin{equation}
- If\hspace*{0.15cm}the\hspace*{0.15cm} task\hspace*{0.15cm}is\hspace*{0.15cm}not\hspace*{0.15cm}being\hspace*{0.15cm} done:\hspace*{0.15cm}  \phi_j \rightarrow   \phi_j \hspace*{0.15cm} + \delta_{\phi_{INC}}
-\label{eqn:delta-phi1}
-\end{equation}
-%%
-\begin{equation}
- If\hspace*{0.15cm}the \hspace*{0.15cm}task\hspace*{0.15cm}is\hspace*{0.15cm}being\hspace*{0.15cm}done:\hspace*{0.15cm}  \phi_j \rightarrow   \phi_j \hspace*{0.15cm} - n\hspace*{0.10cm}\delta_{\phi_{DEC}}
-\label{eqn:delta-phi2}
-\end{equation}
-Eq. \ref{eqn:delta-phi1} refers to a case where no robot attend to task $j$ and Eq. \ref{eqn:delta-phi2} refers to another case where $n$ robots are concurrently performing the task $j$.
-
-In order to complete a task $j$, a robot $r_i$ needs to be within a fixed boundary $D_{j}$. If a robot completes a task $j$ it learns about it and this will influence $r_i$'s likelihood of selecting that task in future, say through increasing  its sensitization to $j$ by a small amount, $k_{INC}$. Here, the variable affinity of a robot $r_i$ to task $j$ is called as its {\em sensitization} $k^{i}_{j}$. If a robot $i$ does not do a task $j$ for some time, it forgets about $j$ and $k^i_j$ is decreased, by another small amount, say $k_{DEC}$ .
-Thus a robot's task-sensitization is updated by following these rules.
-\begin{equation}
- If\hspace*{0.15cm}task\hspace*{0.15cm}is\hspace*{0.15cm}done:\hspace*{0.15cm}  k^i_j \rightarrow   k^i_j \hspace*{0.15cm} + \hspace*{0.15cm} k_{INC}
-\label{eqn:k-inc}
-\end{equation}
-\begin{equation}
- If\hspace*{0.15cm}task\hspace*{0.15cm}is\hspace*{0.15cm}not\hspace*{0.15cm}done:\hspace*{0.15cm}  k^i_j \rightarrow   k^i_j \hspace*{0.15cm} - \hspace*{0.15cm} k_{DEC}
-\label{eqn:k-dec}
-\end{equation}
-
-According to AFM, all robots will establish attractive fields to all tasks due to the presence of a system-wide continuous flow of information. The strength of these attractive fields will vary according to the dynamic distances between the robots and tasks, task-urgencies and corresponding sensitizations of robots. Simplifying the generic implementation of AFM from \citet{Arcaute+2008}, we can formally encode this stimuli of attractive field as follows.
-%% S
-\begin{equation}
-S_{j}^{i} = tanh\{\frac{k_{j}^{i}}{d_{ij}+\delta } \phi _{j}\}
-\label{eqn:afm1}
-\end{equation}
-%--P(Task)
-\begin{equation}
-S^{i}_{RW} = tanh \left \{ 1 -  \frac{ \sum_{j=1}^{J} S^{i}_{j}}{J + 1} \right \}
-\label{eqn:afm2}
-\end{equation}
-%-- P(RW)
-\begin{equation}
-P_{j}^{i} = \frac{S_{j}^{i}}{\sum_{j=0}^{J} S_{j}^{i}} \hspace*{0.25cm}where,\hspace*{0.25cm}S^{i}_{0} = S^{i}_{RW}   
-\label{eqn:afm3}
-\end{equation}
-
-Eq. \ref{eqn:afm1} states that the stimuli of a robot $r_i$ to a particular task $j$, $S^{i}_{j}$ depends on $r_i$'s spatial distance to $j$ ($d_{ij}$), level of sensitization to $j$ ($k_{j}^{i}$), and perceived urgency of that task ($\phi _{j}$). In  Eq. \ref{eqn:afm1}, we have used a very small constant value $\delta$, called {\em delta distance}, to avoid division by zero, in the case when a robot has reached to a task. Since $S^{i}_{j}$ is a probability function, it is chosen as a $tanh$ in order to keep the values between 0 and 1. Eq. \ref{eqn:afm2} suggests us how we can estimate the stimuli of random walk or no-task option. This stimuli of random walk depends on the sum of stimulus of $J$ real tasks. Here, random-walk is also considered as a task. Thus the total number of tasks become $J+1$. The probability of selecting each task has been determined by a probabilistic method outlined in Eq. \ref{eqn:afm3} which states that the probability of choosing a task $j$ by robot $r_i$ is directly proportional to its calculated stimuli $ S^i_j$. 
-%Finally, let $T_a$ be the allocated time to accomplish a task. If a robot can enter inside the task boundary within $T_a$ time it waits there until $T_a$ elapsed. Otherwise it will select a different task.
 %%============================================================ 
-\section{AFM based task-allocation solution}
+\section{A Manufacturing Shop-Floor Interpretation of AFM}
 \label{sec:mrta}
 We have designed a set of  manufacturing shop-floor scenario experiments for validating the effectiveness of our AFM in producing self-regulated MRTA.  In this section, we have described our manufacturing shop-floor scenario and our task-allocation solution for robot-controllers.
 %%
@@ -749,7 +761,7 @@ Thus, in order to observe the above properties of self-regulated MRTA , we have 
 %%
 %------------------------------------------------------------
 \subsection{Parameters}
-Table \ref{table:params} lists a set of essential parameters of our GSNC strategy based experiments (Series A and B). We intend to have a set-up that is relatively complex, i.e., with a high number of robots and tasks in a large area. The diameter of the marker of our e-puck robot is 0.08m (Fig \ref{fig:e-puck}). So, if we put 4 robots in an area of one square meter, this will give us a robot-occupied-space to free-space ratio of about 1:49 per square meter. This ratio is reasonable in order to allow the robots to move at a speed of 5 cm/sec without causing much interference to each other. 
+Table \ref{table:params} lists a set of essential parameters of our GSNC startegy based experiments (Series A and B). We intend to have a set-up that is relatively complex, i.e., with a high number of robots and tasks in a large area. The diameter of the marker of our e-puck robot is 0.08m (Fig \ref{fig:e-puck}). So, if we put 4 robots in an area of one square meter, this will give us a robot-occupied-space to free-space ratio of about 1:49 per square meter. This ratio is reasonable in order to allow the robots to move at a speed of 5 cm/sec without causing much interference to each other. 
 
 The initial values of task urgencies correspond to 100 units of production work-load without any maintenance work-load as outlined in Eq. \ref{eqn:task-urgency-prod-init}. We choose a limit of 0 and 1, where 0 means no urgency and 1 means maximum urgency. Same rule applies to sensitisation, where 0 means no sensitisation and 1 means maximum sensitisation. This also implies that if sensitization is 0, task has been forgotten completely. On the other hand, if sensitization is 1, the task has been learnt completely. We choose a initial sensitization value of 0.1 for all tasks. The following relationships are maintained for selecting task-urgency and sensitization parameters.
 \begin{equation}
@@ -1279,28 +1291,63 @@ We have observed the effect of scaling-up the robot team size. The system size o
 Similarly we can see that in larger system robots have less chances to specialize on tasks, as the Series B experiments show us that the overall average task-specialization of the group $K^G_{avg}$ is lower by 0.10 and it lasts for significantly less time (the difference of $Q^G_{avg}$  of both systems is 20 time-steps). Thus, in a large group, robots are more likely to switch among tasks more frequently and this produces more translation motions which cost more energy (e.g. battery power) in task-performance.
 %%
 \subsection{Comparisons between GSNC and LSLC strategies} 
-Results from Series C and Series D experiments show us many similarities and differences with respect to the results of Series A and Series B experiments. Both Series C and Series D experiments show similar APCD values: 1.42 and 1.46 respectively, which are significantly less than Series B experiment result (APCD = 2.3) and are close to Series A experiment result (APCD = 1.22). This means that for large group, task-performance  is efficient under LSLC strategy (Series C and Series D) comparing with their GSNC counterpart (Series B).
-
-Besides, in terms of task-specialization, the overall task-specialization of group in Series C ($K^G_{avg}$ = 0.4) is  closer to that of Series A experiments ($K^G_{avg}$ = 0.39) and interestingly, the value of  Series D ($K^G_{avg}$ = 0.27) is  much closer to that of Series B experiments ($K^G_{avg}$ = 0.30). So task-specialization in large group under LSLC strategy shows higher performance than their GSNC counter part. Besides task-specialization happens much faster under LSLC strategy as we can see that the average time to reach peak sensitization values  of the group,  $Q^G_{avg}$ in Series C is lower than that of Series A values by 25 time-steps.
-
-\begin{table}
+\begin{table}[H]
+%\begin{scriptsize}
 \begin{center}
-\caption{Sum of translations of robots in our experiments.}
-\begin{tabular}{|c|c|c|}
-\hline \textbf{Series} & \textbf{Average translation (m)} & \textbf{SD} \\ 
-\hline A & 2.631 & 0.804\\ 
-\hline B & 13.882 & 3.099\\
-\hline C & 4.907 & 1.678\\
-\hline D & 4.854 & 1.592\\
+\caption{Shop-floor production and maintenance task performance}
+\begin{tabular}{|p{0.28in}|p{0.8in}|p{0.8in}|p{0.8in}|p{0.8in}|}
+\hline Series & \textit{Production \protect\newline delay (SD) s} & \textit{p-value} \protect\newline 1-tailed \protect\newline t-test\protect\newline (confidence) & \textit{Pending \protect\newline maintenance time (SD) s} & \textit{p-value} 1-tailed \protect\newline t-test\\ 
+\hline A & 555 (50) & 0.0 & 5 (5) & 0.0\\ 
+\hline B & 825 (360) & 0.2 (60\%) & 15 (65) & 0.0 \\
+\hline C & 605 (180) & N/A & 25 (85) & N/A\\
+\hline D  & 615 (200) & 0.0 & 10 (35) & 0.0\\
+\hline
+\end{tabular}
+\label{table:vsp-cmp} 
+\end{center}
+%\end{scriptsize}
+\end{table}
+Results from Series C and Series D experiments show many similarities and differences with respect to the results of Series A and Series B experiments. As shown in Table \ref{table:vsp-cmp}  both Series C and Series D experiments show similar production delay (APCD) values: 605s and 615s respectively, which are less than Series B experiment result (825s) and are close to Series A experiment result (555s). Note that all statistical t-test results are obtained with respect to Series C data and it shows that there is no significant difference in task-performance between Series B and Series C results.
+%%
+\begin{table}[H]
+%\begin{scriptsize}
+\begin{center}
+\caption{Task-specialization values of the robots}
+\begin{tabular}{|p{0.3in}|p{0.7in}|p{0.7in}|c|p{0.7in}|}
+\hline Series & $ K^G_{avg}$ (SD) & \textit{ p-value} \protect\newline 1-tailed t-test (confidence)  & $ Q^G_{avg}$ (SD) & \textit{ p-value} \protect\newline 1-tailed \protect\newline t-test \protect\newline (confidence) \\ 
+\hline A & 0.40 (0.08)& 0.0 & 38 (13) & 0.001 (99.8\%)\\ 
+\hline B &  0.30 (0.03) & 0.2 (60\%) &  18 (5) & 0.2 (60\%)\\
+\hline C  & 0.39 (0.17) & N/A & 13 (7) & N/A \\
+\hline D  & 0.27 (0.1)& 0.0 & 11 (5) & 0.0\\
+\hline
+\end{tabular}
+\label{table:k-cmp} 
+\end{center}
+%\end{scriptsize}
+\end{table}
+Besides, in terms of task-specialization as shown in Table \ref{table:k-cmp}, the overall task-specialization of group in Series C ($K^G_{avg}$ = 0.4) is  closer to that of Series A experiments ($K^G_{avg}$ = 0.39) and interestingly, the value of  Series D ($K^G_{avg}$ = 0.27) is  much closer to that of Series B experiments ($K^G_{avg}$ = 0.30). So task-specialization in large group under LSLC strategy is not significantly different than their GSNC counter part. %Besides task-specialization happens much faster under LSLC strategy as it can be seen that the average time to reach peak sensitization values  of the group,  $Q^G_{avg}$ in Series C is lower than that of Series A values by 25 time-steps.
+
+\begin{table}[H]
+%\begin{small}
+\begin{center}
+\caption{Sum of translations of robots in all experiments.}
+\begin{tabular}{|p{0.3in}|p{1in}|p{0.9in}|}
+\hline Series & Average \protect\newline translation \protect\newline(SD) m & \textit{p-value} \protect\newline 1-tailed t-test (confidence)\\ 
+\hline A & 2.631 (0.804) & N/A\\ 
+\hline B & 13.882 (3.099) & 0.001 (99.8\%)\\
+\hline C & 4.907 (1.678) & N/A\\
+\hline D  & 4.854  (1.592) & 0.0\\
 \hline
 \end{tabular}
 \label{table:motion-cmp} 
 \end{center}
+%\end{small}
 \end{table}
 %%
-From the robot motion profiles found in all four series of experiments, we have found that under LSLC strategy, robot translations have been reduced significantly. Table \ref{table:motion-cmp} summarizes the average translations done by robots in all four series of experiments. From this table we can see than Series C and Series D show about 2.8 times less translation than that in Series B experiments. The translation of 16 robots in Series C and Series D experiments are approximately double (1.89 times) than that of Series A experiments with 8 robots.  Thus the energy-efficiency under LSLC strategy seems to be higher  than that under GSNC strategy.
+Table \ref{table:motion-cmp} summarizes the average translations done by robots in all four series of experiments. From these robot motion profiles, it is found that under LSLC strategy, robot translations have been reduced significantly. From this table it is seen than Series C and Series D show about 2.8 times less translation than that in Series B experiments. The translation of 16 robots in Series C and Series D experiments are approximately double (1.89 times) than that of Series A experiments with 8 robots.  Thus the energy-efficiency under LSLC strategy seems to be higher  than that under GSNC strategy.
 
-From the above results we can see that large group of robots achieve better MRTA under LSLC strategy. The local sensing of tasks prevents them to attend a far-reaching task which may be more common under global sensing strategy. However, as we have seen in Fig. \ref{fig:raw-urgencies} some tasks can be left unattended for a long period of time due to the failure to discover it by any robot. For that reason we see that the values of APMW is slightly higher under LSLC strategy. But this trade-off is worth as LSLC strategy provides superior self-regulated MRTA in terms of task-performance, task-specialization and energy-efficiency. 
+From the above results one can see that large group robots achieve similar or better MRTA under LSLC strategy. The local sensing of tasks prevents them to attend a far-reaching task which may be more common under global sensing strategy. However, as it is seen in Fig. \ref{fig:raw-urgencies-SC-SD}
+some tasks can be left unattended for a long period of time due to the failure to discover it by any robot. For that reason it is seen that the values of pending maintenance load is slightly higher under LSLC strategy. But this trade-off is worth as LSLC strategy provides superior self-regulated MRTA in terms of task-performance, task-specialization and energy-efficiency.
 %%================================================================
 \section{Conclusions}
 \label{sec:conc}
