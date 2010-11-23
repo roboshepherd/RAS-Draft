@@ -278,42 +278,41 @@ Both of the above task-allocation approaches expose their relative strengths and
 Gerkey and Mataric have presented a study \cite{Gerkey+2003} that compared the complexity and performance of key architectures, including ALLIANCE \cite{Parker1998}, the Broadcast of local eligibillity (BLE) arcgutecture \cite{Werger2001}, M+ \cite{Botelho+1999}, MURDOCH \cite{Gerkey+2002}, First piece auctions \cite{Zlot+2002} and Dynamic role assignment \cite{Chaimowicz2002}.  All of these rely on explicit task-allocation mechanisms. The computational and communication requirements of these MRTA systems were expressed as a function of the number of robots and tasks.  Although the study did not explicitly measure the scalability of the architectures, it clearly showed that many explicit task-allocation mechanisms fail to scale well in environments where the number of robots and tasks are large, given limited overall communication bandwidth and limited processing power for individual robots.
 
 %From above discussions we can see that, self-organized task-allocation methods are advantageous as they can provide fully distributed, scalable and robust MRTA solutions through redundancy and parallelism in task-executions. Moreover, the interaction and communication requirements of robots can also be kept under a minimum limit.  So for large multi-robot system, self-organized task-allocation methods  can potentially be selected, if the complex tasks can be divided into simple pieces that can be carried out by multiple simple robots in parallel with limited communication and interaction requirements.
-%%
-\section{A Three-Dimensional Taxonomy of MRTA Systems}
+%%================================================
+\section{A Taxonomy of MRTA Approaches}
 \label{sec:taxonomy}
+In order to understand the interplay among task-allocation, communication and interaction of a particular MRTA approach we have presented these aspects in two 2D characteristic plots.  From this classification we can get an insight about the complexities involved in various kinds of MRTA problems and  the design choices involved in them.
 %%
-In order to categorize both explicit and self-organized MRTA approaches we propose three distinct dimensions: 1) organization of task-allocation, 2) degree of interaction and 3) degree of communication.  Fig. \ref{fig:mrta-complexities} depicts these dimensions.  This taxonomy can be used to measure the complexities involved in various kinds of MRTA problems and to facilcilitated the design of appropriate systems form handling them.
-
-\begin{figure}
+\begin{figure*}[t]
+\begin{minipage}[t]{0.48\linewidth}
 \centering
 \includegraphics[width=0.99\linewidth, angle=0]
 {./images/taxonomy-ta-comm-OK.eps}
 %figure caption is below the figure
 \caption{Classification of MRTA solutions based on task-allocation and communication strategies}
 \label{fig:taxonomy-ta-comm} % Give a unique label
-\end{figure}
-%%
-\begin{figure}
+\end{minipage}
+%\end{figure}
+%\begin{figure}[t]
+\begin{minipage}[t]{0.48\linewidth}
 \centering
 \includegraphics[width=0.99\linewidth, angle=0]
 {./images/taxonomy-comm-interaction-OK.eps}
 %figure caption is below the figure
 \caption{Information flow caused by different levels of communication and interaction}
 \label{fig:taxonomy-comm-interaction} % Give a unique label
-\end{figure}
-In order to characterize both predefined and self-organized approaches in terms of their deployment, we propose three distinct axes: 1) organization of task-allocation (X), 2) degree of interaction (Y) and 2) degree of communication (Z). Fig. \ref{fig:mrta-complexities} depicts these axes with a reference point $O$. These axes can be used to measure the complexities involved in various kinds of MRTA problems and the design of their solutions. 
+\end{minipage}
+\end{figure*}
+%%
+Fig. \ref{fig:taxonomy-ta-comm} presents the classification of MRTA solutions based on task-allocation and communication strategies used to disseminate information. Here horizontal axis shows the number of active nodes that provides the task-allocation to the group . The origin of this axis represents the explicit task-allocation by a single centralized entity. For example, in any explicit task-allocation approach, we can use one external centralized entity or one of the robots (aka {\em leader}) to manage the task-allocation. In many predefined methods, e.g. in market-based systems, multiple nodes can act as mediators or task-allocators. Under predefined task-allocation approach, a small number of robots can have fully distributed task-allocation where each robot acts as an independent task-allocator (e.g. as in ALLIANCE architecture). 
+The right extreme of horizontal axis in Fig. \ref{fig:taxonomy-ta-comm} represents the swarm task-allocation method which is fully distributed, i.e. each robot selects its tasks independently and without the help of a leader. However, robots might be dependent on other entities for getting the latest {\em information} about tasks. In a recent study on swarm-robotic flocking,  \citet{Celikkanat+2008} show that a swarm can be guided to a target by a few informed individuals or leaders while the remaining robots remain self-organized. Task-allocation in a swarm of robots through one central entity may be rare since one of the major motivations behind swarm robotic systems is to make the swarm task-allocation more robust by avoiding single point of failure.
+The vertical axis in Fig. \ref{fig:taxonomy-ta-comm} shows the communication range of individual entities. In case of implicit communication via stigmergy in swarm task-allocation this range does not exist. On the other hand, in case of explicit task-allocation a global range can cover all entities. In this research we have placed our two kinds of experiments vertically aligned with swarm task-allocation. AFM centralized communication represents a GSNC system where communication range is global and task-allocation is fully distributed. Similarly, AFM local communication also represents the the fully distributed task-allocation but with limited communication range under LSLC strategy.
 
-In Fig. \ref{fig:mrta-complexities}, X axis represents the number of active nodes that provides the task-allocation to the group. For example, in any predefined  task-allocation approach, we can use one external centralized entity or one of the robots (aka leader) to manage the task-allocation. In many predefined methods, e.g. in market-based systems,  multiple nodes can act as mediators or task-allocators. Under predefined task-allocation approach,  a small number of robots can have fully distributed task-allocation where each robot acts as an independent task-allocator (e.g. as in ALLIANCE architecture). 
+The information flow caused by different levels of communication and interaction has been depicted in Fig. \ref{fig:taxonomy-comm-interaction}. This group-level interaction can be  classified  into  four types: {\em collective}, {\em cooperative}, {\em coordinative} and {\em collaborative} \cite{Parker2008}. From this plot we can see two extremes of information flow. Insufficient information flow occurs when individual's communication range is low and their interaction is limited. In such cases, system designed can find suitable trade-off to get a balanced information flow by increasing  communication range or interaction frequency or both.   On another extreme of this situation we can find lot of redundant information flow where all individuals are both communicating and interacting. Thus the dotted line in the plot refers to a balanced communication and  interaction. This dotted line does not completely intersect the horizontal line since when the communication range is limited to the next neighbour, individuals can still continue to interact with others as much as possible. 
 
-Most of the self-organized task-allocation methods are fully distributed, i.e. each robot selects its tasks independently and without the help of a leader.  However, robots might be dependent on other entities for getting the latest {\em information} about tasks.  Recent studies on swarm-robotic flocking by Celikkanat {\em et al.} \citet{Celikkanat+2008} show that a swarm can be guided to a target by a few informed individuals or leaders while the remaining robots remain self-organied.  Task-allocation in a swarm of robots through one central entity may be rare since one of the major motivations behind swarm robotic systems is to make more robust by avoiding single points of failure.
+The presence of interaction can be due to the nature of the problem, e.g. cooperation is necessary in co-operative transport tasks. Alternately, this interaction can be a design choice where interaction can improves the performance of the team, e.g. cooperation in cleaning a work-site is not necessary but it can help to improve the efficiency of this task. This plot can also be used to refer to the degree of coupling present in the system. In case of collective interaction, robots merely co-exist, i.e. they may not be aware of each other except treating others as obstacles. Many multi-robot systems are loosely-coupled where robots can indirectly infer some states of the environment from their team-mates' actions. But in many cases, e.g. in co-operative transport, robots not only recognize others as their team-mates, but also they coordinate their actions. Thus they form a tightly coupled system. This level of interaction and coupling also gives us the information about potential side-effects of failure of an individual robot. Tightly coupled systems with high degrees of interactions among the robots suffer from the performance loss if some of the robots removed from the system.
 
-In Fig. \ref{fig:mrta-complexities}, the y-axis corresponds to the level of robot-robot interaction present in the system.  Parker has classified group-level interaction into {\em collective}, {\em cooperative}, {\em coordinative} and {\em collaborative} \cite{Parker2008}.  The presence of interaction can be due to the nature of the problem, e.g. cooperation is necessary in co-operative transport tasks. Alternately, this interaction can be a design choice where interaction can improves the performance of the team, e.g. cooperation in cleaning a work-site is not necessary but it can help to improve the  efficiency of this task. 
-
-Y axis can also be used to refer to the degree of coupling present in the system.  In case of collective interaction, robots merely co-exist, i.e.  they may not be aware of each other except treating others as obstacles. Many multi-robot systems are loosely-coupled where robots can indirectly infer some states of the environment from their team-mates' actions.  But in many cases, e.g. in  co-operative transport, robots not only recognize others as their team-mates, but also they coordinate their actions. Thus they form a  tightly coupled system. This level of interaction and coupling also gives us the information about potential side-effects of failure of an individual robot. Tightly coupled systems with high degrees of interactions among the robots  suffer from the performance loss if some of the robots removed from the system.
-
-The Z axis in Fig. \ref{fig:mrta-complexities} represents the communication overhead of the system. This can be the result of the interactions  of robots under a given task-allocation method. As we have discussed before various task-allocation methods rely upon variable degrees of robot-robot communications.  On the other hand, the communication capabilities of individual robots can limit (or expand) the level of interaction can be made  in a given group. Thus in one way, considering the interaction requirements of a MRTA problem, the system designer can  select suitable communication strategies that both minimizes the communication overhead and maximizes the performance of the group. And in other way, the communication capabilities of robots can guide a system designer to design interaction rules of robot teams, e.g. the specification of robot's on-board camera  can determine the degree of possible visual interactions among robots. The suitable trade-offs between these two axes: communication and interaction can give us a balanced design of our MRTA solution.
-
-The central issue of this paper is to study the performance of different communication and sensing strategies in an adaptive stochastic response-threshold task-allocation mechanism.  We have focused the benefits of traversing along the various axes of Fig. \ref{fig:mrta-complexities}. In this paper, we are interested on two distinct lines: 1) distributed task-allocation, with no direct robot-robot interaction and communication, say line $OX_{n}$ ($n$ being the number of robots)  and 2) distributed task-allocation, with no direct robot-robot interaction, but varying degrees of local communications, say line $X_{n}Z_{l}$  ($Z_{l}$ being a local broadcast communication strategy that involves $l$ number of peers in communication).
+The communication overhead can be resulted from the interactions of robots under a given task-allocation method. Various task-allocation methods rely upon variable degrees of robot-robot communications. On the other hand, the communication capabilities of individual robots can limit (or expand) the level of interaction can be made in a given group. Thus in one way, considering the interaction requirements of a MRTA problem, the system designer can select suitable communication strategies that both minimizes the communication overhead and maximizes the performance of the group. And in other way, the communication capabilities of robots can guide a system designer to design interaction rules of robot teams, e.g. the specification of robot's on-board camera can determine the degree of possible visual interactions among robots. The suitable trade-off between these two axes: communication range and interaction can give us a balanced design of our MRTA solution.
 %%============================================================
 \section{Robotic interpretation of the Attractive Field Model}
 \label{sec:afm}
@@ -1295,8 +1294,8 @@ Similarly we can see that in larger system robots have less chances to specializ
 %\begin{scriptsize}
 \begin{center}
 \caption{Shop-floor production and maintenance task performance}
-\begin{tabular}{|p{0.28in}|p{0.8in}|p{0.8in}|p{0.8in}|p{0.8in}|}
-\hline Series & \textit{Production \protect\newline delay (SD) s} & \textit{p-value} \protect\newline 1-tailed \protect\newline t-test\protect\newline (confidence) & \textit{Pending \protect\newline maintenance time (SD) s} & \textit{p-value} 1-tailed \protect\newline t-test\\ 
+\begin{tabular}{|p{0.26in}|p{0.7in}|p{0.7in}|p{0.7in}|p{0.7in}|}
+\hline Series & \textit{Production \protect\newline delay \protect\newline (SD) s} & \textit{p-value} \protect\newline 1-tailed \protect\newline t-test\protect\newline (confidence) & \textit{Pending \protect\newline maintenance time (SD) s} & \textit{p-value} 1-tailed \protect\newline t-test\\ 
 \hline A & 555 (50) & 0.0 & 5 (5) & 0.0\\ 
 \hline B & 825 (360) & 0.2 (60\%) & 15 (65) & 0.0 \\
 \hline C & 605 (180) & N/A & 25 (85) & N/A\\
@@ -1313,8 +1312,8 @@ Results from Series C and Series D experiments show many similarities and differ
 %\begin{scriptsize}
 \begin{center}
 \caption{Task-specialization values of the robots}
-\begin{tabular}{|p{0.3in}|p{0.7in}|p{0.7in}|c|p{0.7in}|}
-\hline Series & $ K^G_{avg}$ (SD) & \textit{ p-value} \protect\newline 1-tailed t-test (confidence)  & $ Q^G_{avg}$ (SD) & \textit{ p-value} \protect\newline 1-tailed \protect\newline t-test \protect\newline (confidence) \\ 
+\begin{tabular}{|p{0.26in}|p{0.7in}|p{0.7in}|c|p{0.7in}|}
+\hline Series & $ K^G_{avg}$ (SD) & \textit{ p-value} \protect\newline 1-tailed t-test \protect\newline (confidence)  & $ Q^G_{avg}$ (SD) & \textit{ p-value} \protect\newline 1-tailed \protect\newline t-test \protect\newline (confidence) \\ 
 \hline A & 0.40 (0.08)& 0.0 & 38 (13) & 0.001 (99.8\%)\\ 
 \hline B &  0.30 (0.03) & 0.2 (60\%) &  18 (5) & 0.2 (60\%)\\
 \hline C  & 0.39 (0.17) & N/A & 13 (7) & N/A \\
